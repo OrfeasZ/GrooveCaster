@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "_Layout.cshtml";
+}
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">GrooveCaster Setup</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 main">
+            <div role="tabpanel">
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a aria-controls="intro" href="#intro" role="tab">Intro</a></li>
+                    <li role="presentation"><a aria-controls="account" href="#account" role="tab">Account</a></li>
+                    <li role="presentation"><a aria-controls="broadcast" href="#broadcast" role="tab">Broadcast</a></li>
+                    <li role="presentation"><a aria-controls="finish" href="#finish" role="tab">Finish</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="intro">
+                        <h2>GrooveCaster Setup</h2>
+                        <p>Before you are able to fully use GrooveCaster you first need to set it up.</p>
+                        <p>This wizard will guide you through the required steps you need to fully set up GrooveCaster!</p>
+                        <p>To continue, click the "Next" button.</p>
+                        <br/>
+                        <button type="button" class="btn btn-primary" id="setup-next-intro">Next</button>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="account">
+                        <h2>GrooveShark Account</h2>
+                        <p>Please provide the details of the GrooveShark account you want to Broadcast from:</p>
+                        <form id="setup-gs-account" action="/setup/check-credentials" method="POST">
+                            <div class="alert alert-danger" role="alert" style="display: none;" id="gs-account-error"></div>
+                            <label for="inputUsername" class="sr-only">Username</label>
+                            <input type="text" id="inputUsername" class="form-control" placeholder="Username" name="username" required autofocus>
+                            <label for="inputPassword" class="sr-only">Password</label>
+                            <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
+                            <br/>
+                            <button type="submit" class="btn btn-primary" id="setup-next-account">Next</button>
+                            <span class="glyphicon glyphicon-refresh glyphicon-spin" aria-hidden="true" style="display: none" id="gs-account-spinner"></span>
+                        </form>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="broadcast">
+                        <h2>Broadcast Info</h2>
+                        <div id="gs-last-broadcast-loading">
+                            <span class="glyphicon glyphicon-refresh glyphicon-spin" aria-hidden="true"></span> Fetching info from last broadcast...
+                        </div>
+                        <div id="setup-gs-broadcast" style="display: none;">
+                            <p>Please provide the basic details of the Broadcast:</p>
+                            <div class="alert alert-danger" role="alert" style="display: none;" id="gs-broadcast-error"></div>
+                            <label for="inputBroadcastName" class="sr-only">Broadcast Title</label>
+                            <input type="text" id="inputBroadcastName" class="form-control" placeholder="Title" name="bc-name" required autofocus>
+                            <label for="inputBroadcastDesc" class="sr-only">Broadcast Description</label>
+                            <textarea id="inputBroadcastDesc" class="form-control" placeholder="Description" name="bc-description" required></textarea>
+                            <label for="inputBroadcastTag" class="sr-only">Broadcast Category</label>
+                            <select id="inputBroadcastTag" class="form-control" name="bc-tag" required>
+                                <option value="0:multi-genre">Multi Genre</option>
+                            </select>
+                            <br />
+                            <button type="button" class="btn btn-primary" id="setup-next-broadcast">Next</button>
+                        </div>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="finish">
+                        <h2>Finalize Setup</h2>
+                        <p>Please review your information below and click "Finish" to finalize the setup:</p>
+                        <form id="setup-gs-finish" action="/setup" method="POST">
+                            GrooveShark Username: <span class="label label-info" id="gs-username-label"></span><br/>
+                            Broadcast Title: <span class="label label-info" id="bc-name-label"></span><br/>
+                            Broadcast Description: <span class="label label-info" id="bc-description-label"></span><br/>
+                            Broadcast Category: <span class="label label-info" id="bc-category-label"></span><br/>
+                            <input type="hidden" value="" id="gs-username-input" name="username"/>
+                            <input type="hidden" value="" id="gs-password-input" name="password"/>
+                            <input type="hidden" value="" id="bc-title-input" name="title"/>
+                            <input type="hidden" value="" id="bc-description-input" name="description"/>
+                            <input type="hidden" value="" id="bc-tag-input" name="tag"/>
+                            <br />
+                            <button type="submit" class="btn btn-primary">Finish</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
