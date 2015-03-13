@@ -95,6 +95,14 @@ namespace GrooveCasterServer.Managers
                 case "!peek":
                     OnPeek(s_Event, s_Data);
                     break;
+
+                case "!addToCollection":
+                    OnAddToCollection(s_Event, s_Data);
+                    break;
+
+                case "!removeFromCollection":
+                    OnRemoveFromCollection(s_Event, s_Data);
+                    break;
             }
         }
 
@@ -458,6 +466,34 @@ namespace GrooveCasterServer.Managers
             s_Songs = s_Songs.Substring(0, s_Songs.Length - 3);
 
             Program.Library.Chat.SendChatMessage(s_Songs);
+        }
+
+        private static void OnAddToCollection(ChatMessageEvent p_Event, String p_Data)
+        {
+            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+
+            if (s_SpecialGuest == null || !s_SpecialGuest.SuperGuest)
+            {
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                return;
+            }
+
+            Program.Library.User.AddSongToLibrary(Program.Library.Broadcast.PlayingSongID);
+            QueueManager.FetchCollectionSongs();
+        }
+
+        private static void OnRemoveFromCollection(ChatMessageEvent p_Event, String p_Data)
+        {
+            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+
+            if (s_SpecialGuest == null || !s_SpecialGuest.SuperGuest)
+            {
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                return;
+            }
+
+            Program.Library.User.RemoveSongFromLibrary(Program.Library.Broadcast.PlayingSongID);
+            QueueManager.FetchCollectionSongs();
         }
     }
 }
