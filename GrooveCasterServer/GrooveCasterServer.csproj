@@ -83,6 +83,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Managers\BroadcastManager.cs" />
+    <Compile Include="Managers\ChatManager.cs" />
+    <Compile Include="Managers\QueueManager.cs" />
+    <Compile Include="Managers\SettingsManager.cs" />
+    <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Models\LibraryLicense.cs" />
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\SetupRequest.cs" />
@@ -90,7 +95,7 @@
     <Compile Include="Modules\LicenseModule.cs" />
     <Compile Include="Modules\SetupModule.cs" />
     <Compile Include="Nancy\Bootstrapper.cs" />
-    <Compile Include="Modules\IndexModule.cs" />
+    <Compile Include="Modules\DashboardModule.cs" />
     <Compile Include="Models\AdminUser.cs" />
     <Compile Include="Models\CoreSetting.cs" />
     <Compile Include="Models\SpecialGuest.cs" />

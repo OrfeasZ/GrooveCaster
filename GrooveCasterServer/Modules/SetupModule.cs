@@ -1,4 +1,5 @@
 ﻿using System;
+using GrooveCasterServer.Managers;
 using GrooveCasterServer.Models;
 using Nancy;
 using Nancy.ModelBinding;
@@ -70,6 +71,8 @@ namespace GrooveCasterServer.Modules
                     s_Db.Insert(new CoreSetting() { Key = "bcdesc", Value = s_Request.Description });
                     s_Db.Insert(new CoreSetting() { Key = "bctag", Value = s_Request.Tag });
                 }
+
+                UserManager.Authenticate();
 
                 return new RedirectResponse("/");
             };

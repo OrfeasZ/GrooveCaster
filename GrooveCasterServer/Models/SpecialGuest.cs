@@ -12,5 +12,15 @@ namespace GrooveCasterServer.Models
         public String Username { get; set; }
 
         public VIPPermissions Permissions { get; set; }
+
+        public bool CanEditTitle { get; set; }
+
+        public bool CanEditDescription { get; set; }
+
+        public bool CanAddPermanentGuests { get; set; }
+
+        public bool CanAddTemporaryGuests { get; set; }
+
+        public bool SuperGuest { get; set; }
     }
 }
