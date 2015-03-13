@@ -20,6 +20,12 @@ namespace GrooveCasterServer.Managers
         {
             Program.Library.RegisterEventHandler(ClientEvent.SongPlaying, OnSongPlaying);
             Program.Library.RegisterEventHandler(ClientEvent.SongVote, OnSongVote);
+            Program.Library.RegisterEventHandler(ClientEvent.QueueUpdated, OnQueueUpdated);
+        }
+
+        private static void OnQueueUpdated(SharkEvent p_SharkEvent)
+        {
+            UpdateQueue();
         }
 
         public static void FetchCollectionSongs()
@@ -151,7 +157,25 @@ namespace GrooveCasterServer.Managers
 
         public static void RemoveByName(String p_Name)
         {
-            Program.Library.Chat.SendChatMessage("This feature has not been implemented yet.");
+            if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
+                   Program.Library.Broadcast.PlayingSongQueueID == 0)
+                return;
+
+            // Get the next song ID.
+            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+
+            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
+                return;
+
+            var s_QueueIDs = new List<Int64>();
+
+            for (var i = s_Index + 1; i < Program.Library.Queue.CurrentQueue.Count; ++i)
+            {
+                if (Program.Library.Queue.CurrentQueue[i].SongName.ToLowerInvariant().Contains(p_Name.ToLowerInvariant()))
+                    s_QueueIDs.Add(Program.Library.Queue.CurrentQueue[i].QueueID);
+            }
+
+            Program.Library.Broadcast.RemoveSongs(s_QueueIDs);
         }
 
         public static void FetchLast()

@@ -1,5 +1,32 @@
 ﻿@{
     Layout = "_Layout.cshtml";
+    var s_Message = "";
+    var s_Error = false;
+}
+
+@switch ((int) Model.Status)
+{
+    case 0:
+        s_Message = "Broadcast is created and broadcasting!";
+        break;
+        
+    case 1:
+        s_Message = "Authenticating with the GS Backend...";
+        break;
+        
+    case 2:
+        s_Message = "Authentication failed. Please check your settings.";
+        s_Error = true;
+        break;
+        
+    case 3:
+        s_Message = "Creating and initializing broadcast parameters...";
+        break;
+        
+    case 4:
+        s_Message = "Broadcast creation failed. Please check your settings.";
+        s_Error = true;
+        break;
 }
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -23,5 +50,29 @@
     </div>
 </nav>
 <div>
-    This is the index page!
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+                    <li><a href="#">Core Settings</a></li>
+                    <li><a href="#">Guest Management</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <h1 class="page-header">Dashboard</h1>
+                <h2 class="sub-header">Server Status</h2>
+                <div>
+                    @if (s_Error)
+                    {
+                        <div class="alert alert-danger">@s_Message</div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">@s_Message</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

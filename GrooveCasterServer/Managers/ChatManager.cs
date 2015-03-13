@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using GrooveCasterServer.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
+using GS.Lib.Models;
 using ServiceStack.OrmLite;
 
 namespace GrooveCasterServer.Managers
@@ -46,13 +48,13 @@ namespace GrooveCasterServer.Managers
                     OnRemoveLast(s_Event, s_Data);
                     break;
 
-                case "!fetchByName":
+                /*case "!fetchByName":
                     OnFetchByName(s_Event, s_Data);
                     break;
 
                 case "!fetchLast":
                     OnFetchLast(s_Event, s_Data);
-                    break;
+                    break;*/
 
                 case "!removeByName":
                     OnRemoveByName(s_Event, s_Data);
@@ -62,9 +64,9 @@ namespace GrooveCasterServer.Managers
                     OnSkip(s_Event, s_Data);
                     break;
 
-                case "!shuffle":
+                /*case "!shuffle":
                     OnShuffle(s_Event, s_Data);
-                    break;
+                    break;*/
 
                 case "!makeGuest":
                     OnMakeGuest(s_Event, s_Data);
@@ -88,6 +90,10 @@ namespace GrooveCasterServer.Managers
 
                 case "!setDescription":
                     OnSetDescription(s_Event, s_Data);
+                    break;
+
+                case "!peek":
+                    OnPeek(s_Event, s_Data);
                     break;
             }
         }
@@ -419,6 +425,39 @@ namespace GrooveCasterServer.Managers
             }
 
             Program.Library.Broadcast.UpdateBroadcastDescription(p_Data.Trim());
+        }
+
+        private static void OnPeek(ChatMessageEvent p_Event, String p_Data)
+        {
+            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+
+            if (s_SpecialGuest == null)
+            {
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                return;
+            }
+
+            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+
+            var s_UpcomingSongs = new List<QueueSongData>();
+
+            for (var i = s_Index + 1; i < Program.Library.Queue.CurrentQueue.Count; ++i)
+                s_UpcomingSongs.Add(Program.Library.Queue.CurrentQueue[i]);
+
+            if (s_UpcomingSongs.Count == 0)
+            {
+                Program.Library.Chat.SendChatMessage("The are no upcoming songs in the queue.");
+                return;
+            }
+
+            var s_Songs = "Upcoming Songs: ";
+
+            for (var i = 0; i < s_UpcomingSongs.Count; ++i)
+                s_Songs += String.Format("{0} • {1} | ", s_UpcomingSongs[i].SongName, s_UpcomingSongs[i].ArtistName);
+
+            s_Songs = s_Songs.Substring(0, s_Songs.Length - 3);
+
+            Program.Library.Chat.SendChatMessage(s_Songs);
         }
     }
 }

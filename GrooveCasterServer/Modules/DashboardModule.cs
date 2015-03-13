@@ -29,7 +29,34 @@ namespace GrooveCasterServer.Modules
                         return new RedirectResponse("/setup");
                 }
 
-                return View["Index"];
+                var s_Status = 0; // Broadcasting
+
+                if (UserManager.Authenticating)
+                {
+                    s_Status = 1; // Authenticating
+                }
+                else if (!UserManager.Authenticating && UserManager.AuthenticationResult != AuthenticationResult.Success)
+                {
+                    s_Status = 2; // Authentication Failure
+                }
+                else if (!UserManager.Authenticating &&
+                         UserManager.AuthenticationResult == AuthenticationResult.Success &&
+                         BroadcastManager.CreatingBroadcast)
+                {
+                    s_Status = 3; // Creating Broadcast
+                }
+                else if (!UserManager.Authenticating &&
+                         UserManager.AuthenticationResult == AuthenticationResult.Success &&
+                         !BroadcastManager.CreatingBroadcast &&
+                         Program.Library.Broadcast.ActiveBroadcastID == null)
+                {
+                    s_Status = 4; // Broadcast Creation Failed
+                }
+
+                return View["Index", new
+                {
+                    Status = s_Status
+                }];
             };
 
             Get["/status"] = p_Parameters =>
