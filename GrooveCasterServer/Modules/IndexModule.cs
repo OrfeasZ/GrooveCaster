@@ -1,4 +1,5 @@
-﻿using GrooveCasterServer.Models;
+﻿using System;
+using GrooveCasterServer.Models;
 using Nancy;
 using Nancy.Responses;
 using Nancy.Security;
@@ -14,6 +15,9 @@ namespace GrooveCasterServer.Modules
 
             Get["/"] = p_Parameters =>
             {
+                if (String.IsNullOrWhiteSpace(Program.SecretKey))
+                    return View["Error", new { ErrorText = "Failed to fetch SecretKey from GrooveShark.<br/>Please make sure GrooveCaster is up-to-date and that you're not banned from GrooveShark." }];
+                
                 using (var s_Db = Program.DbConnectionString.OpenDbConnection())
                 {
                     var s_GSUsername = s_Db.Single<CoreSetting>(p_Setting => p_Setting.Key == "gsun");

@@ -16,6 +16,9 @@ namespace GrooveCasterServer.Modules
 
             Get["/setup"] = p_Parameters =>
             {
+                if (String.IsNullOrWhiteSpace(Program.SecretKey))
+                    return View["Error", new { ErrorText = "Failed to fetch SecretKey from GrooveShark. Please make sure GrooveCaster is up-to-date and that you're not banned from GrooveShark." }];
+                
                 using (var s_Db = Program.DbConnectionString.OpenDbConnection())
                 {
                     var s_GSUsername = s_Db.Single<CoreSetting>(p_Setting => p_Setting.Key == "gsun");

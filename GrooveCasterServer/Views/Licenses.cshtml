@@ -1,0 +1,16 @@
+﻿@{
+    Layout = "_Layout.cshtml";
+}
+
+<div class="container">
+
+    @foreach (var s_Library in Model.Libraries)
+    {
+        <div class="library">
+            <h2>@s_Library.Name</h2>
+            <textarea class="form-control" style="min-height: 440px;" disabled>@s_Library.License</textarea>
+        </div>
+        <br/>
+    }
+
+</div>
