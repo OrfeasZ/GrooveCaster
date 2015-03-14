@@ -42,6 +42,27 @@ namespace GrooveCasterServer.Managers
         {
             var s_Event = (SongPlayingEvent)p_SharkEvent;
 
+            if (s_Event.SongID == 0)
+            {
+                // We ran out of songs, how did this happen?
+                // Quickly! Add two to the queue!
+                var s_Random = new Random();
+                var s_FirstSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
+                var s_SecondSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
+
+                var s_FirstSong = CollectionSongs[s_FirstSongIndex];
+                var s_SecondSong = CollectionSongs[s_SecondSongIndex];
+
+                while (s_SecondSong == s_FirstSong)
+                {
+                    s_SecondSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
+                    s_SecondSong = CollectionSongs[s_SecondSongIndex];
+                }
+
+                Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong, s_SecondSong });
+                return;
+            }
+
             PlayedSongs.Add(s_Event.SongID);
 
             // Clear songs from history (if needed).
