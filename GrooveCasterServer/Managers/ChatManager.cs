@@ -23,6 +23,10 @@ namespace GrooveCasterServer.Managers
         private static void OnChatMessage(SharkEvent p_SharkEvent)
         {
             var s_Event = p_SharkEvent as ChatMessageEvent;
+
+            if (s_Event.UserID == Program.Library.User.Data.UserID)
+                return;
+
             Console.WriteLine("[CHAT] {0}: {1}", s_Event.UserName, s_Event.ChatMessage);
 
             var s_Parts = s_Event.ChatMessage.Split(' ');
@@ -48,13 +52,13 @@ namespace GrooveCasterServer.Managers
                     OnRemoveLast(s_Event, s_Data);
                     break;
 
-                /*case "!fetchByName":
+                case "!fetchByName":
                     OnFetchByName(s_Event, s_Data);
                     break;
 
                 case "!fetchLast":
                     OnFetchLast(s_Event, s_Data);
-                    break;*/
+                    break;
 
                 case "!removeByName":
                     OnRemoveByName(s_Event, s_Data);
@@ -64,9 +68,9 @@ namespace GrooveCasterServer.Managers
                     OnSkip(s_Event, s_Data);
                     break;
 
-                /*case "!shuffle":
+                case "!shuffle":
                     OnShuffle(s_Event, s_Data);
-                    break;*/
+                    break;
 
                 case "!makeGuest":
                     OnMakeGuest(s_Event, s_Data);
@@ -362,6 +366,12 @@ namespace GrooveCasterServer.Managers
 
         private static void OnUnguest(ChatMessageEvent p_Event, String p_Data)
         {
+            if (String.IsNullOrWhiteSpace(p_Data) && Program.Library.Broadcast.SpecialGuests.Contains(p_Event.UserID))
+            {
+                Program.Library.Broadcast.RemoveSpecialGuest(p_Event.UserID);
+                return;
+            }
+
             var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddPermanentGuests)
@@ -445,7 +455,7 @@ namespace GrooveCasterServer.Managers
                 return;
             }
 
-            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
             var s_UpcomingSongs = new List<QueueSongData>();
 

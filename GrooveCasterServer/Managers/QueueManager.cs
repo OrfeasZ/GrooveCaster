@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GrooveCasterServer.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
 
@@ -42,6 +43,8 @@ namespace GrooveCasterServer.Managers
         {
             var s_Event = (SongPlayingEvent)p_SharkEvent;
 
+            Console.WriteLine("Currently playing song: {0} ({1})", s_Event.SongName, s_Event.SongID);
+
             if (s_Event.SongID == 0)
             {
                 // We ran out of songs, how did this happen?
@@ -59,7 +62,8 @@ namespace GrooveCasterServer.Managers
                     s_SecondSong = CollectionSongs[s_SecondSongIndex];
                 }
 
-                Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong, s_SecondSong });
+                var s_Songs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong, s_SecondSong });
+                Program.Library.Broadcast.PlaySong(s_FirstSong, s_Songs[s_FirstSong]);
                 return;
             }
 
@@ -74,7 +78,9 @@ namespace GrooveCasterServer.Managers
 
         private static void UpdateQueue()
         {
-            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+
+            Console.WriteLine("Updating Queue. Current Song: {0} - Total Songs: {1}", s_Index, Program.Library.Queue.CurrentQueue.Count);
 
             // We're running out of songs; add from collection.
             if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count || s_Index == -1)
@@ -94,6 +100,8 @@ namespace GrooveCasterServer.Managers
                     s_SongID = CollectionSongs[s_RandomSongIndex];
                 }
 
+                Console.WriteLine("Adding song {0} to queue (from collection).", s_SongID);
+
                 Program.Library.Broadcast.AddSongs(new List<Int64> { s_SongID });
             }
         }
@@ -108,7 +116,7 @@ namespace GrooveCasterServer.Managers
                 return;
 
             // Automatically skip a song if it reaches a number of negative votes.
-            if (s_Event.CurrentVote <= s_Threshold)
+            if (s_Event.CurrentVotes <= s_Threshold)
                 SkipSong();
         }
 
@@ -119,7 +127,7 @@ namespace GrooveCasterServer.Managers
                 return;
 
             // Get the next song ID.
-            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
             if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
                 return;
@@ -136,7 +144,7 @@ namespace GrooveCasterServer.Managers
                 return;
 
             // Get the next song ID.
-            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
             if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
                 return;
@@ -160,7 +168,7 @@ namespace GrooveCasterServer.Managers
                   Program.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
-            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
             if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
                 return;
@@ -185,7 +193,7 @@ namespace GrooveCasterServer.Managers
                 return;
 
             // Get the next song ID.
-            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
             if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
                 return;
@@ -207,14 +215,14 @@ namespace GrooveCasterServer.Managers
                      Program.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
-            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
             if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count - 1)
                 return;
 
             var s_SongData = Program.Library.Queue.CurrentQueue[Program.Library.Queue.CurrentQueue.Count - 1];
 
-            Program.Library.Broadcast.MoveSongs(new List<Int64> { s_SongData.QueueID }, Program.Library.Queue.CurrentQueue[s_Index].Index + 1);
+            Program.Library.Broadcast.MoveSongs(new List<Int64> { s_SongData.QueueID }, Program.Library.Queue.GetPlayingSongIndex() + 1);
         }
 
         public static void FetchByName(String p_Name)
