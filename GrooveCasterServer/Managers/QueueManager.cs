@@ -74,8 +74,10 @@ namespace GrooveCasterServer.Managers
 
         private static void UpdateQueue()
         {
+            var s_Index = Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID);
+
             // We're running out of songs; add from collection.
-            if (Program.Library.Queue.GetInternalIndexForSong(Program.Library.Broadcast.PlayingSongQueueID) == Program.Library.Queue.CurrentQueue.Count - 1)
+            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count || s_Index == -1)
             {
                 var s_Random = new Random();
                 var s_RandomSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
