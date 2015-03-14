@@ -206,3 +206,9 @@ body {
     margin: 20px 0;
     text-align: center;
 }
+
+.panel.guest-panel, .panel.user-panel {
+    float: left;
+    margin-right: 20px;
+    max-width: 280px;
+}

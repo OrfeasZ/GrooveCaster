@@ -88,9 +88,13 @@
     <Compile Include="Managers\QueueManager.cs" />
     <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
+    <Compile Include="Models\AddGuestRequest.cs" />
     <Compile Include="Models\LibraryLicense.cs" />
     <Compile Include="Models\LoginRequest.cs" />
+    <Compile Include="Models\SaveSettingsRequest.cs" />
     <Compile Include="Models\SetupRequest.cs" />
+    <Compile Include="Models\UpdateAccountSettingsRequest.cs" />
+    <Compile Include="Models\UpdateGuestRequest.cs" />
     <Compile Include="Modules\AuthModule.cs" />
     <Compile Include="Modules\LicenseModule.cs" />
     <Compile Include="Modules\SetupModule.cs" />
@@ -140,6 +144,18 @@
     <Content Include="Views\Error.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\CoreSettings.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Guests.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\AddGuest.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\AddUser.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Views\Index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -156,6 +172,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Licenses.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Settings.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Users.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Views\_Layout.cshtml">

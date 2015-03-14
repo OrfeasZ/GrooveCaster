@@ -1,32 +1,5 @@
 ﻿@{
     Layout = "_Layout.cshtml";
-    var s_Message = "";
-    var s_Error = false;
-}
-
-@switch ((int) Model.Status)
-{
-    case 0:
-        s_Message = "Broadcast is created and broadcasting!";
-        break;
-        
-    case 1:
-        s_Message = "Authenticating with the GS Backend...";
-        break;
-        
-    case 2:
-        s_Message = "Authentication failed. Please check your settings.";
-        s_Error = true;
-        break;
-        
-    case 3:
-        s_Message = "Creating and initializing broadcast parameters...";
-        break;
-        
-    case 4:
-        s_Message = "Broadcast creation failed. Please check your settings.";
-        s_Error = true;
-        break;
 }
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -54,25 +27,30 @@
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
-                    <li class="active"><a href="/">Overview <span class="sr-only">(current)</span></a></li>
+                    <li><a href="/">Overview</a></li>
                     <li><a href="/settings">Core Settings</a></li>
                     <li><a href="/guests">Guest Management</a></li>
-                    <li><a href="/users">User Management</a></li>
+                    <li class="active"><a href="/users">User Management <span class="sr-only">(current)</span></a></li>
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Dashboard</h1>
-                <h2 class="sub-header">Server Status</h2>
-                <div>
-                    @if (s_Error)
-                    {
-                        <div class="alert alert-danger">@s_Message</div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info">@s_Message</div>
-                    }
-                </div>
+                <h1 class="page-header">Add a new User</h1>
+                <p>Users are granted access to the GrooveCaster Admin Dashboard, allowing them to manage Special Guests, other Users, Broadcast Settings, etc.</p>
+                <p>Please be careful when providing someone with credentials to such a user as access to this system might compromise your Broadcast.</p>
+
+                <form action="/users/add" method="POST" id="user-add-form">
+                    <label>
+                        Username
+                        <input type="text" name="username" class="form-control" placeholder="Username" required autofocus/>
+                    </label>
+                    <br/>
+                    <label>
+                        Password
+                        <input type="password" name="password" class="form-control" placeholder="Password" required />
+                    </label>
+                    <br /><br />
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
             </div>
         </div>
     </div>

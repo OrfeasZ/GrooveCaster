@@ -1,32 +1,5 @@
 ﻿@{
     Layout = "_Layout.cshtml";
-    var s_Message = "";
-    var s_Error = false;
-}
-
-@switch ((int) Model.Status)
-{
-    case 0:
-        s_Message = "Broadcast is created and broadcasting!";
-        break;
-        
-    case 1:
-        s_Message = "Authenticating with the GS Backend...";
-        break;
-        
-    case 2:
-        s_Message = "Authentication failed. Please check your settings.";
-        s_Error = true;
-        break;
-        
-    case 3:
-        s_Message = "Creating and initializing broadcast parameters...";
-        break;
-        
-    case 4:
-        s_Message = "Broadcast creation failed. Please check your settings.";
-        s_Error = true;
-        break;
 }
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -54,25 +27,26 @@
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
-                    <li class="active"><a href="/">Overview <span class="sr-only">(current)</span></a></li>
-                    <li><a href="/settings">Core Settings</a></li>
+                    <li><a href="/">Overview</a></li>
+                    <li class="active"><a href="/settings">Core Settings <span class="sr-only">(current)</span></a></li>
                     <li><a href="/guests">Guest Management</a></li>
                     <li><a href="/users">User Management</a></li>
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Dashboard</h1>
-                <h2 class="sub-header">Server Status</h2>
-                <div>
-                    @if (s_Error)
-                    {
-                        <div class="alert alert-danger">@s_Message</div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info">@s_Message</div>
-                    }
-                </div>
+                <h1 class="page-header">Core Settings</h1>
+                <form action="/settings" method="POST">
+                    <label for="inputTitle">Broadcast Description</label>
+                    <input type="text" id="inputTitle" class="form-control" placeholder="Broadcast Title" name="title" value="@Model.Title" required autofocus>
+                    <label for="inputDescription">Broadcast Description</label>
+                    <textarea class="form-control" id="inputDescription" name="description" placeholder="Broadcast Description">@Model.Description</textarea>
+                    <label for="inputMaxHistory">Max Number of Songs to keep in History (0 to disable)</label>
+                    <input type="number" id="inputMaxHistory" class="form-control" placeholder="0" name="history" value="@Model.History" required>
+                    <label for="inputVoteThreshold">Song Vote Threshold to skip Song (0 to disable)</label>
+                    <input type="number" id="inputVoteThreshold" class="form-control" placeholder="0" name="threshold" value="@Model.Threshold" required>
+                    <br />
+                    <button type="submit" class="btn btn-primary" id="setup-next-account">Save</button>
+                </form>
             </div>
         </div>
     </div>

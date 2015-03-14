@@ -1,0 +1,53 @@
+﻿@using System
+@{
+    Layout = "_Layout.cshtml";
+}
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">GrooveCaster Admin Dashboard</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/">Dashboard</a></li>
+                <li class="active"><a href="/me/settings">Settings</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li class="active"><a href="/me/settings">Account Settings <span class="sr-only">(current)</span></a></li>
+                </ul>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <h1 class="page-header">Account Settings</h1>
+                <form action="/me/settings" method="POST">
+                    @if (!String.IsNullOrWhiteSpace(Model.Error))
+                    {
+                        <div class="alert alert-danger">@Model.Error</div>
+                    }
+                    <label for="inputOldUsername" class="sr-only">Current Password</label>
+                    <input type="password" id="inputOldUsername" class="form-control" placeholder="Current Password" name="verification" required autofocus>
+                    <label for="inputPassword" class="sr-only">New Password</label>
+                    <input type="password" id="inputPassword" class="form-control" placeholder="New Password" name="password" required>
+                    <label for="inputRepeatPassword" class="sr-only">Repeat New Password</label>
+                    <input type="password" id="inputRepeatPassword" class="form-control" placeholder="Repeat New Password" name="repeat" required>
+                    <br/>
+                    <button type="submit" class="btn btn-primary" id="setup-next-account">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

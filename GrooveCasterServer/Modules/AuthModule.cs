@@ -30,7 +30,8 @@ namespace GrooveCasterServer.Modules
 
                 using (var s_Db = Program.DbConnectionString.OpenDbConnection())
                 {
-                    var s_User = s_Db.Single<AdminUser>(p_User => p_User.Username == s_Request.Username);
+                    var s_Username = s_Request.Username.Trim().ToLowerInvariant();
+                    var s_User = s_Db.Single<AdminUser>(p_User => p_User.Username == s_Username);
                     
                     if (s_User == null)
                         return View["Login", new { Error = "Invalid credentials specified." }];

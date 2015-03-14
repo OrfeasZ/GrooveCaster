@@ -107,3 +107,7 @@ $("#setup-next-broadcast").click(function() {
     PopulateFinishPage();
     $('a[href="#finish"]').tab("show");
 });
+
+$("#import-guests").click(function() {
+    $(this).attr("disabled", "disabled");
+});

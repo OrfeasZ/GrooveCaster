@@ -93,7 +93,7 @@ namespace GrooveCasterServer.Managers
             if (QueueManager.CollectionSongs.Count < 2)
                 return;
 
-            BroadcastManager.CreateBroadcast();
+            //BroadcastManager.CreateBroadcast();
         }
 
         private static void OnAuthenticationFailed(SharkEvent p_SharkEvent)
