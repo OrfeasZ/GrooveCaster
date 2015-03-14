@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GrooveCasterServer.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
+using ServiceStack;
 
 namespace GrooveCasterServer.Managers
 {
@@ -227,12 +229,59 @@ namespace GrooveCasterServer.Managers
 
         public static void FetchByName(String p_Name)
         {
-            Program.Library.Chat.SendChatMessage("This feature has not been implemented yet.");
+            if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
+                        Program.Library.Broadcast.PlayingSongQueueID == 0)
+                return;
+
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+
+            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count - 1)
+                return;
+
+            for (var i = s_Index + 1; i < Program.Library.Queue.CurrentQueue.Count; ++i)
+            {
+                if (Program.Library.Queue.CurrentQueue[i].SongName.ToLowerInvariant()
+                    .Contains(p_Name.ToLowerInvariant()))
+                {
+                    Program.Library.Broadcast.MoveSongs(new List<Int64> { Program.Library.Queue.CurrentQueue[i].QueueID }, Program.Library.Queue.GetPlayingSongIndex() + 1);
+                    break;
+                }
+            }
         }
 
         public static void Shuffle()
         {
-            Program.Library.Chat.SendChatMessage("This feature has not been implemented yet.");
+             if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
+                     Program.Library.Broadcast.PlayingSongQueueID == 0)
+                return;
+
+            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+
+            var s_SongCount = Program.Library.Queue.CurrentQueue.Count - (s_Index + 1);
+
+            if (s_SongCount <= 1)
+                return;
+
+            var s_Songs = new SongShuffleData[s_SongCount];
+
+            for (var i = 0; i < s_SongCount; ++i)
+            {
+                s_Songs[i] = new SongShuffleData()
+                {
+                    LastIndex = i,
+                    QueueID = Program.Library.Queue.CurrentQueue[s_Index + i + 1].QueueID
+                };
+            }
+
+            s_Songs = s_Songs.OrderBy(s_Song => Guid.NewGuid()).ToArray();
+
+            for (var i = 0; i < s_SongCount; ++i)
+            {
+                var s_Song = s_Songs[i];
+                Program.Library.Broadcast.MoveSongs(new List<Int64> { s_Song.QueueID }, Program.Library.Queue.GetPlayingSongIndex() + 1 + i);
+            }
+
+            Program.Library.Chat.SendChatMessage("Shuffled " + s_SongCount + " songs.");
         }
     }
 }

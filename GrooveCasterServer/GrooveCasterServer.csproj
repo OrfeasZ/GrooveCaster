@@ -93,6 +93,7 @@
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\SaveSettingsRequest.cs" />
     <Compile Include="Models\SetupRequest.cs" />
+    <Compile Include="Models\SongShuffleData.cs" />
     <Compile Include="Models\UpdateAccountSettingsRequest.cs" />
     <Compile Include="Models\UpdateGuestRequest.cs" />
     <Compile Include="Modules\AuthModule.cs" />

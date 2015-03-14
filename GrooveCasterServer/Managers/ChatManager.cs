@@ -107,6 +107,10 @@ namespace GrooveCasterServer.Managers
                 case "!removeFromCollection":
                     OnRemoveFromCollection(s_Event, s_Data);
                     break;
+
+                case "!about":
+                    OnAbout(s_Event, s_Data);
+                    break;
             }
         }
 
@@ -459,7 +463,13 @@ namespace GrooveCasterServer.Managers
 
             var s_UpcomingSongs = new List<QueueSongData>();
 
-            for (var i = s_Index + 1; i < Program.Library.Queue.CurrentQueue.Count; ++i)
+            // Limit peek to 6 songs.
+            var s_SongCount = Program.Library.Queue.CurrentQueue.Count - s_Index - 1;
+
+            if (s_SongCount > 6)
+                s_SongCount = 6;
+
+            for (var i = s_Index + 1; i < s_Index + 1 + s_SongCount; ++i)
                 s_UpcomingSongs.Add(Program.Library.Queue.CurrentQueue[i]);
 
             if (s_UpcomingSongs.Count == 0)
@@ -504,6 +514,11 @@ namespace GrooveCasterServer.Managers
 
             Program.Library.User.RemoveSongFromLibrary(Program.Library.Broadcast.PlayingSongID);
             QueueManager.FetchCollectionSongs();
+        }
+
+        private static void OnAbout(ChatMessageEvent p_Event, String p_Data)
+        {
+            Program.Library.Chat.SendChatMessage("This broadcast is powered by GrooveCaster. For more information visit https://github.com/OrfeasZ/GrooveCaster.");
         }
     }
 }
