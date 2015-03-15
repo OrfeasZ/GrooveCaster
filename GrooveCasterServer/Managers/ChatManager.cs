@@ -113,6 +113,10 @@ namespace GrooveCasterServer.Managers
                 case "!about":
                     OnAbout(s_Event, s_Data);
                     break;
+
+                case "!help":
+                    OnHelp(s_Event, s_Data);
+                    break;
             }
         }
 
@@ -556,7 +560,56 @@ namespace GrooveCasterServer.Managers
 
         private static void OnAbout(ChatMessageEvent p_Event, String p_Data)
         {
-            Program.Library.Chat.SendChatMessage("This broadcast is powered by GrooveCaster. For more information visit https://github.com/OrfeasZ/GrooveCaster.");
+            Program.Library.Chat.SendChatMessage("This broadcast is powered by GrooveCaster " + Program.GetVersion() + ". For more information visit https://github.com/OrfeasZ/GrooveCaster.");
+        }
+
+        private static readonly Dictionary<String, String> m_CommandHelp = new Dictionary<string, string>()
+        {
+            { "guest", "!guest: Toggle special guest status." },
+            { "ping", "!ping: Ping the GrooveCaster server." },
+            { "removeNext", "!removeNext [count]: Removes the next [count] songs from the queue ([count] defaults to 1 if not specified)." },
+            { "removeLast", "!removeLast [count]: Removes the last [count] songs from the queue ([count] defaults to 1 if not specified)." },
+            { "fetchByName", "!fetchByName <name>: Fetches a song from the queue with a name matching <name> and moves it after the playing song." },
+            { "fetchLast", "!fetchLast: Fetches the last song in the queue and moves it after the playing song." },
+            { "removeByName", "!removeByName <name>: Removes all songs whose name matches <name> from the queue." },
+            { "skip", "!skip: Skips the current song." },
+            { "shuffle", "!shuffle: Shuffles the songs in the queue." },
+            { "peek", "!peek: Displays a list of upcoming songs from the queue." },
+            { "makeGuest", "!makeGuest <userid>: Makes user with user ID <userid> a temporary special guest." },
+            { "addGuest", "!addGuest <userid>: Makes user with user ID <userid> a permanent special guest." },
+            { "removeGuest", "!removeGuest <userid>: Permanently removes special guest permissions from user with user ID <userid>." },
+            { "unguest", "!unguest [userid]: Temporarily removes special guest permissions from user with user ID <userid>. Unguests everyone if [userid] is not specified." },
+            { "addToCollection", "!addToCollection: Adds the currently playing song to the song collection." },
+            { "removeFromCollection", "!removeFromCollection: Removes the currently playing song from the song collection." },
+            { "setTitle", "!setTitle <title>: Sets the title of the broadcast." },
+            { "setDescription", "!setDescription <description>: Sets the description of the broadcast." },
+            { "about", "!about: Displays information about the GrooveCaster bot." },
+            { "help", "!help [command]: Displays detailed information about the command [command]. Displays all available commands if [command] is not specified." },
+        }; 
+
+        private static void OnHelp(ChatMessageEvent p_Event, String p_Data)
+        {
+            var s_Command = p_Data.Trim();
+
+            if (String.IsNullOrWhiteSpace(s_Command))
+            {
+                var s_Commands = "Available commands: ";
+
+                foreach (var s_Pair in m_CommandHelp)
+                    s_Commands += s_Pair.Key + " ";
+
+                Program.Library.Chat.SendChatMessage(s_Commands);
+                Program.Library.Chat.SendChatMessage("For detailed information on a command use !help [command].");
+                return;
+            }
+
+            if (!m_CommandHelp.ContainsKey(s_Command))
+            {
+                Program.Library.Chat.SendChatMessage("Command not found.");
+                return;
+            }
+
+            Program.Library.Chat.SendChatMessage(m_CommandHelp[s_Command]);
         }
     }
 }
