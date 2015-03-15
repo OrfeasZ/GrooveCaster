@@ -48,18 +48,22 @@ var PopulateFinishPage = function() {
     var s_BroadcastDesc = $("#inputBroadcastDesc").val();
     var s_BroadcastTagName = $("#inputBroadcastTag option:selected").text();
     var s_BroadcastTag = $("#inputBroadcastTag option:selected").val();
+    var s_BroadcastMobile = $("#inputMobileCompliance option:selected").prop('checked');
 
     $("#gs-username-label").text(s_Username);
     $("#bc-name-label").text(s_BroadcastTitle);
     $("#bc-description-label").text(s_BroadcastDesc);
     $("#bc-description-label").text(s_BroadcastDesc);
     $("#bc-category-label").text(s_BroadcastTagName);
+    $("#bc-mobile-label").text(s_BroadcastMobile ? 'On' : 'Off');
 
     $("#gs-username-input").val(s_Username);
     $("#gs-password-input").val(s_Password);
     $("#bc-title-input").val(s_BroadcastTitle);
     $("#bc-description-input").val(s_BroadcastDesc);
     $("#bc-tag-input").val(s_BroadcastTag);
+    if (s_BroadcastMobile)
+        $("#bc-mobile-input").val('on');
 };
 
 $("#setup-gs-account").ajaxForm({
@@ -111,3 +115,83 @@ $("#setup-next-broadcast").click(function() {
 $("#import-guests").click(function() {
     $(this).attr("disabled", "disabled");
 });
+
+var s_SongSearchInput = $("#song-search-input");
+
+if (s_SongSearchInput.length > 0) {
+    var s_SongSource = new Bloodhound({
+        datumTokenizer: function (p_Datum) {
+            return Bloodhound.tokenizers.whitespace(p_Datum.songName);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/songs/autocomplete/%QUERY.json'
+        }
+    });
+
+    s_SongSource.initialize();
+
+    s_SongSearchInput.typeahead(null, {
+        displayKey: 'songName',
+        source: s_SongSource.ttAdapter(),
+        templates: {
+            empty: '<div>No results found.</div>',
+            suggestion: Handlebars.compile('<div class="song-suggestion"><strong>{{songName}}</strong><br/><div class="song-details">{{artistName}} &bull; {{albumName}}</div></div>')
+        }
+    });
+
+    s_SongSearchInput.bind('typeahead:selected', function(p_Obj, p_Datum, p_Name) {
+        if (p_Datum == null)
+            return;
+
+        $('#songid-input').val(p_Datum.songID);
+        $('#song-input').val(p_Datum.songName);
+        $('#artistid-input').val(p_Datum.artistID);
+        $('#artist-input').val(p_Datum.artistName);
+        $('#albumid-input').val(p_Datum.albumID);
+        $('#album-input').val(p_Datum.albumName);
+    });
+}
+
+var s_UserSearchInput = $("#user-search-input");
+
+if (s_UserSearchInput.length > 0) {
+    var s_UserSource = new Bloodhound({
+        datumTokenizer: function (p_Datum) {
+            return Bloodhound.tokenizers.whitespace(p_Datum.name);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/songs/import/autocomplete/%QUERY.json'
+        }
+    });
+
+    s_UserSource.initialize();
+
+    s_UserSearchInput.typeahead(null, {
+        displayKey: 'name',
+        source: s_UserSource.ttAdapter(),
+        templates: {
+            empty: '<div>No results found.</div>',
+            suggestion: Handlebars.compile('<div class="song-suggestion"><strong>{{name}}</strong></div>')
+        }
+    });
+
+    s_UserSearchInput.bind('typeahead:selected', function (p_Obj, p_Datum, p_Name) {
+        if (p_Datum == null)
+            return;
+
+        $('#user-input').val(p_Datum.userID);
+    });
+}
+
+$("#song-import-form").submit(function() {
+    $("#song-import-btn").attr("disabled", "disabled");
+});
+
+$("#reset-bot").click(function() {
+    if (!confirm("WARNING! This will destroy the current broadcast and reset all of its settings (it will not reset guests, songs, or any other locally stored data).\n\nAre you sure you want to continue?"))
+        return false;
+
+    return true;
+})

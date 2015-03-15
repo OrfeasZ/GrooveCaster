@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Linq
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@{
     Layout = "_Layout.cshtml";
     var s_Message = "";
     var s_Error = false;
@@ -24,6 +26,11 @@
         break;
         
     case 4:
+        s_Message = "Broadcast didn't start. Not enough songs in collection. Use the \"Song Management\" interface to add songs.";
+        s_Error = true;
+        break;
+        
+    case 5:
         s_Message = "Broadcast creation failed. Please check your settings.";
         s_Error = true;
         break;
@@ -55,9 +62,13 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li class="active"><a href="/">Overview <span class="sr-only">(current)</span></a></li>
-                    <li><a href="/settings">Core Settings</a></li>
                     <li><a href="/guests">Guest Management</a></li>
-                    <li><a href="/users">User Management</a></li>
+                    <li><a href="/songs">Song Management</a></li>
+                    @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
+                    {
+                        <li><a href="/settings">Core Settings</a></li>
+                        <li><a href="/users">User Management</a></li>
+                    }
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

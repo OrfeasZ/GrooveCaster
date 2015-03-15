@@ -12,5 +12,7 @@ namespace GrooveCasterServer.Models
         public String Username { get; set; }
 
         public String Password { get; set; }
+
+        public bool Superuser { get; set; }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GrooveCasterServer.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
-using ServiceStack;
+using ServiceStack.OrmLite;
 
 namespace GrooveCasterServer.Managers
 {
@@ -12,15 +13,19 @@ namespace GrooveCasterServer.Managers
     {
         public static List<Int64> CollectionSongs { get; set; } 
 
-        public static List<Int64> PlayedSongs { get; set; } 
+        public static List<Int64> PlayedSongs { get; set; }
 
         static QueueManager()
         {
             PlayedSongs = new List<long>();
+            CollectionSongs = new List<long>();
         }
 
         public static void Init()
         {
+            PlayedSongs.Clear();
+            CollectionSongs.Clear();
+            
             Program.Library.RegisterEventHandler(ClientEvent.SongPlaying, OnSongPlaying);
             Program.Library.RegisterEventHandler(ClientEvent.SongVote, OnSongVote);
             Program.Library.RegisterEventHandler(ClientEvent.QueueUpdated, OnQueueUpdated);
@@ -33,7 +38,17 @@ namespace GrooveCasterServer.Managers
 
         public static void FetchCollectionSongs()
         {
-            CollectionSongs = Program.Library.User.GetCollectionSongs();
+            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            {
+                var s_Songs = s_Db.Select<SongEntry>();
+
+                CollectionSongs = s_Songs.Select(p_Song => p_Song.SongID).ToList();
+            }
+
+            //CollectionSongs = Program.Library.User.GetCollectionSongs();
+
+            // Temp change to fetch songs from MoS.
+            //CollectionSongs = Program.Library.User.GetSongsInLibrary(20936459);
         }
 
         public static void ClearHistory()
@@ -45,22 +60,22 @@ namespace GrooveCasterServer.Managers
         {
             var s_Event = (SongPlayingEvent)p_SharkEvent;
 
-            Console.WriteLine("Currently playing song: {0} ({1})", s_Event.SongName, s_Event.SongID);
+            Debug.WriteLine("Currently playing song: {0} ({1})", s_Event.SongName, s_Event.SongID);
 
             if (s_Event.SongID == 0)
             {
-                // We ran out of songs, how did this happen?
+                // We stopped playing, how did this happen?
                 // Quickly! Add two to the queue!
                 var s_Random = new Random();
-                var s_FirstSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
-                var s_SecondSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
+                var s_FirstSongIndex = s_Random.Next(0, CollectionSongs.Count);
+                var s_SecondSongIndex = s_Random.Next(0, CollectionSongs.Count);
 
                 var s_FirstSong = CollectionSongs[s_FirstSongIndex];
                 var s_SecondSong = CollectionSongs[s_SecondSongIndex];
 
                 while (s_SecondSong == s_FirstSong)
                 {
-                    s_SecondSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
+                    s_SecondSongIndex = s_Random.Next(0, CollectionSongs.Count);
                     s_SecondSong = CollectionSongs[s_SecondSongIndex];
                 }
 
@@ -82,13 +97,13 @@ namespace GrooveCasterServer.Managers
         {
             var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
-            Console.WriteLine("Updating Queue. Current Song: {0} - Total Songs: {1}", s_Index, Program.Library.Queue.CurrentQueue.Count);
+            Debug.WriteLine("Updating Queue. Current Song: {0} - Total Songs: {1}", s_Index, Program.Library.Queue.CurrentQueue.Count);
 
             // We're running out of songs; add from collection.
             if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count || s_Index == -1)
             {
                 var s_Random = new Random();
-                var s_RandomSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
+                var s_RandomSongIndex = s_Random.Next(0, CollectionSongs.Count);
 
                 var s_SongID = CollectionSongs[s_RandomSongIndex];
 
@@ -98,11 +113,11 @@ namespace GrooveCasterServer.Managers
                 // Make sure the song we're adding is within our history limits.
                 while (PlayedSongs.Contains(s_SongID))
                 {
-                    s_RandomSongIndex = s_Random.Next(0, CollectionSongs.Count - 1);
+                    s_RandomSongIndex = s_Random.Next(0, CollectionSongs.Count);
                     s_SongID = CollectionSongs[s_RandomSongIndex];
                 }
 
-                Console.WriteLine("Adding song {0} to queue (from collection).", s_SongID);
+                Debug.WriteLine("Adding song {0} to queue (from collection).", s_SongID);
 
                 Program.Library.Broadcast.AddSongs(new List<Int64> { s_SongID });
             }

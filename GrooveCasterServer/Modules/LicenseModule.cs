@@ -21,6 +21,11 @@ namespace GrooveCasterServer.Modules
                     },
                     new LibraryLicense
                     {
+                        Name = "SharpShark",
+                        License = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Licenses\\SharpShark.txt"))
+                    },
+                    new LibraryLicense
+                    {
                         Name = "Nancy",
                         License = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Licenses\\Nancy.txt"))
                     },

@@ -31,31 +31,34 @@
                 <ul class="nav nav-sidebar">
                     <li><a href="/">Overview</a></li>
                     <li><a href="/guests">Guest Management</a></li>
-                    <li><a href="/songs">Song Management</a></li>
+                    <li class="active"><a href="/songs">Song Management <span class="sr-only">(current)</span></a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
                         <li><a href="/settings">Core Settings</a></li>
-                        <li class="active"><a href="/users">User Management <span class="sr-only">(current)</span></a></li>
+                        <li><a href="/users">User Management</a></li>
                     }
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Add a new User</h1>
-                <p>Users are granted access to the GrooveCaster Admin Dashboard, allowing them to manage Special Guests, other Users, Broadcast Settings, etc.</p>
-                <p>Please be careful when providing someone with credentials to such a user as access to this system might compromise your Broadcast.</p>
-
-                <form action="/users/add" method="POST" id="user-add-form">
+                <h1 class="page-header">
+                    Import Songs
+                </h1>
+                <p>From this page you can easily import songs from yours (or another users) GrooveShark collection.</p>
+                <p>By default, the automatically filled in User ID is the one of your current broadcast user.</p>
+                <p>Note: Do not fill in the fields manually unless you <strong>really</strong> know what you're doing.</p>
+                <br />
+                <label>
+                    Search for a User<br />
+                    <input type="text" class="typeahead" placeholder="User Name" id="user-search-input">
+                </label>
+                <br /><br />
+                <form action="/songs/import" method="POST" id="song-import-form">
                     <label>
-                        Username
-                        <input type="text" name="username" class="form-control" placeholder="Username" required autofocus/>
-                    </label>
-                    <br/>
-                    <label>
-                        Password
-                        <input type="password" name="password" class="form-control" placeholder="Password" required />
+                        User ID
+                        <input type="number" class="form-control" name="user" id="user-input" placeholder="User ID" value="@Model.User" />
                     </label>
                     <br /><br />
-                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button type="submit" class="btn btn-primary" id="song-import-btn">Import</button>
                 </form>
             </div>
         </div>

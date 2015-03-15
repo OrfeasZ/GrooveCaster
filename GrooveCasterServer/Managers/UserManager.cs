@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GrooveCasterServer.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
-using GS.Lib.Models;
-using ServiceStack.IO;
 using ServiceStack.OrmLite;
 
 namespace GrooveCasterServer.Managers
@@ -24,6 +18,9 @@ namespace GrooveCasterServer.Managers
 
         public static void Init()
         {
+            Authenticating = false;
+            AuthenticationResult = AuthenticationResult.Success;
+            
             Program.Library.RegisterEventHandler(ClientEvent.Authenticated, OnAuthenticated);
             Program.Library.RegisterEventHandler(ClientEvent.AuthenticationFailed, OnAuthenticationFailed);
         }

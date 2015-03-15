@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using GrooveCasterServer.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
@@ -24,10 +25,11 @@ namespace GrooveCasterServer.Managers
         {
             var s_Event = p_SharkEvent as ChatMessageEvent;
 
+            // Disregard messages that are sent by the bot.
             if (s_Event.UserID == Program.Library.User.Data.UserID)
                 return;
 
-            Console.WriteLine("[CHAT] {0}: {1}", s_Event.UserName, s_Event.ChatMessage);
+            Debug.WriteLine("[CHAT] {0}: {1}", s_Event.UserName, s_Event.ChatMessage);
 
             var s_Parts = s_Event.ChatMessage.Split(' ');
 
@@ -498,8 +500,31 @@ namespace GrooveCasterServer.Managers
                 return;
             }
 
-            Program.Library.User.AddSongToLibrary(Program.Library.Broadcast.PlayingSongID);
-            QueueManager.FetchCollectionSongs();
+            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            {
+                var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
+
+                if (s_Song != null)
+                {
+                    Program.Library.Chat.SendChatMessage("Song already exists in the collection.");
+                    return;
+                }
+
+                s_Song = new SongEntry()
+                {
+                    AlbumID = Program.Library.Broadcast.PlayingAlbumID,
+                    AlbumName = Program.Library.Broadcast.PlayingSongAlbum,
+                    ArtistID = Program.Library.Broadcast.PlayingArtistID,
+                    ArtistName = Program.Library.Broadcast.PlayingSongArtist,
+                    SongID = Program.Library.Broadcast.PlayingSongID,
+                    SongName = Program.Library.Broadcast.PlayingSongName
+                };
+
+                s_Db.Insert(s_Song);
+                QueueManager.CollectionSongs.Add(s_Song.SongID);
+
+                Program.Library.Chat.SendChatMessage("Song has been successfully added to the collection.");
+            }
         }
 
         private static void OnRemoveFromCollection(ChatMessageEvent p_Event, String p_Data)
@@ -512,8 +537,21 @@ namespace GrooveCasterServer.Managers
                 return;
             }
 
-            Program.Library.User.RemoveSongFromLibrary(Program.Library.Broadcast.PlayingSongID);
-            QueueManager.FetchCollectionSongs();
+            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            {
+                var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
+
+                if (s_Song == null)
+                {
+                    Program.Library.Chat.SendChatMessage("Song does not exist in the collection.");
+                    return;
+                }
+
+                QueueManager.CollectionSongs.Remove(s_Song.SongID);
+                s_Db.Delete(s_Song);
+
+                Program.Library.Chat.SendChatMessage("Song has been successfully removed from the collection.");
+            }
         }
 
         private static void OnAbout(ChatMessageEvent p_Event, String p_Data)

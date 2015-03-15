@@ -19,12 +19,17 @@ namespace GrooveCasterServer.Nancy
                 if (s_User == null)
                     return null;
 
-                return new UserIdentity()
+                var s_Identity = new UserIdentity()
                 {
                     UserID = p_Identifier,
                     UserName = s_User.Username,
                     Claims = new List<String>() { "admin" }
                 };
+
+                if (s_User.Superuser)
+                    ((List<String>) s_Identity.Claims).Add("super");
+
+                return s_Identity;
             }
         }
     }

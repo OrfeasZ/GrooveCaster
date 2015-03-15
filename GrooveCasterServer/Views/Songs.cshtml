@@ -31,32 +31,29 @@
                 <ul class="nav nav-sidebar">
                     <li><a href="/">Overview</a></li>
                     <li><a href="/guests">Guest Management</a></li>
-                    <li><a href="/songs">Song Management</a></li>
+                    <li class="active"><a href="/songs">Song Management <span class="sr-only">(current)</span></a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
                         <li><a href="/settings">Core Settings</a></li>
-                        <li class="active"><a href="/users">User Management <span class="sr-only">(current)</span></a></li>
+                        <li><a href="/users">User Management</a></li>
                     }
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Add a new User</h1>
-                <p>Users are granted access to the GrooveCaster Admin Dashboard, allowing them to manage Special Guests, other Users, Broadcast Settings, etc.</p>
-                <p>Please be careful when providing someone with credentials to such a user as access to this system might compromise your Broadcast.</p>
-
-                <form action="/users/add" method="POST" id="user-add-form">
-                    <label>
-                        Username
-                        <input type="text" name="username" class="form-control" placeholder="Username" required autofocus/>
-                    </label>
-                    <br/>
-                    <label>
-                        Password
-                        <input type="password" name="password" class="form-control" placeholder="Password" required />
-                    </label>
-                    <br /><br />
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </form>
+                <h1 class="page-header">
+                    Song Collection
+                    <a href="/songs/add" class="btn btn-primary btn-sm">Add Song</a>
+                    <a href="/songs/import" class="btn btn-primary btn-sm" id="import-guests">Import From GS Collection</a>
+                </h1>
+                <div class="list-group">
+                    @foreach (var s_Song in Model.Songs)
+                    {
+                        <div class="list-group-item">
+                            <a class="badge error" href="/songs/delete/@s_Song.SongID">x</a>
+                            <strong>@s_Song.SongName</strong>&nbsp;&mdash;&nbsp;<span>@s_Song.ArtistName &bull; @s_Song.AlbumName</span>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>

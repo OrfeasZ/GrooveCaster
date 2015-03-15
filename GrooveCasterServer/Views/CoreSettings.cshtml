@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Linq
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@{
     Layout = "_Layout.cshtml";
 }
 
@@ -28,13 +30,20 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li><a href="/">Overview</a></li>
-                    <li class="active"><a href="/settings">Core Settings <span class="sr-only">(current)</span></a></li>
                     <li><a href="/guests">Guest Management</a></li>
-                    <li><a href="/users">User Management</a></li>
+                    <li><a href="/songs">Song Management</a></li>
+                    @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
+                    {
+                        <li class="active"><a href="/settings">Core Settings <span class="sr-only">(current)</span></a></li>
+                        <li><a href="/users">User Management</a></li>
+                    }
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Core Settings</h1>
+                <h1 class="page-header">
+                    Core Settings
+                    <a href="/settings/reset" class="btn btn-danger btn-sm" id="reset-bot">Reset Bot</a>
+                </h1>
                 <form action="/settings" method="POST">
                     <label for="inputTitle">Broadcast Description</label>
                     <input type="text" id="inputTitle" class="form-control" placeholder="Broadcast Title" name="title" value="@Model.Title" required autofocus>

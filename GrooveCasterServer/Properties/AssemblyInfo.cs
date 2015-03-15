@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GrooveCasterServer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("GrooveCaster")]
+[assembly: AssemblyDescription("A fully automatic and headless broadcasting bot for GrooveShark.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GrooveCasterServer")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCompany("Orfeas Zafeiris")]
+[assembly: AssemblyProduct("GrooveCaster")]
+[assembly: AssemblyCopyright("Copyright © Orfeas Zafeiris, 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

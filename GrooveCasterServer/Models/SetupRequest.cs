@@ -13,5 +13,7 @@ namespace GrooveCasterServer.Models
         public String Description { get; set; }
 
         public String Tag { get; set; }
+
+        public bool Mobile { get; set; }
     }
 }

@@ -1,9 +1,9 @@
 ﻿@using System.Linq
-
 @inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
 @{
     Layout = "_Layout.cshtml";
 }
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -30,8 +30,8 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li><a href="/">Overview</a></li>
-                    <li class="active"><a href="/guests">Guest Management <span class="sr-only">(current)</span></a></li>
-                    <li><a href="/songs">Song Management</a></li>
+                    <li><a href="/guests">Guest Management</a></li>
+                    <li class="active"><a href="/songs">Song Management <span class="sr-only">(current)</span></a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
                         <li><a href="/settings">Core Settings</a></li>
@@ -40,50 +40,48 @@
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Add a new Guest</h1>
-                <p>Guests can manage your broadcast when you're away by approving/rejecting suggestions, skipping unpopular songs, etc.</p>
-                <p>In order to get the UserID of a User, have him join your broadcast and type !ping in chat. The bot should respond with his unique UserID.</p>
-                <p>Note: The name you specify below is just for personal identification purposes and doesn't have to match the user's name in GrooveShark.</p>
-
-                <form action="/guests/add" method="POST" id="guest-add-form">
+                <h1 class="page-header">
+                    Add a Song
+                </h1>
+                <p>Use the searchbox below to find a song to add in your collection.</p>
+                <p>Note: Do not fill in the fields manually unless you <strong>really</strong> know what you're doing.</p>
+                <br/>
+                <label>
+                    Search for a Song<br/>
+                    <input type="text" class="typeahead" placeholder="Song Name" id="song-search-input">
+                </label>
+                <br/><br/>
+                <form action="/songs/add" method="POST">
                     <label>
-                        User ID
-                        <input type="number" name="user" class="form-control" placeholder="User ID" required autofocus/>
+                        Song ID
+                        <input type="number" class="form-control" name="songid" id="songid-input" placeholder="Song ID"/>
                     </label>
                     <br/>
                     <label>
-                        User Name
-                        <input type="text" name="username" class="form-control" placeholder="User Name" required/>
+                        Song Name
+                        <input type="text" class="form-control" name="song" id="song-input" placeholder="Song Name"/>
                     </label>
-                    <br />
+                    <br/>
                     <label>
-                        <input type="checkbox" name="title"/>
-                        Can Edit Title
+                        Artist ID
+                        <input type="number" class="form-control" name="artistid" id="artistid-input" placeholder="Artist ID" />
                     </label>
+                    <br/>
                     <label>
-                        <input type="checkbox" name="description" />
-                        Can Edit Description
+                        Artist Name
+                        <input type="text" class="form-control" name="artist" id="artist-input" placeholder="Artist Name" />
                     </label>
-                    <br />
+                    <br/>
                     <label>
-                        <input type="checkbox" name="permanent" />
-                        Can Add Permanent Guests
+                        Album ID
+                        <input type="number" class="form-control" name="albumid" id="albumid-input" placeholder="Album ID" />
                     </label>
+                    <br/>
                     <label>
-                        <input type="checkbox" name="temporary" />
-                        Can Add Temporary Guests
+                        Album Name
+                        <input type="text" class="form-control" name="album" id="album-input" placeholder="Album Name" />
                     </label>
-                    <br />
-                    <label>
-                        <input type="checkbox" name="super" />
-                        Super Guest
-                    </label>
-                    <br />
-                    <label>
-                        Channel Permissions
-                        <input type="number" class="form-control" placeholder="0" name="permissions" value="6" required>
-                    </label>
-                    <br /><br />
+                    <br/><br/>
                     <button type="submit" class="btn btn-primary">Add</button>
                 </form>
             </div>
