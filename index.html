@@ -1,0 +1,473 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>GrooveCaster by OrfeasZ</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/OrfeasZ/GrooveCaster">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/OrfeasZ/GrooveCaster/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/OrfeasZ/GrooveCaster/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>GrooveCaster</h1>
+          <p>The most advanced broadcasting bot for GrooveShark</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/OrfeasZ">OrfeasZ</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a id="groovecaster" class="anchor" href="#groovecaster" aria-hidden="true"><span class="octicon octicon-link"></span></a>GrooveCaster</h1>
+
+<p>The most advanced broadcasting bot for GrooveShark.</p>
+
+<hr>
+
+<h2>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description</h2>
+
+<p>GrooveCaster is a completely standalone, headless, fully automatic and unmanaged broadcasting bot for the music streaming service <a href="http://grooveshark.com">GrooveShark</a>, written in C# and powered by the <a href="https://github.com/OrfeasZ/SharpShark">SharpShark</a> library.</p>
+
+<p>GrooveCaster will automagically manage your broadcast by never letting it run out of songs, taking care of all the hassle that's needed for maintaining it manually.</p>
+
+<p>Additionally, it provides a variety of management features, either via it's web-based management interface, or in the form of chat commands in the broadcast itself, allowing for unattended access by users of your community.</p>
+
+<p>Moreover, GrooveCaster is completely standalone and headless, which means that you can run it on almost any piece of hardware without the need for a graphical output (even on Linux servers using Mono!).</p>
+
+<blockquote>
+<p><strong>Note:</strong><br>
+While using GrooveCaster you shouldn't be using GrooveShark with the same account that's used for broadcasting, as in doing so you might cause several issues, both for yourself and your listeners.</p>
+
+<p><strong>Note:</strong><br>
+GrooveCaster is still at an early stage of development, so some features may still be incomplete or not fully functional. If you come across any issues, don't hesitate to let me know by opening a new issue in the <a href="https://github.com/OrfeasZ/GrooveCaster/issues">bugtracker</a> for this project.</p>
+</blockquote>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
+However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.</p>
+
+<p>Latest Release: <strong>1.0.0.0</strong></p>
+
+<p>Windows Binaries: link<br>
+Mono Binaries: link</p>
+
+<p>There's no installation required.<br>
+Simply download the binaries archive from the links above, and extract them at some location on your drive.</p>
+
+<h3>
+<a id="windows-environments" class="anchor" href="#windows-environments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Windows Environments</h3>
+
+<p>If you want to run GrooveCaster on a Windows environment you first need to make sure you have .NET Framework 4.5 installed. If you don't already have it installed, make sure to grab it from <a href="http://www.microsoft.com/en-us/download/details.aspx?id=40779">here</a>.</p>
+
+<p>Afterwards, running GrooveCaster is as simply as double clicking GrooveCaster.exe and following the instructions on how to perform the <a href="#initial-setup">initial setup</a>.</p>
+
+<p>If you get an error about URI reservations, you can try running GrooveCaster as an administrator, and if that doesn't help you will need to follow the on-screen instructions.</p>
+
+<p>GrooveCaster doesn't currently support being ran as a service, however you could run it in daemon mode by specifying the <code>-d</code> parameter:</p>
+
+<blockquote>
+<p>&gt; GrooveCaster.exe -d</p>
+</blockquote>
+
+<p>After GrooveCaster has started you should be able to access it's web interface at <a href="http://localhost:42278">http://localhost:42278</a>.</p>
+
+<h3>
+<a id="unix-environments" class="anchor" href="#unix-environments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Unix Environments</h3>
+
+<p>In Unix-based environments, GrooveCaster requires a framework called Mono.</p>
+
+<p>Depending on your platform, you can find instructions on how to install Mono on the project's <a href="http://www.mono-project.com/docs/getting-started/install/">website</a>.<br>
+After you've finished installing Mono, the rest is pretty much the same.</p>
+
+<p>Simply open up your terminal, go to the folder you extracted GrooveCaster in, and launch it using the <code>-d</code> parameter (it's required for Linux/OSX environments):</p>
+
+<blockquote>
+<p>$ mono GrooveCaster.exe -d</p>
+</blockquote>
+
+<p>In Unix-based environments you can run GrooveCaster as a service, using the <a href="http://supervisord.org/">supervisor</a> software.<br>
+The following instructions underline how to install, configure, and use supervisor in an Ubuntu machine.</p>
+
+<p>First, install supervisor by executing the following command in your terminal:</p>
+
+<blockquote>
+<p>$ sudo apt-get install supervisor</p>
+</blockquote>
+
+<p>Then, create a new supervisor configuration file for GrooveCaster:</p>
+
+<blockquote>
+<p>$ sudo touch /etc/supervisor/conf.d/groovecaster.conf</p>
+</blockquote>
+
+<p>Then edit the contents of that configuration file with your favorite text editor:</p>
+
+<blockquote>
+<p>[program:groovecaster]<br>
+command=/usr/bin/mono GrooveCaster.exe -d<br>
+user=youruser<br>
+stderr_logfile=/var/log/supervisor/groovecaster.err<br>
+stdout_logfile=/var/log/supervisor/groovecaster.log<br>
+directory=/groovecaster/directory/  </p>
+</blockquote>
+
+<p>Of course, you will need to replace <code>youruser</code> with the username of the user you want to run GrooveCaster under, and <code>/groovecaster/directory/</code> with the directory where you extracted GrooveCaster.</p>
+
+<p>You should also verify the location of the <code>mono</code> executable by running:</p>
+
+<blockquote>
+<p>$ whereis mono</p>
+</blockquote>
+
+<p>If you see <code>/usr/bin/mono</code> in there, there's nothing to worry about. Otherwise, simply update the configuration file to reflect the location of the <code>mono</code> executable (for instance it could be <code>/usr/local/bin/mono</code>).</p>
+
+<p>After you're done with all that start the control manager of supervisor:</p>
+
+<blockquote>
+<p>$ sudo supervisorctl</p>
+</blockquote>
+
+<p>Update the configuration, and launch GrooveCaster:</p>
+
+<blockquote>
+<p>$ supervisor&gt;update<br>
+$ supervisor&gt;start groovecaster</p>
+</blockquote>
+
+<p>After GrooveCaster has started you should be able to access it's web interface at <a href="http://localhost:42278">http://localhost:42278</a>.</p>
+
+<h3>
+<a id="additional-options" class="anchor" href="#additional-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional Options</h3>
+
+<p>When launching GrooveCaster you can explicitly specify the host the web interface will bind to.</p>
+
+<p>By default, GrooveCaster will bind to http://localhost:42278.</p>
+
+<p>You can change that behavior by specifying the <code>-b</code> command-line parameter:</p>
+
+<blockquote>
+<p>&gt; GrooveCaster.exe -b http://localhost:1234</p>
+</blockquote>
+
+<h2>
+<a id="initial-setup" class="anchor" href="#initial-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initial Setup</h2>
+
+<p>After you've successfully installed GrooveCaster you will have to set it up for use.</p>
+
+<p>In order to do that, you first need to login to the admin dashboard by accessing the web interface which, by default, will be available at <a href="http://localhost:42278">http://localhost:42278</a>.</p>
+
+<p>The default credentials are <code>admin</code> as a username and <code>admin</code> as a password.</p>
+
+<p>After you've successfully logged in, you'll be presented with the setup wizard, where you will be required to setup your GrooveShark account, as long as the details of your broadcast.</p>
+
+<p>Once you've finished the setup wizard you will be redirected to the admin dashboard, from where you can manage the settings of the bot, your song collection, special guests, and additional users with access to the admin dashboard.</p>
+
+<p>It is recommended that the first thing you do is change the password of the admin account.<br>
+To do that, simply click the <code>Settings</code> link, located at the top right corner of the dashboard, and provide your current password (<code>admin</code>), and your new desired password.</p>
+
+<p>Now that your account is secured you will need to add songs to your collection.<br>
+GrooveCaster will not start broadcasting until there's at least 2 songs in your collection.</p>
+
+<p>For more instructions on how to add songs to your collection see <a href="#song-management">Song Management</a>.</p>
+
+<p>You might also want to add yourself as a special guest via the <a href="#adding-guests">Guest Management</a> page.</p>
+
+<h2>
+<a id="the-admin-dashboard" class="anchor" href="#the-admin-dashboard" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Admin Dashboard</h2>
+
+<h3>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h3>
+
+<p>The overview page provides a quick overview of the current status of GrooveCaster.<br>
+Currently, there's not much information except for the status of the current broadcast.</p>
+
+<p>This information doesn't update automatically currently, so you will have to refresh the page to see changes.</p>
+
+<h3>
+<a id="guest-management" class="anchor" href="#guest-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Guest Management</h3>
+
+<p>The guest management page provides a detailed listing of users with special guest permissions, while also allowing you to edit/delete them, add new guests, and import guests.</p>
+
+<p>The process of adding guests via the admin dashboard is currently relatively manual, but will be improved in the future.</p>
+
+<h4>
+<a id="adding-guests" class="anchor" href="#adding-guests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding Guests</h4>
+
+<p>To add a new guest, click on the <code>Add Guest</code> button, and fill in the required fields in the page you'll be presented with.</p>
+
+<p>For now, the easiest way of getting the User ID of a user is by having them join your broadcast and type <code>!ping</code> in chat. GrooveCaster will respond with a message containing their User ID.</p>
+
+<p>The User Name field is only for personal reference, and doesn't have to match the username of the GrooveShark user.</p>
+
+<p>The Channel Permissions field outlines the special guest permissions that are granted to the user.<br>
+For now, you should leave this to the default value (<code>6</code>).</p>
+
+<p>This will give the user suggestion approval/rejection permissions, and the permission to ban/unban users from the broadcast.</p>
+
+<h4>
+<a id="importing-guests" class="anchor" href="#importing-guests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Importing Guests</h4>
+
+<p>For ease of use, GrooveCaster provides the option to import all the users your GrooveShark account follows as special guests.</p>
+
+<p>In order to do that, simply click on the <code>Import Followed Users</code> button in the Guest Management page.</p>
+
+<h3>
+<a id="song-management" class="anchor" href="#song-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Song Management</h3>
+
+<p>The song management page provides a detailed listing of the local collection of songs GrooveCaster will use to automatically fill the queue.</p>
+
+<p>From this page you can also remove songs from the collection, add new songs, and import songs from a GrooveShark collection.</p>
+
+<h4>
+<a id="adding-songs" class="anchor" href="#adding-songs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding Songs</h4>
+
+<p>Adding songs is really straight forward.</p>
+
+<p>Simply click on the <code>Add Song</code> button present in the Song Management page, and use the search box in order to find the song you'd like to add.</p>
+
+<p>Upon clicking on a song suggestion from the search box the song details fields will be automatically populated.</p>
+
+<p>Do <strong>not</strong> edit those fields manually unless you <strong>really</strong> know what you're doing.</p>
+
+<p>After you've found and selected the song you'd like to add, simply click on the <code>Add</code> button to add the song to the collection.</p>
+
+<h4>
+<a id="importing-songs" class="anchor" href="#importing-songs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Importing Songs</h4>
+
+<p>GrooveCaster provides the ability to very easily and automatically import songs from the collection of a GrooveShark user.</p>
+
+<p>To do so, simply click on the <code>Import from GS Collection</code> button present in the Song Management page, find the user whose collection you want to import using the search box, and click on the <code>Import</code> button.</p>
+
+<p>By default, the User ID field will contain the ID of the current broadcast user (the user you set up GrooveCaster with).</p>
+
+<p>Collection importing might take some time, so don't worry if you don't see any immediate progress.</p>
+
+<h3>
+<a id="core-settings" class="anchor" href="#core-settings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Core Settings</h3>
+
+<p>The core settings page provides the ability to modify some core settings of GrooveCaster.</p>
+
+<p>Currently available settings are:</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Broadcast Title</td>
+<td>The title of the Broadcast.</td>
+</tr>
+<tr>
+<td>Broadcast Description</td>
+<td>The description of the Broadcast.</td>
+</tr>
+<tr>
+<td>Max History Songs</td>
+<td>The maximum number of songs to keep in history. This prevents GrooveCaster from playing the same songs. Input 0 to disable.</td>
+</tr>
+<tr>
+<td>Song Vote Threshold</td>
+<td>The maximum number of votes a song has to get in order for GrooveCaster to automatically skip it. Only accepts negative values. Input 0 to disable.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="user-management" class="anchor" href="#user-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>User Management</h3>
+
+<p>The user management page provides a detailed listing of users with access to the GrooveCaster administration dashboard.</p>
+
+<p>Such users can only access the <a href="#overview">Overview</a>, <a href="#guest-management">Guest Management</a>, and <a href="#song-management">Song Management</a> pages.</p>
+
+<h2>
+<a id="the-chat-interface" class="anchor" href="#the-chat-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Chat Interface</h2>
+
+<p>GrooveCaster provides a really powerful management interface via the default GrooveShark chat.</p>
+
+<p>Using a set of commands, listeners with special guest permissions can remotely manage the broadcast, greatly reducing the hustle of personally maintaining it.</p>
+
+<p>By default, all users who are added as a Special Guest from the admin dashboard, have guesting permissions in the broadcast itself. However, some commands are only available to users with the required flags.</p>
+
+<p>Currently, all commands start with an exclamation mark (<code>!</code>) and can be used regardless if the user invoking them is currently a special guest in the broadcast or not.</p>
+
+<p>In the future, the ability to provide custom aliases for commands will be implemented.</p>
+
+<p>The following commands are currently available:</p>
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>guest</code></td>
+<td>
+<code>!guest</code>: Toggle special guest status.</td>
+</tr>
+<tr>
+<td><code>ping</code></td>
+<td>
+<code>!ping</code>: Ping the GrooveCaster server.</td>
+</tr>
+<tr>
+<td><code>removeNext</code></td>
+<td>
+<code>!removeNext [count]</code>: Removes the next <code>[count]</code> songs from the queue (<code>[count]</code> defaults to <code>1</code> if not specified).</td>
+</tr>
+<tr>
+<td><code>removeLast</code></td>
+<td>
+<code>!removeLast [count]</code>: Removes the last <code>[count]</code> songs from the queue (<code>[count]</code> defaults to <code>1</code> if not specified).</td>
+</tr>
+<tr>
+<td><code>fetchByName</code></td>
+<td>
+<code>!fetchByName &lt;name&gt;</code>: Fetches a song from the queue with a name matching <code>&lt;name&gt;</code> and moves it after the playing song.</td>
+</tr>
+<tr>
+<td><code>fetchLast</code></td>
+<td>
+<code>!fetchLast</code>: Fetches the last song in the queue and moves it after the playing song.</td>
+</tr>
+<tr>
+<td><code>removeByName</code></td>
+<td>
+<code>!removeByName &lt;name&gt;</code>: Removes all songs whose name matches <code>&lt;name&gt;</code> from the queue.</td>
+</tr>
+<tr>
+<td><code>skip</code></td>
+<td>
+<code>!skip</code>: Skips the current song.</td>
+</tr>
+<tr>
+<td><code>shuffle</code></td>
+<td>
+<code>!shuffle</code>: Shuffles the songs in the queue.</td>
+</tr>
+<tr>
+<td><code>peek</code></td>
+<td>
+<code>!peek</code>: Displays a list of upcoming songs from the queue.</td>
+</tr>
+<tr>
+<td><code>makeGuest</code></td>
+<td>
+<code>!makeGuest &lt;userid&gt;</code>: Makes user with user ID <code>&lt;userid&gt;</code> a temporary special guest.</td>
+</tr>
+<tr>
+<td><code>addGuest</code></td>
+<td>
+<code>!addGuest &lt;userid&gt;</code>: Makes user with user ID <code>&lt;userid&gt;</code> a permanent special guest.</td>
+</tr>
+<tr>
+<td><code>removeGuest</code></td>
+<td>
+<code>!removeGuest &lt;userid&gt;</code>: Permanently removes special guest permissions from user with user ID <code>&lt;userid&gt;</code>.</td>
+</tr>
+<tr>
+<td><code>unguest</code></td>
+<td>
+<code>!unguest [userid]</code>: Temporarily removes special guest permissions from user with user ID <code>[userid]</code>. Unguests everyone if <code>[userid]</code> is not specified.</td>
+</tr>
+<tr>
+<td><code>addToCollection</code></td>
+<td>
+<code>!addToCollection</code>: Adds the currently playing song to the song collection.</td>
+</tr>
+<tr>
+<td><code>removeFromCollection</code></td>
+<td>
+<code>!removeFromCollection</code>: Removes the currently playing song from the song collection.</td>
+</tr>
+<tr>
+<td><code>setTitle</code></td>
+<td>
+<code>!setTitle &lt;title&gt;</code>: Sets the title of the broadcast.</td>
+</tr>
+<tr>
+<td><code>setDescription</code></td>
+<td>
+<code>!setDescription &lt;description&gt;</code>: Sets the description of the broadcast.</td>
+</tr>
+<tr>
+<td><code>about</code></td>
+<td>
+<code>!about</code>: Displays information about the GrooveCaster bot.</td>
+</tr>
+<tr>
+<td><code>help</code></td>
+<td>
+<code>!help [command]</code>: Displays detailed information about the command <code>[command]</code>. Displays all available commands if <code>[command]</code> is not specified.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="upcoming-features" class="anchor" href="#upcoming-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upcoming Features</h2>
+
+<p>This is a list of features and fixes that are currently being worked on:</p>
+
+<ul>
+<li>Graceful Broadcast resuming on bot restart</li>
+<li>Better management interface for Guest permissions</li>
+<li>More user-friendly interface for Guest addition</li>
+<li>Custom aliases for chat commands</li>
+<li>Broadcast statistics in dashboard</li>
+<li>Dynamic status updates in Broadcast description/title</li>
+<li>Automatic service installation on Windows</li>
+<li>More advanced logging</li>
+</ul>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>GrooveCaster is an open-source project, available for everyone to use and modify.</p>
+
+<p>If you want to implement a new feature, modify an existing one, fix a bug, or anything else, feel free to fork this respository and send me a pull request.</p>
+
+<p>Approved contributions will get added to the master branch, shipped in the next binary release, and contributors will be listed below.</p>
+
+<p>Contributors:</p>
+
+<ul>
+<li>
+<a href="https://github.com/OrfeasZ">Orfeas Zafeirs</a> (author)</li>
+</ul>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
