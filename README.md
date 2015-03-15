@@ -28,10 +28,10 @@ However, if you want to build GrooveCaster yourself, you can clone this reposito
 
 Latest Release: **1.0.0.0**
 
-Windows Binaries: link
+Windows Binaries: link  
 Mono Binaries: link
 
-There's no installation required. 
+There's no installation required.  
 Simply download the binaries archive from the links above, and extract them at some location on your drive.
 
 ### Windows Environments
@@ -50,14 +50,14 @@ After GrooveCaster has started you should be able to access it's web interface a
 ### Unix Environments
 In Unix-based environments, GrooveCaster requires a framework called Mono.
 
-Depending on your platform, you can find instructions on how to install Mono on the project's [website](http://www.mono-project.com/docs/getting-started/install/).
+Depending on your platform, you can find instructions on how to install Mono on the project's [website](http://www.mono-project.com/docs/getting-started/install/).  
 After you've finished installing Mono, the rest is pretty much the same.
 
 Simply open up your terminal, go to the folder you extracted GrooveCaster in, and launch it using the `-d` parameter (it's required for Linux/OSX environments):
 
 > $ mono GrooveCaster.exe -d
 
-In Unix-based environments you can run GrooveCaster as a service, using the [supervisor](http://supervisord.org/) software. 
+In Unix-based environments you can run GrooveCaster as a service, using the [supervisor](http://supervisord.org/) software.  
 The following instructions underline how to install, configure, and use supervisor in an Ubuntu machine.
 
 First, install supervisor by executing the following command in your terminal:
@@ -117,10 +117,10 @@ After you've successfully logged in, you'll be presented with the setup wizard, 
 
 Once you've finished the setup wizard you will be redirected to the admin dashboard, from where you can manage the settings of the bot, your song collection, special guests, and additional users with access to the admin dashboard.
 
-It is recommended that the first thing you do is change the password of the admin account.
+It is recommended that the first thing you do is change the password of the admin account.  
 To do that, simply click the `Settings` link, located at the top right corner of the dashboard, and provide your current password (`admin`), and your new desired password.
 
-Now that your account is secured you will need to add songs to your collection.
+Now that your account is secured you will need to add songs to your collection.  
 GrooveCaster will not start broadcasting until there's at least 2 songs in your collection.
 
 For more instructions on how to add songs to your collection see [Song Management](#song-management).
@@ -131,7 +131,7 @@ The Admin Dashboard
 --------------------------
 
 ### Overview
-The overview page provides a quick overview of the current status of GrooveCaster.
+The overview page provides a quick overview of the current status of GrooveCaster.  
 Currently, there's not much information except for the status of the current broadcast.
 
 This information doesn't update automatically currently, so you will have to refresh the page to see changes.
@@ -149,7 +149,7 @@ For now, the easiest way of getting the User ID of a user is by having them join
 
 The User Name field is only for personal reference, and doesn't have to match the username of the GrooveShark user.
 
-The Channel Permissions field outlines the special guest permissions that are granted to the user.
+The Channel Permissions field outlines the special guest permissions that are granted to the user.  
 For now, you should leave this to the default value (`6`).
 
 This will give the user suggestion approval/rejection permissions, and the permission to ban/unban users from the broadcast.
@@ -191,7 +191,7 @@ Currently available settings are:
 
 
 | Option                      |  Description | 
-| ----------------------      |--------------------------------------------------------------------------------------------------- -------------------------------------------------      |
+| ----------------------      |------------- |
 | Broadcast Title             | The title of the Broadcast.                                                                                                                               |
 | Broadcast Description       | The description of the Broadcast.                                                                                                                         |
 | Max History Songs           | The maximum number of songs to keep in history. This prevents GrooveCaster from playing the same songs. Input 0 to disable.                               |
