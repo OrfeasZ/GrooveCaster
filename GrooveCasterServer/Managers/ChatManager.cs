@@ -136,7 +136,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -162,7 +162,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -188,7 +188,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -201,7 +201,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -214,7 +214,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -227,7 +227,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -240,7 +240,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -253,7 +253,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddTemporaryGuests)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -284,7 +284,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddPermanentGuests)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -332,7 +332,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddPermanentGuests)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -386,7 +386,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddPermanentGuests)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -423,7 +423,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanEditTitle)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -442,7 +442,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanEditDescription)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -461,7 +461,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -500,7 +500,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null || !s_SpecialGuest.SuperGuest)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -537,7 +537,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null || !s_SpecialGuest.SuperGuest)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -560,7 +560,7 @@ namespace GrooveCasterServer.Managers
 
         private static void OnAbout(ChatMessageEvent p_Event, String p_Data)
         {
-            Program.Library.Chat.SendChatMessage("This broadcast is powered by GrooveCaster " + Program.GetVersion() + ". For more information visit https://github.com/OrfeasZ/GrooveCaster.");
+            Program.Library.Chat.SendChatMessage("This broadcast is powered by GrooveCaster " + Program.GetVersion() + ". For more information visit http://orfeasz.github.io/GrooveCaster/.");
         }
 
         private static readonly Dictionary<String, String> m_CommandHelp = new Dictionary<string, string>()

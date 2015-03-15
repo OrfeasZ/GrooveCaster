@@ -111,7 +111,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_UserName + ", but you don't have permissions to use this feature.");
+                Program.Library.Chat.SendChatMessage("Sorry " + p_UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 

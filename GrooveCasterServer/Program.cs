@@ -11,6 +11,7 @@ using GS.Lib;
 using GS.SneakyBeaky;
 using Nancy.Hosting.Self;
 using NDesk.Options;
+using Newtonsoft.Json;
 using ServiceStack.OrmLite;
 
 namespace GrooveCasterServer
@@ -25,6 +26,8 @@ namespace GrooveCasterServer
 
         public static String SecretKey { get; set; }
 
+        public static String LatestVersion { get; set; }
+
         private static bool m_Daemonize;
 
         private static String m_Host;
@@ -35,7 +38,7 @@ namespace GrooveCasterServer
 
         static void Main(string[] p_Args)
         {
-            Console.Title = "GrooveCaster";
+            Console.Title = "GrooveCaster " + GetVersion();
 
             // Default values.
             m_Daemonize = false;
@@ -102,6 +105,23 @@ namespace GrooveCasterServer
             SecretKey = Beakynator.FetchSecretKey();
             Library = new SharpShark(SecretKey);
 
+            // Fetch latest GrooveCaster version.
+            LatestVersion = GetLatestVersion();
+
+            // Check for updates every hour.
+            var s_VersionCheckTimer = new System.Timers.Timer()
+            {
+                Interval = 3600000,
+                AutoReset = true
+            };
+
+            s_VersionCheckTimer.Elapsed += (p_Sender, p_EventArgs) =>
+            {
+                LatestVersion = GetLatestVersion();
+            };
+
+            s_VersionCheckTimer.Start();
+
             // Start Nancy host.
             using (Host = new NancyHost(new HostConfiguration()
             {
@@ -132,6 +152,15 @@ namespace GrooveCasterServer
 
                 Console.WriteLine("GrooveCaster is active and running on " + s_HostUri);
 
+                if (NeedsUpdate())
+                {
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine("Your version of GrooveCaster is out of date (Current: {0}, Latest: {1}).", GetVersion(), LatestVersion);
+                    Console.WriteLine("Visit http://orfeasz.github.io/GrooveCaster/ for instructions on how to update.");
+                    Console.WriteLine();
+                }
+
                 // Has the user setup the bot?
                 if (!s_Setup)
                 {
@@ -147,6 +176,7 @@ namespace GrooveCasterServer
                 }
                 else
                 {
+                    Console.WriteLine();
                     Console.WriteLine("Press any key to exit.");
                     Console.ReadKey();
                 }
@@ -239,7 +269,30 @@ namespace GrooveCasterServer
 
         public static String GetVersion()
         {
-            return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        }
+
+        public static String GetLatestVersion()
+        {
+            try
+            {
+                var s_VersionData = new System.Net.WebClient().DownloadString("http://orfeasz.github.io/GrooveCaster/version.json");
+                var s_Version = JsonConvert.DeserializeObject<VersionModel>(s_VersionData);
+                return s_Version.Version;
+            }
+            catch
+            {
+                return GetVersion();
+            }
+        }
+
+        public static bool NeedsUpdate()
+        {
+            var s_CurrentVersion = new Version(GetVersion());
+            var s_LatestVersion = new Version(LatestVersion);
+
+            var s_Result = s_CurrentVersion.CompareTo(s_LatestVersion);
+            return s_Result < 0;
         }
     }
 }
