@@ -26,10 +26,10 @@ Installation
 For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
 However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.
 
-Latest Release: **1.0.0.0**
+Latest Release: **1.0.1.0**
 
-Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.0.0/GrooveCaster-1.0.0.0-Win32.zip)  
-Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.0.0/GrooveCaster-1.0.0.0-Mono.zip)
+Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.1.0/GrooveCaster-1.0.1.0-Win32.zip)  
+Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.1.0/GrooveCaster-1.0.1.0-Mono.zip)
 
 There's no installation required.  
 Simply download the binaries archive from the links above, and extract them at some location on your drive.
@@ -225,6 +225,7 @@ The following commands are currently available:
 | `fetchByName`		| `!fetchByName <name>`: Fetches a song from the queue with a name matching `<name>` and moves it after the playing song. |
 | `fetchLast`		| `!fetchLast`: Fetches the last song in the queue and moves it after the playing song. |
 | `removeByName`		| `!removeByName <name>`: Removes all songs whose name matches `<name>` from the queue. |
+| `queueRandom` | `!queueRandom [count]`: Adds `[count]` random songs to the end of the queue (`[count]` defaults to 1 if not specified). |
 | `skip`		| `!skip`: Skips the current song. |
 | `shuffle`		| `!shuffle`: Shuffles the songs in the queue. |
 | `peek`		| `!peek`: Displays a list of upcoming songs from the queue. |
@@ -234,6 +235,7 @@ The following commands are currently available:
 | `unguest`		| `!unguest [userid]`: Temporarily removes special guest permissions from user with user ID `[userid]`. Unguests everyone if `[userid]` is not specified. |
 | `addToCollection`		| `!addToCollection`: Adds the currently playing song to the song collection. |
 | `removeFromCollection`		| `!removeFromCollection`: Removes the currently playing song from the song collection. |
+| `seek` 		| `!seek <second>`: Seeks to the `<second>` second of the currently playing song. |
 | `setTitle`		| `!setTitle <title>`: Sets the title of the broadcast. |
 | `setDescription`		| `!setDescription <description>`: Sets the description of the broadcast. |
 | `about`		| `!about`: Displays information about the GrooveCaster bot. |
@@ -243,7 +245,6 @@ Upcoming Features
 -----------------------
 This is a list of features and fixes that are currently being worked on:
 
- - Graceful Broadcast resuming on bot restart
  - Better management interface for Guest permissions
  - More user-friendly interface for Guest addition
  - Custom aliases for chat commands

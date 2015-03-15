@@ -44,16 +44,43 @@ namespace GrooveCasterServer.Managers
 
                 CollectionSongs = s_Songs.Select(p_Song => p_Song.SongID).ToList();
             }
-
-            //CollectionSongs = Program.Library.User.GetCollectionSongs();
-
-            // Temp change to fetch songs from MoS.
-            //CollectionSongs = Program.Library.User.GetSongsInLibrary(20936459);
         }
 
         public static void ClearHistory()
         {
             PlayedSongs.Clear();
+        }
+
+        public static void QueueRandomSongs(int p_Count)
+        {
+            Program.Library.Broadcast.AddSongs(GetRandomSongIDs(p_Count));
+        }
+
+        public static List<Int64> GetRandomSongIDs(int p_Count)
+        {
+            var s_Songs = new List<Int64>();
+
+            var s_Random = new Random();
+            for (var i = 0; i < p_Count; ++i)
+            {
+                var s_RandomSongIndex = s_Random.Next(0, CollectionSongs.Count);
+
+                var s_SongID = CollectionSongs[s_RandomSongIndex];
+
+                if (CollectionSongs.Count <= PlayedSongs.Count)
+                    PlayedSongs.Clear();
+
+                // Make sure the song we're adding is within our history limits.
+                while (PlayedSongs.Contains(s_SongID) || s_Songs.Contains(s_SongID))
+                {
+                    s_RandomSongIndex = s_Random.Next(0, CollectionSongs.Count);
+                    s_SongID = CollectionSongs[s_RandomSongIndex];
+                }
+
+                s_Songs.Add(s_SongID);
+            }
+
+            return s_Songs;
         }
 
         private static void OnSongPlaying(SharkEvent p_SharkEvent)
@@ -93,14 +120,14 @@ namespace GrooveCasterServer.Managers
             UpdateQueue();
         }
 
-        private static void UpdateQueue()
+        public static void UpdateQueue()
         {
             var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
             Debug.WriteLine("Updating Queue. Current Song: {0} - Total Songs: {1}", s_Index, Program.Library.Queue.CurrentQueue.Count);
 
             // We're running out of songs; add from collection.
-            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count || s_Index == -1)
+            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
             {
                 var s_Random = new Random();
                 var s_RandomSongIndex = s_Random.Next(0, CollectionSongs.Count);

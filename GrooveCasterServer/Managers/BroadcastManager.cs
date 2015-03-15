@@ -78,26 +78,45 @@ namespace GrooveCasterServer.Managers
             QueueManager.FetchCollectionSongs();
             QueueManager.ClearHistory();
 
+            // Add two random songs to the collection.
+            if (Program.Library.Queue.CurrentQueue.Count < 2)
+            {
+                var s_Random = new Random();
+                var s_FirstSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
+                var s_SecondSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
+
+                var s_FirstSong = QueueManager.CollectionSongs[s_FirstSongIndex];
+                var s_SecondSong = QueueManager.CollectionSongs[s_SecondSongIndex];
+
+                while (s_SecondSong == s_FirstSong)
+                {
+                    s_SecondSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
+                    s_SecondSong = QueueManager.CollectionSongs[s_SecondSongIndex];
+                }
+
+                var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> {s_FirstSong, s_SecondSong});
+
+                if (Program.Library.Broadcast.PlayingSongID == 0)
+                    Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
+            }
+            else if (Program.Library.Broadcast.PlayingSongID == 0)
+            {
+                var s_Random = new Random();
+                var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
+                var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];
+
+                var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
+
+                 Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
+            }
+            else if (Program.Library.Broadcast.PlayingSongID != 0)
+            {
+                QueueManager.UpdateQueue();
+            }
+
             // Disable mobile compliance if needed.
             if (!SettingsManager.MobileCompliance())
                 DisableMobileCompliance();
-
-            // Add two random songs to the collection.
-            var s_Random = new Random();
-            var s_FirstSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
-            var s_SecondSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
-
-            var s_FirstSong = QueueManager.CollectionSongs[s_FirstSongIndex];
-            var s_SecondSong = QueueManager.CollectionSongs[s_SecondSongIndex];
-
-            while (s_SecondSong == s_FirstSong)
-            {
-                s_SecondSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
-                s_SecondSong = QueueManager.CollectionSongs[s_SecondSongIndex];
-            }
-
-            var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong, s_SecondSong });
-            Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
         }
 
         public static void DisableMobileCompliance()

@@ -117,6 +117,14 @@ namespace GrooveCasterServer.Managers
                 case "!help":
                     OnHelp(s_Event, s_Data);
                     break;
+
+                case "!seek":
+                    OnSeek(s_Event, s_Data);
+                    break;
+
+                case "!queueRandom":
+                    OnQueueRandom(s_Event, s_Data);
+                    break;
             }
         }
 
@@ -376,12 +384,6 @@ namespace GrooveCasterServer.Managers
 
         private static void OnUnguest(ChatMessageEvent p_Event, String p_Data)
         {
-            if (String.IsNullOrWhiteSpace(p_Data) && Program.Library.Broadcast.SpecialGuests.Contains(p_Event.UserID))
-            {
-                Program.Library.Broadcast.RemoveSpecialGuest(p_Event.UserID);
-                return;
-            }
-
             var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddPermanentGuests)
@@ -563,6 +565,52 @@ namespace GrooveCasterServer.Managers
             Program.Library.Chat.SendChatMessage("This broadcast is powered by GrooveCaster " + Program.GetVersion() + ". For more information visit http://orfeasz.github.io/GrooveCaster/.");
         }
 
+        private static void OnSeek(ChatMessageEvent p_Event, String p_Data)
+        {
+            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+
+            if (s_SpecialGuest == null || !s_SpecialGuest.SuperGuest)
+            {
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                return;
+            }
+
+            Int64 s_Seconds;
+            if (!Int64.TryParse(p_Data, out s_Seconds) || s_Seconds < 0)
+            {
+                Program.Library.Chat.SendChatMessage("Usage: !seek <seconds>");
+                return;
+            }
+
+            Program.Library.Broadcast.SeekCurrentSong(s_Seconds * 1000.0);
+        }
+
+        private static void OnQueueRandom(ChatMessageEvent p_Event, String p_Data)
+        {
+             var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+
+            if (s_SpecialGuest == null)
+            {
+                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                return;
+            }
+
+            if (String.IsNullOrWhiteSpace(p_Data))
+            {
+                QueueManager.QueueRandomSongs(1);
+                return;
+            }
+
+            Int32 s_Songs;
+            if (!Int32.TryParse(p_Data, out s_Songs) || s_Songs <= 0)
+            {
+                Program.Library.Chat.SendChatMessage("Usage: !queueRandom [count]");
+                return;
+            }
+
+            QueueManager.QueueRandomSongs(s_Songs);
+        }
+
         private static readonly Dictionary<String, String> m_CommandHelp = new Dictionary<string, string>()
         {
             { "guest", "!guest: Toggle special guest status." },
@@ -572,6 +620,7 @@ namespace GrooveCasterServer.Managers
             { "fetchByName", "!fetchByName <name>: Fetches a song from the queue with a name matching <name> and moves it after the playing song." },
             { "fetchLast", "!fetchLast: Fetches the last song in the queue and moves it after the playing song." },
             { "removeByName", "!removeByName <name>: Removes all songs whose name matches <name> from the queue." },
+            { "queueRandom", "!queueRandom [count]: Adds [count] random songs to the end of the queue ([count] defaults to 1 if not specified)." },
             { "skip", "!skip: Skips the current song." },
             { "shuffle", "!shuffle: Shuffles the songs in the queue." },
             { "peek", "!peek: Displays a list of upcoming songs from the queue." },
@@ -581,6 +630,7 @@ namespace GrooveCasterServer.Managers
             { "unguest", "!unguest [userid]: Temporarily removes special guest permissions from user with user ID [userid]. Unguests everyone if [userid] is not specified." },
             { "addToCollection", "!addToCollection: Adds the currently playing song to the song collection." },
             { "removeFromCollection", "!removeFromCollection: Removes the currently playing song from the song collection." },
+            { "seek", "!seek <second>: Seeks to the <second> second of the currently playing song." },
             { "setTitle", "!setTitle <title>: Sets the title of the broadcast." },
             { "setDescription", "!setDescription <description>: Sets the description of the broadcast." },
             { "about", "!about: Displays information about the GrooveCaster bot." },
