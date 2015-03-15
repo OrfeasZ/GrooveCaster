@@ -103,7 +103,13 @@ namespace GrooveCasterServer
             Library = new SharpShark(SecretKey);
 
             // Start Nancy host.
-            using (Host = new NancyHost(s_HostUri))
+            using (Host = new NancyHost(new HostConfiguration()
+            {
+                UrlReservations = new UrlReservations()                 
+                {
+                    CreateAutomatically = true
+                }
+            }, s_HostUri))
             {
                 Console.WriteLine("Starting web host...");
 

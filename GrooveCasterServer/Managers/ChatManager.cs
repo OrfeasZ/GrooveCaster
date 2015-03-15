@@ -578,7 +578,7 @@ namespace GrooveCasterServer.Managers
             { "makeGuest", "!makeGuest <userid>: Makes user with user ID <userid> a temporary special guest." },
             { "addGuest", "!addGuest <userid>: Makes user with user ID <userid> a permanent special guest." },
             { "removeGuest", "!removeGuest <userid>: Permanently removes special guest permissions from user with user ID <userid>." },
-            { "unguest", "!unguest [userid]: Temporarily removes special guest permissions from user with user ID <userid>. Unguests everyone if [userid] is not specified." },
+            { "unguest", "!unguest [userid]: Temporarily removes special guest permissions from user with user ID [userid]. Unguests everyone if [userid] is not specified." },
             { "addToCollection", "!addToCollection: Adds the currently playing song to the song collection." },
             { "removeFromCollection", "!removeFromCollection: Removes the currently playing song from the song collection." },
             { "setTitle", "!setTitle <title>: Sets the title of the broadcast." },
