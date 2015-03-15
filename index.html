@@ -63,10 +63,10 @@ GrooveCaster is still at an early stage of development, so some features may sti
 <p>For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
 However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.</p>
 
-<p>Latest Release: <strong>1.0.0.0</strong></p>
+<p>Latest Release: <strong>1.0.1.0</strong></p>
 
-<p>Windows Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.0.0/GrooveCaster-1.0.0.0-Win32.zip">Download</a><br>
-Mono Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.0.0/GrooveCaster-1.0.0.0-Mono.zip">Download</a></p>
+<p>Windows Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.1.0/GrooveCaster-1.0.1.0-Win32.zip">Download</a><br>
+Mono Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.1.0/GrooveCaster-1.0.1.0-Mono.zip">Download</a></p>
 
 <p>There's no installation required.<br>
 Simply download the binaries archive from the links above, and extract them at some location on your drive.</p>
@@ -359,6 +359,11 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 <code>!removeByName &lt;name&gt;</code>: Removes all songs whose name matches <code>&lt;name&gt;</code> from the queue.</td>
 </tr>
 <tr>
+<td><code>queueRandom</code></td>
+<td>
+<code>!queueRandom [count]</code>: Adds <code>[count]</code> random songs to the end of the queue (<code>[count]</code> defaults to 1 if not specified).</td>
+</tr>
+<tr>
 <td><code>skip</code></td>
 <td>
 <code>!skip</code>: Skips the current song.</td>
@@ -404,6 +409,11 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 <code>!removeFromCollection</code>: Removes the currently playing song from the song collection.</td>
 </tr>
 <tr>
+<td><code>seek</code></td>
+<td>
+<code>!seek &lt;second&gt;</code>: Seeks to the <code>&lt;second&gt;</code> second of the currently playing song.</td>
+</tr>
+<tr>
 <td><code>setTitle</code></td>
 <td>
 <code>!setTitle &lt;title&gt;</code>: Sets the title of the broadcast.</td>
@@ -432,7 +442,6 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 <p>This is a list of features and fixes that are currently being worked on:</p>
 
 <ul>
-<li>Graceful Broadcast resuming on bot restart</li>
 <li>Better management interface for Guest permissions</li>
 <li>More user-friendly interface for Guest addition</li>
 <li>Custom aliases for chat commands</li>
