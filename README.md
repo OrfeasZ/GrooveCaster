@@ -28,7 +28,7 @@ However, if you want to build GrooveCaster yourself, you can clone this reposito
 
 Latest Release: **1.0.0.0**
 
-Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.0.0/GrooveCaster-1.0.0.0-Win32.zip)
+Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.0.0/GrooveCaster-1.0.0.0-Win32.zip)  
 Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.0.0/GrooveCaster-1.0.0.0-Mono.zip)
 
 There's no installation required.  
