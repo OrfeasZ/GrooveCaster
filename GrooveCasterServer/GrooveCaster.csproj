@@ -131,12 +131,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database.cs" />
     <Compile Include="Managers\BroadcastManager.cs" />
     <Compile Include="Managers\ChatManager.cs" />
     <Compile Include="Managers\ModuleManager.cs" />
     <Compile Include="Managers\QueueManager.cs" />
     <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
+    <Compile Include="Migrations.cs" />
     <Compile Include="Models\AddGuestRequest.cs" />
     <Compile Include="Models\AddModuleRequest.cs" />
     <Compile Include="Models\AddSongRequest.cs" />

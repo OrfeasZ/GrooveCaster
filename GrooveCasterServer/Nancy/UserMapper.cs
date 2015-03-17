@@ -12,7 +12,7 @@ namespace GrooveCaster.Nancy
     {
         public IUserIdentity GetUserFromIdentifier(Guid p_Identifier, NancyContext p_Context)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_User = s_Db.SingleById<AdminUser>(p_Identifier);
 

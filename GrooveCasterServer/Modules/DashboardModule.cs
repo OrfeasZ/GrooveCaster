@@ -23,7 +23,7 @@ namespace GrooveCaster.Modules
                 if (String.IsNullOrWhiteSpace(Program.SecretKey))
                     return View["Error", new { ErrorText = "Failed to fetch SecretKey from GrooveShark.<br/>Please make sure GrooveCaster is up-to-date and that you're not banned from GrooveShark." }];
                 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_GSUsername = s_Db.SingleById<CoreSetting>("gsun");
                     var s_GSPassword = s_Db.SingleById<CoreSetting>("gspw");
@@ -83,7 +83,7 @@ namespace GrooveCaster.Modules
                 if (s_Request.Password != s_Request.Repeat)
                     return View["Settings", new { Error = "The passwords you specified don't match." }];
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_User = s_Db.Single<AdminUser>(p_User => p_User.Username == Context.CurrentUser.UserName);
                     

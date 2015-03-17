@@ -39,7 +39,7 @@ namespace GrooveCaster.Managers
 
         public static void FetchCollectionSongs()
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Songs = s_Db.Select<SongEntry>();
 
@@ -329,7 +329,7 @@ namespace GrooveCaster.Managers
 
         public static bool AddPlayingSongToCollection()
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
 
@@ -355,7 +355,7 @@ namespace GrooveCaster.Managers
 
         public static bool RemovePlayingSongFromCollection()
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
 

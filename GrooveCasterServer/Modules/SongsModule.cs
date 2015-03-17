@@ -19,7 +19,7 @@ namespace GrooveCaster.Modules
             
             Get["/songs"] = p_Parameters =>
             {
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                     return View["Songs", new { Songs = s_Db.Select<SongEntry>() }];
             };
 
@@ -52,7 +52,7 @@ namespace GrooveCaster.Modules
 
                 var s_PreviousSongCount = QueueManager.CollectionSongs.Count;
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_Song = s_Db.SingleById<SongEntry>(s_Request.SongID);
 
@@ -87,7 +87,7 @@ namespace GrooveCaster.Modules
                 if (QueueManager.CollectionSongs.Count <= 2)
                     return new RedirectResponse("/songs");
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_Song = s_Db.SingleById<SongEntry>(s_SongID);
 
@@ -150,7 +150,7 @@ namespace GrooveCaster.Modules
                     }
                 }
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                     s_Db.SaveAll(s_SongEntries);
 
                 QueueManager.FetchCollectionSongs();

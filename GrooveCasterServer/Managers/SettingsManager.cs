@@ -28,7 +28,7 @@ namespace GrooveCaster.Managers
             if (m_MaxHistorySongs.HasValue)
                 return m_MaxHistorySongs.Value;
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("history");
 
@@ -46,7 +46,7 @@ namespace GrooveCaster.Managers
 
         public static void MaxHistorySongs(int p_Songs)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("history");
 
@@ -70,7 +70,7 @@ namespace GrooveCaster.Managers
             if (m_SongVoteThreshold.HasValue)
                 return m_SongVoteThreshold.Value;
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("votethreshold");
 
@@ -91,7 +91,7 @@ namespace GrooveCaster.Managers
             if (p_Threshold > 0)
                 return;
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("votethreshold");
 
@@ -115,7 +115,7 @@ namespace GrooveCaster.Managers
             if (m_CommandPrefix.HasValue)
                 return m_CommandPrefix.Value;
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("cmdprefix");
 
@@ -136,7 +136,7 @@ namespace GrooveCaster.Managers
             if (Char.IsLetterOrDigit(p_Prefix))
                 return;
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("cmdprefix");
 
@@ -160,7 +160,7 @@ namespace GrooveCaster.Managers
             if (m_CanCommandWithoutGuest.HasValue)
                 return m_CanCommandWithoutGuest.Value;
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("cmdguest");
 
@@ -178,7 +178,7 @@ namespace GrooveCaster.Managers
 
         public static void CanCommandWithoutGuest(bool p_Value)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("cmdguest");
 
@@ -199,7 +199,7 @@ namespace GrooveCaster.Managers
 
         public static bool MobileCompliance()
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("bcmobile");
 

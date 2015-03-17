@@ -39,7 +39,7 @@ namespace GrooveCaster.Managers
 
         public static String GetBroadcastName()
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 // TODO: Variable substitution.
                 var s_Setting = s_Db.SingleById<CoreSetting>("bcname");
@@ -49,7 +49,7 @@ namespace GrooveCaster.Managers
 
         public static String GetBroadcastDescription()
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 // TODO: Variable substitution.
                 var s_Setting = s_Db.SingleById<CoreSetting>("bcdesc");
@@ -59,7 +59,7 @@ namespace GrooveCaster.Managers
 
         public static CategoryTag GetBroadcastCategoryTag()
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Setting = s_Db.SingleById<CoreSetting>("bctag");
 
@@ -131,7 +131,7 @@ namespace GrooveCaster.Managers
 
         public static bool AddGuest(String p_Username, Int64 p_UserID, VIPPermissions p_Permissions)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Guest = s_Db.SingleById<SpecialGuest>(p_UserID);
 
@@ -153,7 +153,7 @@ namespace GrooveCaster.Managers
 
         public static bool RemoveGuest(Int64 p_UserID, out SpecialGuest p_Guest)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 p_Guest = s_Db.SingleById<SpecialGuest>(p_UserID);
 
@@ -168,7 +168,7 @@ namespace GrooveCaster.Managers
 
         public static bool RemoveGuest(Int64 p_UserID)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_Guest = s_Db.SingleById<SpecialGuest>(p_UserID);
 
@@ -192,7 +192,7 @@ namespace GrooveCaster.Managers
 
         public static SpecialGuest GetGuestForUserID(Int64 p_UserID)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
                 return s_Db.SingleById<SpecialGuest>(p_UserID);
         }
 

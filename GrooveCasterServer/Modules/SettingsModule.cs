@@ -44,7 +44,7 @@ namespace GrooveCaster.Modules
                 SettingsManager.SongVoteThreshold(s_Request.Threshold);
                 SettingsManager.CommandPrefix(s_Request.Prefix[0]);
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     if (s_Request.Title.Trim().Length > 3)
                     {
@@ -74,7 +74,7 @@ namespace GrooveCaster.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     // Delete all settings.
                     s_Db.DeleteByIds<CoreSetting>(new List<String> { "gsun", "gspw", "gssess", "bcmobile", "bcname", "bcdesc", "bctag" });

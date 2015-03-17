@@ -104,13 +104,13 @@ namespace GrooveCaster.Managers
 
         internal static IEnumerable<GrooveModule> GetModules()
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
                 return s_Db.Select<GrooveModule>();
         }
 
         internal static GrooveModule GetModule(String p_Name)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
                 return s_Db.SingleById<GrooveModule>(p_Name.Trim().ToLowerInvariant());
         }
 
@@ -128,7 +128,7 @@ namespace GrooveCaster.Managers
 
         internal static void UpdateModule(GrooveModule p_Module)
         {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
                 s_Db.Update(p_Module);
         }
 
@@ -137,7 +137,7 @@ namespace GrooveCaster.Managers
             if (p_Module.Default)
                 return;
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
                 s_Db.Delete(p_Module);
         }
     }

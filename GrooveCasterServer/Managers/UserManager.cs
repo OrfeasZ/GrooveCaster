@@ -38,7 +38,7 @@ namespace GrooveCaster.Managers
                 return;
             }
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
             {
                 var s_SessionSetting = s_Db.SingleById<CoreSetting>("gssess");
                 AuthenticateUsingSession(s_SessionSetting.Value);
@@ -51,7 +51,7 @@ namespace GrooveCaster.Managers
             if ((AuthenticationResult = Program.Library.User.Authenticate(p_SessionID)) != AuthenticationResult.Success)
             {
                 // Session-based authentication failed; retry with stored username and password.
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_UsernameSetting = s_Db.SingleById<CoreSetting>("gsun");
                     var s_PasswordSetting = s_Db.SingleById<CoreSetting>("gspw");
@@ -74,7 +74,7 @@ namespace GrooveCaster.Managers
             }
 
             // Store new session ID in database.
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
                 s_Db.Update(new CoreSetting() { Key = "gssess", Value = Program.Library.User.SessionID });
 
             Program.Library.Chat.Connect();

@@ -28,7 +28,7 @@ namespace GrooveCaster.Modules
             {
                 var s_Request = this.Bind<LoginRequest>();
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_Username = s_Request.Username.Trim().ToLowerInvariant();
                     var s_User = s_Db.Single<AdminUser>(p_User => p_User.Username == s_Username);

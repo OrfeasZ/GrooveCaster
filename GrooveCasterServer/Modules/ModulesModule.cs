@@ -101,7 +101,7 @@ namespace GrooveCaster.Modules
                     Default = false
                 };
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                     s_Db.Insert(s_Module);
 
                 ModuleManager.ReloadModules();
