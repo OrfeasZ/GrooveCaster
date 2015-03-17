@@ -182,6 +182,7 @@ if (s_UserSearchInput.length > 0) {
             return;
 
         $('#user-input').val(p_Datum.userID);
+        $("#user-name-input").val(p_Datum.name);
     });
 }
 
