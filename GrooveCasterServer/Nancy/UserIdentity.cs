@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Nancy.Security;
 
-namespace GrooveCasterServer.Nancy
+namespace GrooveCaster.Nancy
 {
     public class UserIdentity : IUserIdentity
     {

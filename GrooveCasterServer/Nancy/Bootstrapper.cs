@@ -3,7 +3,7 @@ using Nancy.Authentication.Forms;
 using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
 
-namespace GrooveCasterServer.Nancy
+namespace GrooveCaster.Nancy
 {
     public class Bootstrapper : DefaultNancyBootstrapper
     {

@@ -1,4 +1,4 @@
-﻿namespace GrooveCasterServer.Models
+﻿namespace GrooveCaster.Models
 {
     public class UpdateGuestRequest
     {

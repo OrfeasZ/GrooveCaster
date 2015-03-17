@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrooveCasterServer.Managers;
-using GrooveCasterServer.Models;
+using GrooveCaster.Managers;
+using GrooveCaster.Models;
 using GS.Lib.Models;
 using Nancy;
 using Nancy.ModelBinding;
@@ -9,7 +9,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class SongsModule : NancyModule
     {
@@ -19,7 +19,7 @@ namespace GrooveCasterServer.Modules
             
             Get["/songs"] = p_Parameters =>
             {
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                     return View["Songs", new { Songs = s_Db.Select<SongEntry>() }];
             };
 
@@ -52,7 +52,7 @@ namespace GrooveCasterServer.Modules
 
                 var s_PreviousSongCount = QueueManager.CollectionSongs.Count;
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_Song = s_Db.SingleById<SongEntry>(s_Request.SongID);
 
@@ -87,7 +87,7 @@ namespace GrooveCasterServer.Modules
                 if (QueueManager.CollectionSongs.Count <= 2)
                     return new RedirectResponse("/songs");
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_Song = s_Db.SingleById<SongEntry>(s_SongID);
 
@@ -150,7 +150,7 @@ namespace GrooveCasterServer.Modules
                     }
                 }
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                     s_Db.SaveAll(s_SongEntries);
 
                 QueueManager.FetchCollectionSongs();

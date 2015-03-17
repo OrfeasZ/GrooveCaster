@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GrooveCasterServer.Managers;
-using GrooveCasterServer.Models;
+using GrooveCaster.Managers;
+using GrooveCaster.Models;
 using GS.Lib;
 using Nancy;
 using Nancy.ModelBinding;
@@ -10,7 +10,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class SettingsModule : NancyModule
     {
@@ -28,7 +28,8 @@ namespace GrooveCasterServer.Modules
                     History = SettingsManager.MaxHistorySongs(),
                     Threshold = SettingsManager.SongVoteThreshold(),
                     Title = BroadcastManager.GetBroadcastName(),
-                    Description = BroadcastManager.GetBroadcastDescription()
+                    Description = BroadcastManager.GetBroadcastDescription(),
+                    CommandPrefix = SettingsManager.CommandPrefix().ToString()
                 }];
             };
 
@@ -41,8 +42,9 @@ namespace GrooveCasterServer.Modules
 
                 SettingsManager.MaxHistorySongs(s_Request.History);
                 SettingsManager.SongVoteThreshold(s_Request.Threshold);
+                SettingsManager.CommandPrefix(s_Request.Prefix[0]);
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     if (s_Request.Title.Trim().Length > 3)
                     {
@@ -62,7 +64,8 @@ namespace GrooveCasterServer.Modules
                     History = SettingsManager.MaxHistorySongs(),
                     Threshold = SettingsManager.SongVoteThreshold(),
                     Title = BroadcastManager.GetBroadcastName(),
-                    Description = BroadcastManager.GetBroadcastDescription()
+                    Description = BroadcastManager.GetBroadcastDescription(),
+                    CommandPrefix = SettingsManager.CommandPrefix().ToString()
                 }];
             };
 
@@ -71,7 +74,7 @@ namespace GrooveCasterServer.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     // Delete all settings.
                     s_Db.DeleteByIds<CoreSetting>(new List<String> { "gsun", "gspw", "gssess", "bcmobile", "bcname", "bcdesc", "bctag" });

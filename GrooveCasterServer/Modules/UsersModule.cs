@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class UsersModule : NancyModule
     {
@@ -22,7 +22,7 @@ namespace GrooveCasterServer.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                     return View["Users", new { Users = s_Db.Select<AdminUser>() }];
             };
 
@@ -44,7 +44,7 @@ namespace GrooveCasterServer.Modules
                 if (s_Request.Username.Length < 3 || s_Request.Password.Length < 3)
                     return View["AddUser", new { Error = "The information you provided is invalid." }];
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_Username = s_Request.Username.Trim().ToLowerInvariant();
                     var s_User = s_Db.Single<AdminUser>(p_User => p_User.Username == s_Username);
@@ -78,7 +78,7 @@ namespace GrooveCasterServer.Modules
 
                 Guid s_GUID = p_Parameters.guid;
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_User = s_Db.SingleById<AdminUser>(s_GUID);
 

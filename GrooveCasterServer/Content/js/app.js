@@ -182,6 +182,7 @@ if (s_UserSearchInput.length > 0) {
             return;
 
         $('#user-input').val(p_Datum.userID);
+        $("#user-name-input").val(p_Datum.name);
     });
 }
 
@@ -194,4 +195,24 @@ $("#reset-bot").click(function() {
         return false;
 
     return true;
-})
+});
+
+var s_ModuleScriptInput = document.getElementById('module-script-input');
+
+if (s_ModuleScriptInput !== null) {
+    var s_CodeMirror = CodeMirror.fromTextArea(s_ModuleScriptInput, {
+        lineNumbers: true,
+        mode: 'python'
+    });
+
+    $('.CodeMirror').resizable({
+        resize: function() {
+            s_CodeMirror.setSize($(this).width(), $(this).height());
+            s_CodeMirror.refresh();
+        }
+    });
+}
+
+$('#module-name-input').on('input', function () {
+    $('#module-id-input').val($(this).val().trim().toLowerCase().replace(' ', '-').replace('.', '').replace(',', ''));
+});

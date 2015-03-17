@@ -1,5 +1,5 @@
 ﻿using System;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using GS.Lib.Enums;
 using Nancy;
 using Nancy.ModelBinding;
@@ -7,7 +7,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class GuestsModule : NancyModule
     {
@@ -17,7 +17,7 @@ namespace GrooveCasterServer.Modules
 
             Get["/guests"] = p_Parameters =>
             {
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_Guests = s_Db.Select<SpecialGuest>();
 
@@ -31,7 +31,7 @@ namespace GrooveCasterServer.Modules
 
                 Int64 s_GuestID = p_Parameters.id;
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_SpecialGuest = s_Db.SingleById<SpecialGuest>(s_GuestID);
 
@@ -55,7 +55,7 @@ namespace GrooveCasterServer.Modules
             {
                 Int64 s_GuestID = p_Parameters.id;
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_SpecialGuest = s_Db.SingleById<SpecialGuest>(s_GuestID);
 
@@ -77,7 +77,7 @@ namespace GrooveCasterServer.Modules
             {
                 var s_Reqest = this.Bind<AddGuestRequest>();
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_SpecialGuest = s_Db.SingleById<SpecialGuest>(s_Reqest.User);
 
@@ -106,7 +106,7 @@ namespace GrooveCasterServer.Modules
             {
                 var s_FollowingUsers = Program.Library.User.GetFollowingUsers();
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     foreach (var s_User in s_FollowingUsers)
                     {

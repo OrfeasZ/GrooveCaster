@@ -34,6 +34,7 @@
                     <li><a href="/songs">Song Management</a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
+                        <li><a href="/modules">Module Management</a></li>
                         <li class="active"><a href="/settings">Core Settings <span class="sr-only">(current)</span></a></li>
                         <li><a href="/users">User Management</a></li>
                     }
@@ -53,6 +54,8 @@
                     <input type="number" id="inputMaxHistory" class="form-control" placeholder="0" name="history" value="@Model.History" required>
                     <label for="inputVoteThreshold">Song Vote Threshold to skip Song (0 to disable)</label>
                     <input type="number" id="inputVoteThreshold" class="form-control" placeholder="0" name="threshold" value="@Model.Threshold" required>
+                    <label for="inputCommandPrefix">Chat Command Prefix (defaults to !)</label>
+                    <input type="text" id="inputCommandPrefix" class="form-control" placeholder="Command Prefix" maxlength="1" name="prefix" value="@Model.CommandPrefix" required>
                     <br />
                     <button type="submit" class="btn btn-primary" id="setup-next-account">Save</button>
                 </form>

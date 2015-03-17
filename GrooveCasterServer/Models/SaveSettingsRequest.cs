@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GrooveCasterServer.Models
+namespace GrooveCaster.Models
 {
     public class SaveSettingsRequest
     {
@@ -8,5 +8,6 @@ namespace GrooveCasterServer.Models
         public int Threshold { get; set; }
         public String Title { get; set; }
         public String Description { get; set; }
+        public String Prefix { get; set; }
     }
 }

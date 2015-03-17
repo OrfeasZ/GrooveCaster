@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using Nancy;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class LicenseModule : NancyModule
     {
@@ -38,6 +38,11 @@ namespace GrooveCasterServer.Modules
                     {
                         Name = "Razor",
                         License = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Licenses\\Razor.txt"))
+                    },
+                    new LibraryLicense
+                    {
+                        Name = "IronPython",
+                        License = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Licenses\\IronPython.txt"))
                     },
                 };
 

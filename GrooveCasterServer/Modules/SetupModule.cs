@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
-using GrooveCasterServer.Managers;
-using GrooveCasterServer.Models;
+using GrooveCaster.Managers;
+using GrooveCaster.Models;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class SetupModule : NancyModule
     {
@@ -24,7 +24,7 @@ namespace GrooveCasterServer.Modules
                 if (String.IsNullOrWhiteSpace(Program.SecretKey))
                     return View["Error", new { ErrorText = "Failed to fetch SecretKey from GrooveShark. Please make sure GrooveCaster is up-to-date and that you're not banned from GrooveShark." }];
                 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_GSUsername = s_Db.Single<CoreSetting>(p_Setting => p_Setting.Key == "gsun");
                     var s_GSPassword = s_Db.Single<CoreSetting>(p_Setting => p_Setting.Key == "gspw");
@@ -78,7 +78,7 @@ namespace GrooveCasterServer.Modules
                     String.IsNullOrWhiteSpace(s_Request.Tag) || String.IsNullOrWhiteSpace(Program.Library.User.SessionID))
                     return new RedirectResponse("/setup");
 
-                using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+                using (var s_Db = Database.GetConnection())
                 {
                     var s_GSUsername = s_Db.Single<CoreSetting>(p_Setting => p_Setting.Key == "gsun");
                     var s_GSPassword = s_Db.Single<CoreSetting>(p_Setting => p_Setting.Key == "gspw");

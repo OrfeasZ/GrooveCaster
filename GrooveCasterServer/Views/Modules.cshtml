@@ -34,30 +34,42 @@
                     <li><a href="/songs">Song Management</a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
-                        <li><a href="/modules">Module Management</a></li>
+                        <li class="active"><a href="/modules">Module Management <span class="sr-only">(current)</span></a></li>
                         <li><a href="/settings">Core Settings</a></li>
-                        <li class="active"><a href="/users">User Management <span class="sr-only">(current)</span></a></li>
+                        <li><a href="/users">User Management</a></li>
                     }
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">
-                    Administrative Users
-                    <a href="/users/add" class="btn btn-primary btn-sm">Add User</a>
+                    Modules
+                    <a href="/modules/add" class="btn btn-primary btn-sm">New Module</a>
                 </h1>
-                <p>Administrative Users are users with access to the Admin Dashboard of GrooveCaster.</p>
-                @foreach (var s_User in @Model.Users)
+                <p>Modules are simple python scripts designed to provide additional functionality to GrooveCaster.</p>
+                <p>Any module action (adding, editing, enabling, disabling, removing) will cause all modules to reload.</p>
+                @foreach (var s_Pair in @Model.Errors)
                 {
-                    <div class="panel panel-default user-panel">
-                        <div class="panel-heading">@s_User.Username (@s_User.UserID)</div>
+                    <div class="alert alert-danger">Module "@s_Pair.Key" failed to load:<br/>@s_Pair.Value</div>
+                }
+
+                @foreach (var s_Module in @Model.Modules)
+                {
+                    <div class="panel panel-default module-panel">
+                        <div class="panel-heading">@s_Module.DisplayName (@s_Module.Name)</div>
                         <div class="panel-body">
-                            @if (s_User.Username == "admin")
+                            <p>@s_Module.Description</p>
+                            <a class="btn btn-primary" href="/modules/edit/@s_Module.Name">Edit</a>
+                            @if (s_Module.Enabled)
                             {
-                                <a href="#" class="btn btn-danger" disabled>Delete</a>
+                                <a class="btn btn-warning" href="/modules/disable/@s_Module.Name">Disable</a>
                             }
                             else
                             {
-                                <a href="/users/delete/@s_User.UserID" class="btn btn-danger">Delete</a>
+                                <a class="btn btn-success" href="/modules/enable/@s_Module.Name">Enable</a>
+                            }
+                            @if (!s_Module.Default)
+                            {
+                                <a class="btn btn-danger" href="/modules/delete/@s_Module.Name">Delete</a>
                             }
                         </div>
                     </div>

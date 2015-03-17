@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Data;
 using System.Diagnostics;
+using System.Net;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
-using GrooveCasterServer.Managers;
-using GrooveCasterServer.Models;
+using GrooveCaster.Managers;
+using GrooveCaster.Models;
 using GS.Lib;
 using GS.SneakyBeaky;
+using Nancy;
 using Nancy.Hosting.Self;
 using NDesk.Options;
 using Newtonsoft.Json;
 using ServiceStack.OrmLite;
+using Timer = System.Timers.Timer;
 
-namespace GrooveCasterServer
+namespace GrooveCaster
 {
     public class Program
     {
         public static SharpShark Library { get; set; }
 
-        public static NancyHost Host { get; set; }
+        internal static NancyHost Host { get; set; }
 
-        public static String DbConnectionString { get; set; }
-
-        public static String SecretKey { get; set; }
+        internal static String SecretKey { get; set; }
 
         public static String LatestVersion { get; set; }
 
@@ -36,7 +34,7 @@ namespace GrooveCasterServer
 
         private static OptionSet m_Options;
 
-        static void Main(string[] p_Args)
+        internal static void Main(string[] p_Args)
         {
             Console.Title = "GrooveCaster " + GetVersion();
 
@@ -97,7 +95,7 @@ namespace GrooveCasterServer
             Console.WriteLine("GrooveCaster is initializing. Please wait...");
 
             // Initialize local database.
-            InitDatabase();
+            Database.Init();
 
             Console.WriteLine("Fetching latest Secret Key from GrooveShark...");
 
@@ -109,7 +107,7 @@ namespace GrooveCasterServer
             LatestVersion = GetLatestVersion();
 
             // Check for updates every hour.
-            var s_VersionCheckTimer = new System.Timers.Timer()
+            var s_VersionCheckTimer = new Timer()
             {
                 Interval = 3600000,
                 AutoReset = true
@@ -121,6 +119,9 @@ namespace GrooveCasterServer
             };
 
             s_VersionCheckTimer.Start();
+
+            // Enable error traces.
+            StaticConfiguration.DisableErrorTraces = false;
 
             // Start Nancy host.
             using (Host = new NancyHost(new HostConfiguration()
@@ -193,62 +194,7 @@ namespace GrooveCasterServer
             m_Options.WriteOptionDescriptions(Console.Out);
         }
 
-        private static void InitDatabase()
-        {
-            OrmLiteConfig.DialectProvider = SqliteDialect.Provider;
-            DbConnectionString = "gcaster.sqlite";
-
-            using (var s_Db = DbConnectionString.OpenDbConnection())
-            {
-                if (!s_Db.TableExists<AdminUser>())
-                {
-                    s_Db.CreateTable<AdminUser>();
-                    SetupAdminUser(s_Db);
-                }
-
-                if (!s_Db.TableExists<CoreSetting>())
-                {
-                    s_Db.CreateTable<CoreSetting>();
-                    SetupBaseSettings(s_Db);
-                }
-
-                if (!s_Db.TableExists<SpecialGuest>())
-                {
-                    s_Db.CreateTable<SpecialGuest>();
-                }
-
-                if (!s_Db.TableExists<SongEntry>())
-                {
-                    s_Db.CreateTable<SongEntry>();
-                }
-            }
-        }
-
-        private static void SetupAdminUser(IDbConnection p_Connection)
-        {
-            var s_AdminUser = new AdminUser()
-            {
-                UserID = Guid.NewGuid(),
-                Username = "admin",
-                Superuser = true
-            };
-
-            using (SHA256 s_Sha1 = new SHA256Managed())
-            {
-                var s_HashBytes = s_Sha1.ComputeHash(Encoding.ASCII.GetBytes("admin"));
-                s_AdminUser.Password = BitConverter.ToString(s_HashBytes).Replace("-", "").ToLowerInvariant();
-            }
-
-            p_Connection.Insert(s_AdminUser);
-        }
-
-        private static void SetupBaseSettings(IDbConnection p_Connection)
-        {
-            // Store current version; used for migrations.
-            p_Connection.Insert(new CoreSetting() { Key = "gcver", Value = GetVersion() });
-        }
-
-        public static bool BootstrapLibrary()
+        internal static bool BootstrapLibrary()
         {
             if (String.IsNullOrWhiteSpace(SecretKey))
                 return true;
@@ -258,8 +204,9 @@ namespace GrooveCasterServer
             QueueManager.Init();
             SettingsManager.Init();
             UserManager.Init();
+            ModuleManager.Init();
 
-            using (var s_Db = DbConnectionString.OpenDbConnection())
+            using (var s_Db = Database.GetConnection())
                 if (s_Db.SingleById<CoreSetting>("gsun") == null || s_Db.SingleById<CoreSetting>("gspw") == null)
                     return false;
             
@@ -276,7 +223,7 @@ namespace GrooveCasterServer
         {
             try
             {
-                var s_VersionData = new System.Net.WebClient().DownloadString("http://orfeasz.github.io/GrooveCaster/version.json");
+                var s_VersionData = new WebClient().DownloadString("http://orfeasz.github.io/GrooveCaster/version.json");
                 var s_Version = JsonConvert.DeserializeObject<VersionModel>(s_VersionData);
                 return s_Version.Version;
             }

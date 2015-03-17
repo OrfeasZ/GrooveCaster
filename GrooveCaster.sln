@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrooveCasterServer", "GrooveCasterServer\GrooveCasterServer.csproj", "{68F5F5F3-B8BB-4911-875F-6F00AAE04EA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrooveCaster", "GrooveCasterServer\GrooveCaster.csproj", "{68F5F5F3-B8BB-4911-875F-6F00AAE04EA6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GS", "GS", "{82E464BF-9CD4-410C-BAF9-A2A080903042}"
 EndProject
