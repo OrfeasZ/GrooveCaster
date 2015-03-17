@@ -201,8 +201,9 @@ Currently available settings are:
 | ----------------------      |------------- |
 | Broadcast Title             | The title of the Broadcast.                                                                                                                               |
 | Broadcast Description       | The description of the Broadcast.                                                                                                                         |
-| Max History Songs           | The maximum number of songs to keep in history. This prevents GrooveCaster from playing the same songs. Input 0 to disable.                               |
-| Song Vote Threshold         | The maximum number of votes a song has to get in order for GrooveCaster to automatically skip it. Only accepts negative values. Input 0 to disable.       |
+| Max History Songs           | The maximum number of songs to keep in history. This prevents GrooveCaster from playing the same songs. Input `0` to disable.                               |
+| Song Vote Threshold         | The maximum number of votes a song has to get in order for GrooveCaster to automatically skip it. Only accepts negative values. Input `0` to disable.       |
+| Command Prefix 			  | The prefix used to identify chat commands. Defaults to `!` and can only be a single non-alphanumeric character. |
 
 ### User Management
 The user management page provides a detailed listing of users with access to the GrooveCaster administration dashboard.
