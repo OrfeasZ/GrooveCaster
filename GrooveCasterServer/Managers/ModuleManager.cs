@@ -75,6 +75,7 @@ namespace GrooveCaster.Managers
 
                 m_ScriptEngine.Execute("clr.AddReference('System.Core')", s_Scope);
                 m_ScriptEngine.Execute("from System import Action", s_Scope);
+                m_ScriptEngine.Execute("from System.Collections.Generic import List", s_Scope);
 
                 m_ScriptEngine.Execute("clr.AddReference('GS.Lib')", s_Scope);
                 m_ScriptEngine.Execute("from GS.Lib import *", s_Scope);

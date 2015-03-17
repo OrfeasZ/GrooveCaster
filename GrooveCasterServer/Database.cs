@@ -672,7 +672,7 @@ def OnUnload():
                 },
             };
 
-            p_Connection.Save(s_Modules);
+            p_Connection.SaveAll(s_Modules);
         }
 
     }
