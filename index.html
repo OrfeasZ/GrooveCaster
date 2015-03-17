@@ -45,9 +45,11 @@
 
 <p>GrooveCaster will automagically manage your broadcast by never letting it run out of songs, taking care of all the hassle that's needed for maintaining it manually.</p>
 
-<p>Additionally, it provides a variety of management features, either via it's web-based management interface, or in the form of chat commands in the broadcast itself, allowing for unattended access by users of your community.</p>
+<p>Additionally, it provides a variety of management features, either via it's web-based <a href="#the-admin-dashboard">management interface</a>, or in the form of <a href="#the-chat-interface">chat commands</a> in the broadcast itself, allowing for unattended access by users of your community.</p>
 
-<p>Moreover, GrooveCaster is completely standalone and headless, which means that you can run it on almost any piece of hardware without the need for a graphical output (even on Linux servers using Mono!).</p>
+<p>Moreover, GrooveCaster provides an advanced <a href="#the-module-system">module system</a>, which allows users to very easily introduce completely new functionality (or modify existing one) .</p>
+
+<p>Finally, GrooveCaster is completely standalone and headless, which means that you can run it on almost any piece of hardware without the need for a graphical output (even on Linux servers using Mono!).</p>
 
 <blockquote>
 <p><strong>Note:</strong><br>
@@ -63,10 +65,10 @@ GrooveCaster is still at an early stage of development, so some features may sti
 <p>For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
 However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.</p>
 
-<p>Latest Release: <strong>1.0.1.0</strong></p>
+<p>Latest Release: <strong>1.1.0.0</strong></p>
 
-<p>Windows Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.1.0/GrooveCaster-1.0.1.0-Win32.zip">Download</a><br>
-Mono Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.0.1.0/GrooveCaster-1.0.1.0-Mono.zip">Download</a></p>
+<p>Windows Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.0.0/GrooveCaster-1.1.0.0-Win32.zip">Download</a><br>
+Mono Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.0.0/GrooveCaster-1.1.0.0-Mono.zip">Download</a></p>
 
 <p>There's no installation required.<br>
 Simply download the binaries archive from the links above, and extract them at some location on your drive.</p>
@@ -260,6 +262,13 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 <p>Collection importing might take some time, so don't worry if you don't see any immediate progress.</p>
 
 <h3>
+<a id="module-management" class="anchor" href="#module-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Module Management</h3>
+
+<p>The module management page provides a detailed listing of available modules, while also allowing editing, enabling, disabling, or removing them, as well as creating entirely modules.</p>
+
+<p>For more information about modules, refer to the <a href="#the-module-system">Module System</a>.</p>
+
+<h3>
 <a id="core-settings" class="anchor" href="#core-settings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Core Settings</h3>
 
 <p>The core settings page provides the ability to modify some core settings of GrooveCaster.</p>
@@ -284,11 +293,15 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 </tr>
 <tr>
 <td>Max History Songs</td>
-<td>The maximum number of songs to keep in history. This prevents GrooveCaster from playing the same songs. Input 0 to disable.</td>
+<td>The maximum number of songs to keep in history. This prevents GrooveCaster from playing the same songs. Input <code>0</code> to disable.</td>
 </tr>
 <tr>
 <td>Song Vote Threshold</td>
-<td>The maximum number of votes a song has to get in order for GrooveCaster to automatically skip it. Only accepts negative values. Input 0 to disable.</td>
+<td>The maximum number of votes a song has to get in order for GrooveCaster to automatically skip it. Only accepts negative values. Input <code>0</code> to disable.</td>
+</tr>
+<tr>
+<td>Command Prefix</td>
+<td>The prefix used to identify chat commands. Defaults to <code>!</code> and can only be a single non-alphanumeric character.</td>
 </tr>
 </tbody>
 </table>
@@ -309,11 +322,22 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 
 <p>By default, all users who are added as a Special Guest from the admin dashboard, have guesting permissions in the broadcast itself. However, some commands are only available to users with the required flags.</p>
 
-<p>Currently, all commands start with an exclamation mark (<code>!</code>) and can be used regardless if the user invoking them is currently a special guest in the broadcast or not.</p>
+<p>All commands start with the specified command prefix (defaults to <code>!</code>) and can be used regardless if the user invoking them is currently a special guest in the broadcast or not.</p>
 
-<p>In the future, the ability to provide custom aliases for commands will be implemented.</p>
+<p>Currently, all commands are implemented in the form of modules you can selectively enable. For more information about available commands refer to <a href="#the-module-system">the module system</a>.</p>
 
-<p>The following commands are currently available:</p>
+<h2>
+<a id="the-module-system" class="anchor" href="#the-module-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Module System</h2>
+
+<p>GrooveCaster also provides a very powerful module system which allows users to implement custom functionality, modify, or built on-top of existing one.</p>
+
+<p>All GrooveCaster modules are simple Python scripts (using <a href="http://ironpython.net/">IronPython</a> syntax), and can be directly managed from the Administration Dashboard.</p>
+
+<p>All changes to modules are being propagated immediately, requiring no code recompilation or restarts.</p>
+
+<p>By default, GrooveCaster comes with several built-in modules which provide custom commands for the chat interface.</p>
+
+<p>The default commands are the following:</p>
 
 <table>
 <thead>
@@ -436,6 +460,8 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 </tbody>
 </table>
 
+<p>For more details on how to implement your own modules, example modules, and documentation on the available APIs, please refer to the <a href="https://github.com/OrfeasZ/GrooveCaster/wiki">Wiki</a>.</p>
+
 <h2>
 <a id="upcoming-features" class="anchor" href="#upcoming-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upcoming Features</h2>
 
@@ -443,10 +469,7 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 
 <ul>
 <li>Better management interface for Guest permissions</li>
-<li>More user-friendly interface for Guest addition</li>
-<li>Custom aliases for chat commands</li>
 <li>Broadcast statistics in dashboard</li>
-<li>Dynamic status updates in Broadcast description/title</li>
 <li>Automatic service installation on Windows</li>
 <li>More advanced logging</li>
 </ul>
