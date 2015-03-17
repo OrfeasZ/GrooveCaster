@@ -67,7 +67,10 @@
                             {
                                 <a class="btn btn-success" href="/modules/enable/@s_Module.Name">Enable</a>
                             }
-                            <a class="btn btn-danger" href="/modules/delete/@s_Module.Name">Delete</a>
+                            @if (!s_Module.Default)
+                            {
+                                <a class="btn btn-danger" href="/modules/delete/@s_Module.Name">Delete</a>
+                            }
                         </div>
                     </div>
                 }

@@ -221,7 +221,13 @@ body {
     height: 100px;
     text-overflow: ellipsis;
     overflow: hidden;
-    width: 280px;
+    width: 250px;
+}
+
+.panel.module-panel>.panel-heading {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .badge.error {

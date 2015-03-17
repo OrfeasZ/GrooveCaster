@@ -378,5 +378,10 @@ namespace GrooveCaster.Managers
         {
             return Program.Library.Queue.CurrentQueue;
         }
+
+        public static void SeekCurrentSong(float p_Seconds)
+        {
+            Program.Library.Broadcast.SeekCurrentSong(p_Seconds);
+        }
     }
 }

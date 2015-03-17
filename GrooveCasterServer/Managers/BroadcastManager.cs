@@ -166,6 +166,21 @@ namespace GrooveCaster.Managers
             }
         }
 
+        public static bool RemoveGuest(Int64 p_UserID)
+        {
+            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            {
+                var s_Guest = s_Db.SingleById<SpecialGuest>(p_UserID);
+
+                if (s_Guest == null)
+                    return false;
+
+                s_Db.Delete(s_Guest);
+
+                return true;
+            }
+        }
+
         public static void UnguestAll()
         {
             foreach (var s_UserID in Program.Library.Broadcast.SpecialGuests)
@@ -204,6 +219,16 @@ namespace GrooveCaster.Managers
         public static void Unguest(Int64 p_UserID)
         {
             Program.Library.Broadcast.RemoveSpecialGuest(p_UserID);
+        }
+
+        public static void SetTitle(String p_Title)
+        {
+            Program.Library.Broadcast.UpdateBroadcastName(p_Title);
+        }
+
+        public static void SetDescription(String p_Description)
+        {
+            Program.Library.Broadcast.UpdateBroadcastDescription(p_Description);
         }
     }
 }
