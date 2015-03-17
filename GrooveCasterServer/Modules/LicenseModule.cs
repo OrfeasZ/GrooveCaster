@@ -39,6 +39,11 @@ namespace GrooveCaster.Modules
                         Name = "Razor",
                         License = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Licenses\\Razor.txt"))
                     },
+                    new LibraryLicense
+                    {
+                        Name = "IronPython",
+                        License = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Licenses\\IronPython.txt"))
+                    },
                 };
 
                 return View["Licenses", new { Libraries = s_Libraries }];
