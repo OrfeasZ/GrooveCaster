@@ -1,23 +1,25 @@
 ﻿using System;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Managers
+namespace GrooveCaster.Managers
 {
     public static class SettingsManager
     {
         private static int? m_MaxHistorySongs;
         private static int? m_SongVoteThreshold;
+        private static char? m_CommandPrefix;
         //private static bool? m_CanCommandWithoutGuest;
 
         static SettingsManager()
         {
         }
 
-        public static void Init()
+        internal static void Init()
         {
             m_MaxHistorySongs = null;
             m_SongVoteThreshold = null;
+            m_CommandPrefix = null;
             //m_CanCommandWithoutGuest = null;
         }
 
@@ -106,6 +108,51 @@ namespace GrooveCasterServer.Managers
             }
 
             m_SongVoteThreshold = p_Threshold;
+        }
+
+        public static char CommandPrefix()
+        {
+            if (m_CommandPrefix.HasValue)
+                return m_CommandPrefix.Value;
+
+            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            {
+                var s_Setting = s_Db.SingleById<CoreSetting>("cmdprefix");
+
+                if (s_Setting == null)
+                {
+                    s_Setting = new CoreSetting() { Key = "cmdprefix", Value = "!" };
+                    s_Db.Insert(s_Setting);
+                }
+
+                m_CommandPrefix = Char.Parse(s_Setting.Value);
+            }
+
+            return m_CommandPrefix.Value;
+        }
+
+        public static void CommandPrefix(char p_Prefix)
+        {
+            if (Char.IsLetterOrDigit(p_Prefix))
+                return;
+
+            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            {
+                var s_Setting = s_Db.SingleById<CoreSetting>("cmdprefix");
+
+                if (s_Setting == null)
+                {
+                    s_Setting = new CoreSetting() { Key = "cmdprefix", Value = p_Prefix.ToString() };
+                    s_Db.Insert(s_Setting);
+                }
+                else
+                {
+                    s_Setting.Value = p_Prefix.ToString();
+                    s_Db.Update(s_Setting);
+                }
+            }
+
+            m_CommandPrefix = p_Prefix;
         }
 
         /*public static bool CanCommandWithoutGuest()

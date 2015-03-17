@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class UsersModule : NancyModule
     {

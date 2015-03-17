@@ -207,10 +207,21 @@ body {
     text-align: center;
 }
 
-.panel.guest-panel, .panel.user-panel {
+.panel.guest-panel, .panel.user-panel, .panel.module-panel {
     float: left;
     margin-right: 20px;
     max-width: 280px;
+}
+
+.panel.module-panel {
+    height: 220px;
+}
+
+.panel.module-panel .panel-body p {
+    height: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 280px;
 }
 
 .badge.error {
@@ -289,4 +300,9 @@ body {
 
 .gist {
   font-size: 14px;
+}
+
+.CodeMirror {
+    min-width: 900px;
+    min-height: 300px;
 }

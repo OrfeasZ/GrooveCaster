@@ -34,6 +34,7 @@
                     <li><a href="/songs">Song Management</a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
+                        <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li class="active"><a href="/users">User Management <span class="sr-only">(current)</span></a></li>
                     }

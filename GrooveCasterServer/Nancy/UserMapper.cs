@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using Nancy;
 using Nancy.Authentication.Forms;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Nancy
+namespace GrooveCaster.Nancy
 {
     public class UserMapper : IUserMapper
     {

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using Nancy;
 using Nancy.Authentication.Forms;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class AuthModule : NancyModule
     {

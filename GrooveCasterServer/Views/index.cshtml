@@ -1,5 +1,5 @@
 ﻿@using System.Linq
-@using GrooveCasterServer
+@using GrooveCaster
 @inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
 @{
     Layout = "_Layout.cshtml";
@@ -67,6 +67,7 @@
                     <li><a href="/songs">Song Management</a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
+                        <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li><a href="/users">User Management</a></li>
                     }
@@ -91,6 +92,11 @@
                     else
                     {
                         <div class="alert alert-info">@s_Message</div>
+                    }
+
+                    @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super") && Model.ModuleErrors.Count > 0)
+                    {
+                        <div class="alert alert-danger">Some modules have failed to load. Please visit the <a href="/modules">modules</a> page for more information.</div>
                     }
                 </div>
             </div>

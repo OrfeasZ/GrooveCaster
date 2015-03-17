@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using GrooveCasterServer.Managers;
-using GrooveCasterServer.Models;
+using GrooveCaster.Managers;
+using GrooveCaster.Models;
 using GS.Lib.Enums;
 using Nancy;
 using Nancy.ModelBinding;
@@ -10,7 +10,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class DashboardModule : NancyModule
     {
@@ -66,7 +66,8 @@ namespace GrooveCasterServer.Modules
 
                 return View["Index", new
                 {
-                    Status = s_Status
+                    Status = s_Status,
+                    ModuleErrors = ModuleManager.LoadExceptions
                 }];
             };
 

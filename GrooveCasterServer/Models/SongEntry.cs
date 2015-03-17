@@ -1,7 +1,7 @@
 ﻿using System;
 using ServiceStack.DataAnnotations;
 
-namespace GrooveCasterServer.Models
+namespace GrooveCaster.Models
 {
     public class SongEntry
     {

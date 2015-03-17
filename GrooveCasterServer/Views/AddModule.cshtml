@@ -1,4 +1,5 @@
-﻿@using System.Linq
+﻿@using System
+@using System.Linq
 @inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
 @{
     Layout = "_Layout.cshtml";
@@ -31,10 +32,10 @@
                 <ul class="nav nav-sidebar">
                     <li><a href="/">Overview</a></li>
                     <li><a href="/guests">Guest Management</a></li>
-                    <li class="active"><a href="/songs">Song Management <span class="sr-only">(current)</span></a></li>
+                    <li><a href="/songs">Song Management</a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
-                        <li><a href="/modules">Module Management</a></li>
+                        <li class="active"><a href="/modules">Module Management <span class="sr-only">(current)</span></a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li><a href="/users">User Management</a></li>
                     }
@@ -42,48 +43,34 @@
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">
-                    Add a Song
+                    Create a new Module
                 </h1>
-                <p>Use the searchbox below to find a song to add in your collection.</p>
-                <p>Note: Do not fill in the fields manually unless you <strong>really</strong> know what you're doing.</p>
-                <br/>
-                <label>
-                    Search for a Song<br/>
-                    <input type="text" class="typeahead" placeholder="Song Name" id="song-search-input">
-                </label>
-                <br/><br/>
-                <form action="/songs/add" method="POST">
+                <form action="/modules/add" method="POST">
+                    @if (!String.IsNullOrWhiteSpace(Model.Error))
+                    {
+                        <div class="alert alert-danger">@Model.Error</div>
+                    }
                     <label>
-                        Song ID
-                        <input type="number" class="form-control" name="songid" id="songid-input" placeholder="Song ID"/>
+                        Module Name<br/>
+                        <input type="text" class="form-control" placeholder="Display Name" name="display" value="@Model.Data.Display" id="module-name-input" required autofocus/>
                     </label>
                     <br/>
                     <label>
-                        Song Name
-                        <input type="text" class="form-control" name="song" id="song-input" placeholder="Song Name"/>
+                        Module ID<br/>
+                        <input type="text" class="form-control" placeholder="ID" name="name" value="@Model.Data.Name" id="module-id-input" required/>
                     </label>
                     <br/>
                     <label>
-                        Artist ID
-                        <input type="number" class="form-control" name="artistid" id="artistid-input" placeholder="Artist ID" />
+                        Module Description<br/>
+                        <input type="text" class="form-control" placeholder="Description" name="description" style="width: 650px;" value="@Model.Data.Description"/>
                     </label>
                     <br/>
                     <label>
-                        Artist Name
-                        <input type="text" class="form-control" name="artist" id="artist-input" placeholder="Artist Name" />
-                    </label>
-                    <br/>
-                    <label>
-                        Album ID
-                        <input type="number" class="form-control" name="albumid" id="albumid-input" placeholder="Album ID" />
-                    </label>
-                    <br/>
-                    <label>
-                        Album Name
-                        <input type="text" class="form-control" name="album" id="album-input" placeholder="Album Name" />
+                        Script<br/>
+                        <textarea class="form-control" placeholder="Python Script" name="script" id="module-script-input">@Model.Data.Script</textarea>
                     </label>
                     <br/><br/>
-                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
                 </form>
             </div>
         </div>

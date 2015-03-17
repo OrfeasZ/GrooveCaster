@@ -2,7 +2,7 @@
 using GS.Lib.Enums;
 using ServiceStack.DataAnnotations;
 
-namespace GrooveCasterServer.Models
+namespace GrooveCaster.Models
 {
     public class SpecialGuest
     {

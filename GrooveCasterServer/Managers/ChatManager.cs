@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
 using GS.Lib.Models;
-using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Managers
+namespace GrooveCaster.Managers
 {
     public static class ChatManager
     {
+        private static Dictionary<String, ChatCommand> m_ChatCommands; 
+
         static ChatManager()
         {
             
         }
 
-        public static void Init()
+        internal static void Init()
         {
+            m_ChatCommands = new Dictionary<string, ChatCommand>();
             Program.Library.RegisterEventHandler(ClientEvent.ChatMessage, OnChatMessage);
+
+            RegisterCommandInternal("about", ": Displays information about the GrooveCaster bot.", OnAbout);
+            RegisterCommandInternal("help", " [command]: Displays detailed information about the command [command]. Displays all available commands if [command] is not specified.", OnHelp);
         }
 
         private static void OnChatMessage(SharkEvent p_SharkEvent)
@@ -31,120 +36,33 @@ namespace GrooveCasterServer.Managers
 
             Debug.WriteLine("[CHAT] {0}: {1}", s_Event.UserName, s_Event.ChatMessage);
 
-            var s_Parts = s_Event.ChatMessage.Split(' ');
+            if (s_Event.ChatMessage.Trim().Length < 2 || s_Event.ChatMessage.Trim()[0] != SettingsManager.CommandPrefix())
+                return;
+
+            var s_Parts = s_Event.ChatMessage.Trim().Split(' ');
 
             var s_Command = s_Parts[0];
             var s_Data = s_Event.ChatMessage.Substring(s_Command.Length).Trim();
 
-            switch (s_Command)
-            {
-                case "!guest":
-                    OnGuest(s_Event, s_Data);
-                    break;
+            ChatCommand s_ChatCommand;
+            if (!m_ChatCommands.TryGetValue(s_Command.Substring(1), out s_ChatCommand))
+                return;
 
-                case "!ping":
-                    OnPing(s_Event, s_Data);
-                    break;
-
-                case "!removeNext":
-                    OnRemoveNext(s_Event, s_Data);
-                    break;
-
-                case "!removeLast":
-                    OnRemoveLast(s_Event, s_Data);
-                    break;
-
-                case "!fetchByName":
-                    OnFetchByName(s_Event, s_Data);
-                    break;
-
-                case "!fetchLast":
-                    OnFetchLast(s_Event, s_Data);
-                    break;
-
-                case "!removeByName":
-                    OnRemoveByName(s_Event, s_Data);
-                    break;
-
-                case "!skip":
-                    OnSkip(s_Event, s_Data);
-                    break;
-
-                case "!shuffle":
-                    OnShuffle(s_Event, s_Data);
-                    break;
-
-                case "!makeGuest":
-                    OnMakeGuest(s_Event, s_Data);
-                    break;
-
-                case "!addGuest":
-                    OnAddGuest(s_Event, s_Data);
-                    break;
-
-                case "!removeGuest":
-                    OnRemoveGuest(s_Event, s_Data);
-                    break;
-
-                case "!unguest":
-                    OnUnguest(s_Event, s_Data);
-                    break;
-
-                case "!setTitle":
-                    OnSetTitle(s_Event, s_Data);
-                    break;
-
-                case "!setDescription":
-                    OnSetDescription(s_Event, s_Data);
-                    break;
-
-                case "!peek":
-                    OnPeek(s_Event, s_Data);
-                    break;
-
-                case "!addToCollection":
-                    OnAddToCollection(s_Event, s_Data);
-                    break;
-
-                case "!removeFromCollection":
-                    OnRemoveFromCollection(s_Event, s_Data);
-                    break;
-
-                case "!about":
-                    OnAbout(s_Event, s_Data);
-                    break;
-
-                case "!help":
-                    OnHelp(s_Event, s_Data);
-                    break;
-
-                case "!seek":
-                    OnSeek(s_Event, s_Data);
-                    break;
-
-                case "!queueRandom":
-                    OnQueueRandom(s_Event, s_Data);
-                    break;
-            }
+            s_ChatCommand.Callback(s_Event, s_Data);
         }
-
-        private static void OnGuest(ChatMessageEvent p_Event, String p_Data)
-        {
-            UserManager.GuestUser(p_Event.UserID, p_Event.UserName);
-        }
-
+        
         private static void OnPing(ChatMessageEvent p_Event, String p_Data)
         {
-            Program.Library.Chat.SendChatMessage("Pong! Hello " + p_Event.UserName + " (" + p_Event.UserID + ")!");
+            SendChatMessage("Pong! Hello " + p_Event.UserName + " (" + p_Event.UserID + ")!");
         }
 
         private static void OnRemoveNext(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -157,7 +75,7 @@ namespace GrooveCasterServer.Managers
             int s_Count;
             if (!Int32.TryParse(p_Data.Trim(), out s_Count))
             {
-                Program.Library.Chat.SendChatMessage("Usage: !removeNext [count]");
+                SendChatMessage("Usage: !removeNext [count]");
                 return;
             }
 
@@ -166,11 +84,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnRemoveLast(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -183,7 +101,7 @@ namespace GrooveCasterServer.Managers
             int s_Count;
             if (!Int32.TryParse(p_Data.Trim(), out s_Count))
             {
-                Program.Library.Chat.SendChatMessage("Usage: !removeLast [count]");
+                SendChatMessage("Usage: !removeLast [count]");
                 return;
             }
 
@@ -192,11 +110,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnFetchByName(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -205,11 +123,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnFetchLast(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -218,11 +136,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnRemoveByName(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -231,11 +149,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnSkip(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -244,11 +162,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnShuffle(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -257,11 +175,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnMakeGuest(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddTemporaryGuests)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -269,14 +187,14 @@ namespace GrooveCasterServer.Managers
 
             if (s_Parts.Length != 1)
             {
-                Program.Library.Chat.SendChatMessage("Usage: !makeGuest <userID>");
+                SendChatMessage("Usage: !makeGuest <userID>");
                 return;
             }
 
             Int64 s_UserID;
             if (!Int64.TryParse(s_Parts[0], out s_UserID))
             {
-                 Program.Library.Chat.SendChatMessage("Usage: !makeGuest <userID>");
+                 SendChatMessage("Usage: !makeGuest <userID>");
                 return;
             }
 
@@ -288,11 +206,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnAddGuest(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddPermanentGuests)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -300,47 +218,33 @@ namespace GrooveCasterServer.Managers
 
             if (s_Parts.Length != 2)
             {
-                Program.Library.Chat.SendChatMessage("Usage: !addGuest <userID> <userName>");
+                SendChatMessage("Usage: !addGuest <userID> <userName>");
                 return;
             }
 
             Int64 s_UserID;
             if (!Int64.TryParse(s_Parts[0], out s_UserID) || String.IsNullOrWhiteSpace(s_Parts[1]))
             {
-                Program.Library.Chat.SendChatMessage("Usage: !addGuest <userID> <userName>");
+                SendChatMessage("Usage: !addGuest <userID> <userName>");
                 return;
             }
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            if (!BroadcastManager.AddGuest(s_Parts[1], s_UserID, VIPPermissions.Suggestions | VIPPermissions.ChatModerate))
             {
-                var s_Guest = s_Db.SingleById<SpecialGuest>(s_UserID);
-
-                if (s_Guest != null)
-                {
-                    Program.Library.Chat.SendChatMessage("The user you specified already has guest permissions.");
-                    return;
-                }
-
-                s_Guest = new SpecialGuest()
-                {
-                    Username = s_Parts[1],
-                    UserID = s_UserID,
-                    Permissions = VIPPermissions.Suggestions | VIPPermissions.ChatModerate
-                };
-
-                s_Db.Insert(s_Guest);
-
-                Program.Library.Chat.SendChatMessage("Successfully granted user '" + s_Parts[1] + "' guest permissions.");
+                SendChatMessage("The user you specified already has guest permissions.");
+                return;
             }
+
+            SendChatMessage("Successfully granted user '" + s_Parts[1] + "' guest permissions.");
         }
 
         private static void OnRemoveGuest(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddPermanentGuests)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -348,47 +252,36 @@ namespace GrooveCasterServer.Managers
 
             if (s_Parts.Length != 1)
             {
-                Program.Library.Chat.SendChatMessage("Usage: !removeGuest <userID|userName>");
+                SendChatMessage("Usage: !removeGuest <userID|userName>");
                 return;
             }
 
             if (String.IsNullOrWhiteSpace(s_Parts[0]))
             {
-                Program.Library.Chat.SendChatMessage("Usage: !removeGuest <userID|userName>");
+                SendChatMessage("Usage: !removeGuest <userID|userName>");
                 return;
             }
 
             Int64 s_UserID = -1;
             Int64.TryParse(s_Parts[0], out s_UserID);
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            SpecialGuest s_Guest;
+            if (!BroadcastManager.RemoveGuest(s_UserID, out s_Guest))
             {
-                SpecialGuest s_Guest;
-                
-                if (s_UserID != -1)
-                    s_Guest = s_Db.SingleById<SpecialGuest>(s_UserID);
-                else
-                    s_Guest = s_Db.Single<SpecialGuest>(p_Guest => p_Guest.Username.Equals(s_Parts[0], StringComparison.OrdinalIgnoreCase));
-
-                if (s_Guest == null)
-                {
-                    Program.Library.Chat.SendChatMessage("The user you specified could not be found.");
-                    return;
-                }
-
-                s_Db.Delete(s_Guest);
-
-                Program.Library.Chat.SendChatMessage("Successfully revoked guest permissions from user '" + s_Guest.Username + "'.");
+                SendChatMessage("The user you specified could not be found.");
+                return;
             }
+
+            SendChatMessage("Successfully revoked guest permissions from user '" + s_Guest.Username + "'.");
         }
 
         private static void OnUnguest(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanAddPermanentGuests)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -396,20 +289,20 @@ namespace GrooveCasterServer.Managers
 
             if (s_Parts.Length > 1)
             {
-                Program.Library.Chat.SendChatMessage("Usage: !unguest [userID]");
+                SendChatMessage("Usage: !unguest [userID]");
                 return;
             }
 
             if (s_Parts.Length == 0 || String.IsNullOrWhiteSpace(s_Parts[0]))
             {
-                UserManager.UnguestAll();
+                BroadcastManager.UnguestAll();
                 return;
             }
 
             Int64 s_UserID;
             if (!Int64.TryParse(s_Parts[0], out s_UserID))
             {
-                Program.Library.Chat.SendChatMessage("Usage: !unguest [userID]");
+                SendChatMessage("Usage: !unguest [userID]");
                 return;
             }
 
@@ -421,17 +314,17 @@ namespace GrooveCasterServer.Managers
 
         private static void OnSetTitle(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanEditTitle)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
             if (p_Data.Trim().Length < 3)
             {
-                Program.Library.Chat.SendChatMessage("Usage: !setTitle <title>");
+                SendChatMessage("Usage: !setTitle <title>");
                 return;
             }
 
@@ -440,17 +333,17 @@ namespace GrooveCasterServer.Managers
 
         private static void OnSetDescription(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.CanEditDescription)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
             if (p_Data.Trim().Length < 3)
             {
-                Program.Library.Chat.SendChatMessage("Usage: !setDescription <description>");
+                SendChatMessage("Usage: !setDescription <description>");
                 return;
             }
 
@@ -459,11 +352,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnPeek(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -482,7 +375,7 @@ namespace GrooveCasterServer.Managers
 
             if (s_UpcomingSongs.Count == 0)
             {
-                Program.Library.Chat.SendChatMessage("The are no upcoming songs in the queue.");
+                SendChatMessage("The are no upcoming songs in the queue.");
                 return;
             }
 
@@ -493,92 +386,66 @@ namespace GrooveCasterServer.Managers
 
             s_Songs = s_Songs.Substring(0, s_Songs.Length - 3);
 
-            Program.Library.Chat.SendChatMessage(s_Songs);
+            SendChatMessage(s_Songs);
         }
 
         private static void OnAddToCollection(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.SuperGuest)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            if (!QueueManager.AddPlayingSongToCollection())
             {
-                var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
-
-                if (s_Song != null)
-                {
-                    Program.Library.Chat.SendChatMessage("Song already exists in the collection.");
-                    return;
-                }
-
-                s_Song = new SongEntry()
-                {
-                    AlbumID = Program.Library.Broadcast.PlayingAlbumID,
-                    AlbumName = Program.Library.Broadcast.PlayingSongAlbum,
-                    ArtistID = Program.Library.Broadcast.PlayingArtistID,
-                    ArtistName = Program.Library.Broadcast.PlayingSongArtist,
-                    SongID = Program.Library.Broadcast.PlayingSongID,
-                    SongName = Program.Library.Broadcast.PlayingSongName
-                };
-
-                s_Db.Insert(s_Song);
-                QueueManager.CollectionSongs.Add(s_Song.SongID);
-
-                Program.Library.Chat.SendChatMessage("Song has been successfully added to the collection.");
+                SendChatMessage("Song already exists in the collection.");
+                return;
             }
+
+            SendChatMessage("Song has been successfully added to the collection.");
         }
 
         private static void OnRemoveFromCollection(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.SuperGuest)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            if (!QueueManager.RemovePlayingSongFromCollection())
             {
-                var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
-
-                if (s_Song == null)
-                {
-                    Program.Library.Chat.SendChatMessage("Song does not exist in the collection.");
-                    return;
-                }
-
-                QueueManager.CollectionSongs.Remove(s_Song.SongID);
-                s_Db.Delete(s_Song);
-
-                Program.Library.Chat.SendChatMessage("Song has been successfully removed from the collection.");
+                SendChatMessage("Song does not exist in the collection.");
+                return;
             }
+                
+            SendChatMessage("Song has been successfully removed from the collection.");
         }
 
         private static void OnAbout(ChatMessageEvent p_Event, String p_Data)
         {
-            Program.Library.Chat.SendChatMessage("This broadcast is powered by GrooveCaster " + Program.GetVersion() + ". For more information visit http://orfeasz.github.io/GrooveCaster/.");
+            SendChatMessage("This broadcast is powered by GrooveCaster " + Program.GetVersion() + ". For more information visit http://orfeasz.github.io/GrooveCaster/.");
         }
 
         private static void OnSeek(ChatMessageEvent p_Event, String p_Data)
         {
-            var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+            var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null || !s_SpecialGuest.SuperGuest)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
             Int64 s_Seconds;
             if (!Int64.TryParse(p_Data, out s_Seconds) || s_Seconds < 0)
             {
-                Program.Library.Chat.SendChatMessage("Usage: !seek <seconds>");
+                SendChatMessage("Usage: !seek <seconds>");
                 return;
             }
 
@@ -587,11 +454,11 @@ namespace GrooveCasterServer.Managers
 
         private static void OnQueueRandom(ChatMessageEvent p_Event, String p_Data)
         {
-             var s_SpecialGuest = UserManager.GetGuestForUserID(p_Event.UserID);
+             var s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID);
 
             if (s_SpecialGuest == null)
             {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
+                SendChatMessage("Sorry " + p_Event.UserName + ", but you don't have permission to use this feature.");
                 return;
             }
 
@@ -604,7 +471,7 @@ namespace GrooveCasterServer.Managers
             Int32 s_Songs;
             if (!Int32.TryParse(p_Data, out s_Songs) || s_Songs <= 0)
             {
-                Program.Library.Chat.SendChatMessage("Usage: !queueRandom [count]");
+                SendChatMessage("Usage: !queueRandom [count]");
                 return;
             }
 
@@ -645,21 +512,127 @@ namespace GrooveCasterServer.Managers
             {
                 var s_Commands = "Available commands: ";
 
-                foreach (var s_Pair in m_CommandHelp)
-                    s_Commands += s_Pair.Key + " ";
+                foreach (var s_Pair in m_ChatCommands)
+                {
+                    if (!s_Pair.Value.MainInstance)
+                        continue;
 
-                Program.Library.Chat.SendChatMessage(s_Commands);
-                Program.Library.Chat.SendChatMessage("For detailed information on a command use !help [command].");
+                    s_Commands += s_Pair.Value.Command + " • ";
+                }
+
+                SendChatMessage(s_Commands.Substring(0, s_Commands.Length - 3));
+                SendChatMessage("For detailed information on a command use " + SettingsManager.CommandPrefix() + "help [command].");
                 return;
             }
 
-            if (!m_CommandHelp.ContainsKey(s_Command))
+            ChatCommand s_ChatCommand;
+            if (!m_ChatCommands.TryGetValue(s_Command, out s_ChatCommand))
             {
-                Program.Library.Chat.SendChatMessage("Command not found.");
+                SendChatMessage("Command not found.");
                 return;
             }
 
-            Program.Library.Chat.SendChatMessage(m_CommandHelp[s_Command]);
+            // Print command description.
+            SendChatMessage(SettingsManager.CommandPrefix() + s_ChatCommand.Command + s_ChatCommand.Description);
+
+            // Print command aliases.
+            if (s_ChatCommand.Aliases.Count == 0)
+                return;
+
+            var s_Aliases = "Aliases: ";
+
+            foreach (var s_Alias in s_ChatCommand.Aliases)
+                s_Aliases += s_Alias + " • ";
+
+            SendChatMessage(s_Aliases.Substring(0, s_Aliases.Length - 3));
+        }
+
+        public static void SendChatMessage(String p_Message)
+        {
+            Program.Library.Chat.SendChatMessage(p_Message);
+        }
+
+        private static void RegisterCommandInternal(String p_Command, String p_Description,
+            Action<ChatMessageEvent, String> p_Callback, List<String> p_Aliases = null)
+        {
+            // Remove all commands with the same name.
+            ChatCommand s_Command;
+            if (m_ChatCommands.TryGetValue(p_Command, out s_Command))
+            {
+                m_ChatCommands.Remove(s_Command.Command);
+
+                foreach (var s_Alias in s_Command.Aliases)
+                    m_ChatCommands.Remove(s_Alias);
+            }
+
+            // Remove all commands with the same aliases.
+            if (p_Aliases != null)
+            {
+                foreach (var s_Alias in p_Aliases)
+                {
+                    if (m_ChatCommands.TryGetValue(s_Alias, out s_Command))
+                    {
+                        m_ChatCommands.Remove(s_Command.Command);
+
+                        foreach (var s_OtherAlias in s_Command.Aliases)
+                            m_ChatCommands.Remove(s_OtherAlias);
+                    }
+                }
+            }
+
+            // Register the main command.
+            s_Command = new ChatCommand()
+            {
+                Command = p_Command,
+                Description = p_Description,
+                Aliases = p_Aliases ?? new List<string>(),
+                Callback = p_Callback,
+                MainInstance = true
+            };
+
+            m_ChatCommands.Add(s_Command.Command, s_Command);
+
+            // Register all the aliases.
+            if (p_Aliases != null)
+            {
+                var s_SecondaryInstance = new ChatCommand()
+                {
+                    Command = p_Command,
+                    Description = p_Description,
+                    Aliases = p_Aliases,
+                    Callback = p_Callback,
+                    MainInstance = false
+                };
+
+                foreach (var s_Alias in p_Aliases)
+                    m_ChatCommands.Add(s_Alias, s_SecondaryInstance);
+            }
+        }
+
+        public static void RegisterCommand(String p_Command, String p_Description,
+            Action<ChatMessageEvent, String> p_Callback, List<String> p_Aliases = null)
+        {
+            if (p_Command == "about" || p_Command == "help" ||
+                (p_Aliases != null && (p_Aliases.Contains("about") && p_Aliases.Contains("help"))))
+                return;
+
+            RegisterCommandInternal(p_Command, p_Description, p_Callback, p_Aliases);
+        }
+
+        public static void RemoveCommand(String p_Command)
+        {
+            if (p_Command == "about" || p_Command == "help")
+                return;
+
+            // Remove all commands with the same name.
+            ChatCommand s_Command;
+            if (m_ChatCommands.TryGetValue(p_Command, out s_Command))
+            {
+                m_ChatCommands.Remove(s_Command.Command);
+
+                foreach (var s_Alias in s_Command.Aliases)
+                    m_ChatCommands.Remove(s_Alias);
+            }
         }
     }
 }

@@ -7,11 +7,12 @@
     <ProjectGuid>{68F5F5F3-B8BB-4911-875F-6F00AAE04EA6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GrooveCasterServer</RootNamespace>
+    <RootNamespace>GrooveCaster</RootNamespace>
     <AssemblyName>GrooveCaster</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -54,6 +54,30 @@
     </StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IronPython">
+      <HintPath>..\packages\IronPython.2.7.5\lib\Net45\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Modules">
+      <HintPath>..\packages\IronPython.2.7.5\lib\Net45\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.SQLite">
+      <HintPath>..\packages\IronPython.2.7.5\lib\Net45\IronPython.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Wpf">
+      <HintPath>..\packages\IronPython.2.7.5\lib\Net45\IronPython.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic">
+      <HintPath>..\packages\IronPython.2.7.5\lib\Net45\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting">
+      <HintPath>..\packages\IronPython.2.7.5\lib\Net45\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.AspNet">
+      <HintPath>..\packages\IronPython.2.7.5\lib\Net45\Microsoft.Scripting.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata">
+      <HintPath>..\packages\IronPython.2.7.5\lib\Net45\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\packages\ServiceStack.OrmLite.Sqlite.Mono.4.0.38\lib\net45\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
@@ -109,14 +133,20 @@
   <ItemGroup>
     <Compile Include="Managers\BroadcastManager.cs" />
     <Compile Include="Managers\ChatManager.cs" />
+    <Compile Include="Managers\ModuleManager.cs" />
     <Compile Include="Managers\QueueManager.cs" />
     <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Models\AddGuestRequest.cs" />
+    <Compile Include="Models\AddModuleRequest.cs" />
     <Compile Include="Models\AddSongRequest.cs" />
+    <Compile Include="Models\ChatCommand.cs" />
+    <Compile Include="Models\EditModuleRequest.cs" />
     <Compile Include="Models\ImportSongsFromUserRequest.cs" />
     <Compile Include="Models\LibraryLicense.cs" />
     <Compile Include="Models\LoginRequest.cs" />
+    <Compile Include="Models\GrooveModule.cs" />
+    <Compile Include="Models\ModuleScript.cs" />
     <Compile Include="Models\SaveSettingsRequest.cs" />
     <Compile Include="Models\SetupRequest.cs" />
     <Compile Include="Models\SongEntry.cs" />
@@ -127,6 +157,7 @@
     <Compile Include="Modules\AuthModule.cs" />
     <Compile Include="Modules\GuestsModule.cs" />
     <Compile Include="Modules\LicenseModule.cs" />
+    <Compile Include="Modules\ModulesModule.cs" />
     <Compile Include="Modules\SettingsModule.cs" />
     <Compile Include="Modules\SetupModule.cs" />
     <Compile Include="Modules\SongsModule.cs" />
@@ -136,13 +167,23 @@
     <Compile Include="Models\AdminUser.cs" />
     <Compile Include="Models\CoreSetting.cs" />
     <Compile Include="Models\SpecialGuest.cs" />
+    <Compile Include="Nancy\RazorConfiguration.cs" />
     <Compile Include="Nancy\UserIdentity.cs" />
     <Compile Include="Nancy\UserMapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\codemirror.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\css\jquery-ui.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\js\bootstrap.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\js\codemirror.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\js\handlebars.min.js">
@@ -165,6 +206,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
+    <Content Include="Content\js\jquery-ui.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\js\python.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\js\typeahead.bundle.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -204,6 +251,12 @@
     <Content Include="Views\ImportSongs.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\AddModule.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\EditModule.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Views\Index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -229,6 +282,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Songs.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Modules.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Views\_Layout.cshtml">

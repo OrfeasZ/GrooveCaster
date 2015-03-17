@@ -5,26 +5,27 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using GrooveCasterServer.Managers;
-using GrooveCasterServer.Models;
+using GrooveCaster.Managers;
+using GrooveCaster.Models;
 using GS.Lib;
 using GS.SneakyBeaky;
+using Nancy;
 using Nancy.Hosting.Self;
 using NDesk.Options;
 using Newtonsoft.Json;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer
+namespace GrooveCaster
 {
     public class Program
     {
         public static SharpShark Library { get; set; }
 
-        public static NancyHost Host { get; set; }
+        internal static NancyHost Host { get; set; }
 
-        public static String DbConnectionString { get; set; }
+        internal static String DbConnectionString { get; set; }
 
-        public static String SecretKey { get; set; }
+        internal static String SecretKey { get; set; }
 
         public static String LatestVersion { get; set; }
 
@@ -36,7 +37,7 @@ namespace GrooveCasterServer
 
         private static OptionSet m_Options;
 
-        static void Main(string[] p_Args)
+        internal static void Main(string[] p_Args)
         {
             Console.Title = "GrooveCaster " + GetVersion();
 
@@ -121,6 +122,9 @@ namespace GrooveCasterServer
             };
 
             s_VersionCheckTimer.Start();
+
+            // Enable error traces.
+            StaticConfiguration.DisableErrorTraces = false;
 
             // Start Nancy host.
             using (Host = new NancyHost(new HostConfiguration()
@@ -221,6 +225,11 @@ namespace GrooveCasterServer
                 {
                     s_Db.CreateTable<SongEntry>();
                 }
+
+                if (!s_Db.TableExists<GrooveModule>())
+                {
+                    s_Db.CreateTable<GrooveModule>();
+                }
             }
         }
 
@@ -248,7 +257,7 @@ namespace GrooveCasterServer
             p_Connection.Insert(new CoreSetting() { Key = "gcver", Value = GetVersion() });
         }
 
-        public static bool BootstrapLibrary()
+        internal static bool BootstrapLibrary()
         {
             if (String.IsNullOrWhiteSpace(SecretKey))
                 return true;
@@ -258,6 +267,7 @@ namespace GrooveCasterServer
             QueueManager.Init();
             SettingsManager.Init();
             UserManager.Init();
+            ModuleManager.Init();
 
             using (var s_Db = DbConnectionString.OpenDbConnection())
                 if (s_Db.SingleById<CoreSetting>("gsun") == null || s_Db.SingleById<CoreSetting>("gspw") == null)

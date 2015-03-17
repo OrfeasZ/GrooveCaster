@@ -1,5 +1,5 @@
 ﻿using System;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using GS.Lib.Enums;
 using Nancy;
 using Nancy.ModelBinding;
@@ -7,7 +7,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Modules
+namespace GrooveCaster.Modules
 {
     public class GuestsModule : NancyModule
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GrooveCasterServer.Models
+namespace GrooveCaster.Models
 {
     public class AddSongRequest
     {

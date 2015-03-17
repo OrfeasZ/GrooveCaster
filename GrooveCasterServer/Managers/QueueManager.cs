@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
+using GS.Lib.Models;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Managers
+namespace GrooveCaster.Managers
 {
     public static class QueueManager
     {
@@ -21,7 +22,7 @@ namespace GrooveCasterServer.Managers
             CollectionSongs = new List<long>();
         }
 
-        public static void Init()
+        internal static void Init()
         {
             PlayedSongs.Clear();
             CollectionSongs.Clear();
@@ -120,7 +121,7 @@ namespace GrooveCasterServer.Managers
             UpdateQueue();
         }
 
-        public static void UpdateQueue()
+        internal static void UpdateQueue()
         {
             var s_Index = Program.Library.Queue.GetPlayingSongIndex();
 
@@ -324,6 +325,58 @@ namespace GrooveCasterServer.Managers
             }
 
             Program.Library.Chat.SendChatMessage("Shuffled " + s_SongCount + " songs.");
+        }
+
+        public static bool AddPlayingSongToCollection()
+        {
+            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            {
+                var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
+
+                if (s_Song != null)
+                    return false;
+
+                s_Song = new SongEntry()
+                {
+                    AlbumID = Program.Library.Broadcast.PlayingAlbumID,
+                    AlbumName = Program.Library.Broadcast.PlayingSongAlbum,
+                    ArtistID = Program.Library.Broadcast.PlayingArtistID,
+                    ArtistName = Program.Library.Broadcast.PlayingSongArtist,
+                    SongID = Program.Library.Broadcast.PlayingSongID,
+                    SongName = Program.Library.Broadcast.PlayingSongName
+                };
+
+                s_Db.Insert(s_Song);
+                CollectionSongs.Add(s_Song.SongID);
+
+                return true;
+            }
+        }
+
+        public static bool RemovePlayingSongFromCollection()
+        {
+            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
+            {
+                var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
+
+                if (s_Song == null)
+                    return false;
+
+                CollectionSongs.Remove(s_Song.SongID);
+                s_Db.Delete(s_Song);
+
+                return true;
+            }
+        }
+
+        public static int GetPlayingSongIndex()
+        {
+            return Program.Library.Queue.GetPlayingSongIndex();
+        }
+
+        public static List<QueueSongData> GetCurrentQueue()
+        {
+            return Program.Library.Queue.CurrentQueue;
         }
     }
 }

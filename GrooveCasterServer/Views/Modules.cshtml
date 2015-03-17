@@ -34,29 +34,43 @@
                     <li><a href="/songs">Song Management</a></li>
                     @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
                     {
-                        <li><a href="/modules">Module Management</a></li>
-                        <li class="active"><a href="/settings">Core Settings <span class="sr-only">(current)</span></a></li>
+                        <li class="active"><a href="/modules">Module Management <span class="sr-only">(current)</span></a></li>
+                        <li><a href="/settings">Core Settings</a></li>
                         <li><a href="/users">User Management</a></li>
                     }
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">
-                    Core Settings
-                    <a href="/settings/reset" class="btn btn-danger btn-sm" id="reset-bot">Reset Bot</a>
+                    Modules
+                    <a href="/modules/add" class="btn btn-primary btn-sm">New Module</a>
                 </h1>
-                <form action="/settings" method="POST">
-                    <label for="inputTitle">Broadcast Title</label>
-                    <input type="text" id="inputTitle" class="form-control" placeholder="Broadcast Title" name="title" value="@Model.Title" required autofocus>
-                    <label for="inputDescription">Broadcast Description</label>
-                    <textarea class="form-control" id="inputDescription" name="description" placeholder="Broadcast Description">@Model.Description</textarea>
-                    <label for="inputMaxHistory">Max Number of Songs to keep in History (0 to disable)</label>
-                    <input type="number" id="inputMaxHistory" class="form-control" placeholder="0" name="history" value="@Model.History" required>
-                    <label for="inputVoteThreshold">Song Vote Threshold to skip Song (0 to disable)</label>
-                    <input type="number" id="inputVoteThreshold" class="form-control" placeholder="0" name="threshold" value="@Model.Threshold" required>
-                    <br />
-                    <button type="submit" class="btn btn-primary" id="setup-next-account">Save</button>
-                </form>
+                <p>Modules are simple python scripts designed to provide additional functionality to GrooveCaster.</p>
+                <p>Any module action (adding, editing, enabling, disabling, removing) will cause all modules to reload.</p>
+                @foreach (var s_Pair in @Model.Errors)
+                {
+                    <div class="alert alert-danger">Module "@s_Pair.Key" failed to load:<br/>@s_Pair.Value</div>
+                }
+
+                @foreach (var s_Module in @Model.Modules)
+                {
+                    <div class="panel panel-default module-panel">
+                        <div class="panel-heading">@s_Module.DisplayName (@s_Module.Name)</div>
+                        <div class="panel-body">
+                            <p>@s_Module.Description</p>
+                            <a class="btn btn-primary" href="/modules/edit/@s_Module.Name">Edit</a>
+                            @if (s_Module.Enabled)
+                            {
+                                <a class="btn btn-warning" href="/modules/disable/@s_Module.Name">Disable</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-success" href="/modules/enable/@s_Module.Name">Enable</a>
+                            }
+                            <a class="btn btn-danger" href="/modules/delete/@s_Module.Name">Delete</a>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -1,10 +1,10 @@
 ﻿using System;
-using GrooveCasterServer.Models;
+using GrooveCaster.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
 using ServiceStack.OrmLite;
 
-namespace GrooveCasterServer.Managers
+namespace GrooveCaster.Managers
 {
     public static class UserManager
     {
@@ -25,7 +25,7 @@ namespace GrooveCasterServer.Managers
             Program.Library.RegisterEventHandler(ClientEvent.AuthenticationFailed, OnAuthenticationFailed);
         }
 
-        public static void Authenticate()
+        internal static void Authenticate()
         {
             if (Authenticating)
                 return;
@@ -97,50 +97,6 @@ namespace GrooveCasterServer.Managers
         {
             Authenticating = false;
             AuthenticationResult = AuthenticationResult.InternalError;
-        }
-
-        public static void GuestUser(Int64 p_UserID, String p_UserName)
-        {
-            if (Program.Library.Broadcast.SpecialGuests.Contains(p_UserID))
-            {
-                Program.Library.Broadcast.RemoveSpecialGuest(p_UserID);
-                return;
-            }
-
-            var s_SpecialGuest = GetGuestForUserID(p_UserID);
-
-            if (s_SpecialGuest == null)
-            {
-                Program.Library.Chat.SendChatMessage("Sorry " + p_UserName + ", but you don't have permission to use this feature.");
-                return;
-            }
-
-            Program.Library.Broadcast.AddSpecialGuest(s_SpecialGuest.UserID, s_SpecialGuest.Permissions);
-        }
-
-        public static void AddGuest(Int64 p_UserID, String p_Name)
-        {
-            
-        }
-
-        public static void RemoveGuest(Int64 p_UserID)
-        {
-            
-        }
-
-        public static void UnguestAll()
-        {
-            foreach (var s_UserID in Program.Library.Broadcast.SpecialGuests)
-            {
-                Program.Library.Broadcast.RemoveSpecialGuest(s_UserID);
-                return;
-            }
-        }
-
-        public static SpecialGuest GetGuestForUserID(Int64 p_UserID)
-        {
-            using (var s_Db = Program.DbConnectionString.OpenDbConnection())
-                return s_Db.SingleById<SpecialGuest>(p_UserID);
         }
     }
 }
