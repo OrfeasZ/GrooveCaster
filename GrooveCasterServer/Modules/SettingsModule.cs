@@ -28,7 +28,8 @@ namespace GrooveCaster.Modules
                     History = SettingsManager.MaxHistorySongs(),
                     Threshold = SettingsManager.SongVoteThreshold(),
                     Title = BroadcastManager.GetBroadcastName(),
-                    Description = BroadcastManager.GetBroadcastDescription()
+                    Description = BroadcastManager.GetBroadcastDescription(),
+                    CommandPrefix = SettingsManager.CommandPrefix().ToString()
                 }];
             };
 
@@ -41,6 +42,7 @@ namespace GrooveCaster.Modules
 
                 SettingsManager.MaxHistorySongs(s_Request.History);
                 SettingsManager.SongVoteThreshold(s_Request.Threshold);
+                SettingsManager.CommandPrefix(s_Request.Prefix[0]);
 
                 using (var s_Db = Program.DbConnectionString.OpenDbConnection())
                 {
@@ -62,7 +64,8 @@ namespace GrooveCaster.Modules
                     History = SettingsManager.MaxHistorySongs(),
                     Threshold = SettingsManager.SongVoteThreshold(),
                     Title = BroadcastManager.GetBroadcastName(),
-                    Description = BroadcastManager.GetBroadcastDescription()
+                    Description = BroadcastManager.GetBroadcastDescription(),
+                    CommandPrefix = SettingsManager.CommandPrefix().ToString()
                 }];
             };
 
