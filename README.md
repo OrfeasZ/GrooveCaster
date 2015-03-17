@@ -115,7 +115,7 @@ In order to do that, you first need to login to the admin dashboard by accessing
 
 The default credentials are `admin` as a username and `admin` as a password.
 
-After you've successfully logged in, you'll be presented with the setup wizard, where you will be required to setup your GrooveShark account, as long as the details of your broadcast.
+After you've successfully logged in, you'll be presented with the setup wizard, where you will be required to setup your GrooveShark account, as well as the details of your broadcast.
 
 Once you've finished the setup wizard you will be redirected to the admin dashboard, from where you can manage the settings of the bot, your song collection, special guests, and additional users with access to the admin dashboard.
 
