@@ -212,6 +212,9 @@
     <Content Include="Content\js\typeahead.bundle.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\js\underscore-min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Licenses\IronPython.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -42,16 +42,26 @@
                     <a href="/songs/add" class="btn btn-primary btn-sm">Add Song</a>
                     <a href="/songs/import" class="btn btn-primary btn-sm" id="import-guests">Import From GS Collection</a>
                 </h1>
-                <div class="list-group">
-					@Each.Songs
-                        <div class="list-group-item">
-                            <a class="badge error" href="/songs/delete/@Current.SongID">x</a>
-                            <strong>@Current.SongName</strong>&nbsp;&mdash;&nbsp;<span>@Current.ArtistName &bull; @Current.AlbumName</span>
-                        </div>
-                    @EndEach
+                <div class="list-group" id="songs-list">
                 </div>
             </div>
         </div>
     </div>
 </div>
 @EndSection['Content']
+
+@Section['Scripts']
+
+<script type="application/javascript">
+$.getJSON('/songs/all.json', function(p_Data) {
+	var s_Items = '';
+
+	for (var i = 0; i < p_Data.length; ++i)
+		s_Items += ('<div class="list-group-item"><a class="badge error" href="/songs/delete/' + _.escape(p_Data[i].SongID) + '">x</a><strong>' + 
+		_.escape(p_Data[i].SongName) + '</strong>&nbsp;&mdash;&nbsp;<span>' + _.escape(p_Data[i].ArtistName) + ' &bull; ' + _.escape(p_Data[i].AlbumName) + '</span></div>');
+
+	$("#songs-list").append($(s_Items));
+});
+</script>
+
+@EndSection['Scripts']

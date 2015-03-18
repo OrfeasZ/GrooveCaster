@@ -46,7 +46,7 @@
                     <input type="text" class="typeahead" placeholder="User Name" id="user-search-input">
                 </label>
                 <br /><br />
-                <form action="/guests/add" method="POST" id="guest-add-form">
+                <form action="/guests/add" method="POST" id="guest-add-form" data-permissions="6">
                     <label>
                         User ID
                         <input type="number" name="user" class="form-control" id="user-input" placeholder="User ID" required autofocus />
@@ -81,10 +81,11 @@
                     </label>
                     <br />
                     <label>
-                        Channel Permissions
-                        <input type="number" class="form-control" placeholder="0" name="permissions" value="6" required>
+                        <button type="button" class="btn btn-default permissions-btn">Channel Permissions</button>
+                        <input type="hidden" name="permissions" value="6">
                     </label>
-                    <br /><br />
+					<br/>
+					<br/>
                     <button type="submit" class="btn btn-primary">Add</button>
                 </form>
             </div>
@@ -92,3 +93,146 @@
     </div>
 </div>
 @EndSection['Content']
+
+
+@Section['Scripts']
+
+<script type="text/javascript">
+var GetContent = function(p_Permissions)
+{
+	var s_Content = '';
+
+	s_Content += '<button type="button" class="btn auto-approve-btn btn-xs';
+	s_Content += (p_Permissions & 1) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Add Songs</button>';
+
+	s_Content += '<button type="button" class="btn suggestions-btn btn-xs';
+	s_Content += (p_Permissions & 2) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Manage Suggestions</button>';
+
+	s_Content += '<button type="button" class="btn chat-moderate-btn btn-xs';
+	s_Content += (p_Permissions & 4) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Moderate Chat</button>';
+
+	s_Content += '<button type="button" class="btn metadata-btn btn-xs';
+	s_Content += (p_Permissions & 8) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Change Details</button>';
+
+	s_Content += '<button type="button" class="btn features-btn btn-xs';
+	s_Content += (p_Permissions & 16) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Toggle Chat/Suggestions</button>';
+
+	s_Content += '<button type="button" class="btn callouts-btn btn-xs';
+	s_Content += (p_Permissions & 32) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Make Recordings</button>';
+
+	s_Content += '<button type="button" class="btn play-next-btn btn-xs';
+	s_Content += (p_Permissions & 64) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Override Next Song</button>';
+
+	return s_Content;
+};
+
+var s_Form = $("#guest-add-form");
+var s_Permissions = parseInt($("#guest-add-form").attr('data-permissions'), 10);
+var s_PermissionsInput = $("#guest-add-form").find('input[name="permissions"]');
+
+var s_Parent = $("#guest-add-form").find('.permissions-btn').popover({
+	placement: 'right',
+	html: true,
+	content: GetContent(s_Permissions)
+}).parent();
+
+s_Parent.on('click', 'button.auto-approve-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~1;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 1;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.suggestions-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~2;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 2;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.chat-moderate-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~4;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 4;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.metadata-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~8;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 8;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.features-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~16;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 16;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.callouts-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~32;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 32;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.play-next-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~64;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 64;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+</script>
+
+@EndSection['Scripts']

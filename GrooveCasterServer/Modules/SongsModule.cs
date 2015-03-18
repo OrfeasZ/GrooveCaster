@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using GrooveCaster.Managers;
 using GrooveCaster.Models;
 using GS.Lib.Models;
@@ -8,6 +9,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
+using Newtonsoft.Json;
 using ServiceStack.OrmLite;
 
 namespace GrooveCaster.Modules
@@ -20,8 +22,22 @@ namespace GrooveCaster.Modules
             
             Get["/songs"] = p_Parameters =>
             {
+                return View["Songs", new { SuperUser = Context.CurrentUser.Claims.Contains("super") }];
+            };
+
+            Get["/songs/all.json"] = p_Parameters =>
+            {
                 using (var s_Db = Database.GetConnection())
-                    return View["Songs", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Songs = s_Db.Select<SongEntry>() }];
+                {
+                    var s_Serialized = JsonConvert.SerializeObject(s_Db.Select<SongEntry>());
+                    var s_Encoded = Encoding.UTF8.GetBytes(s_Serialized);
+
+                    return new Response()
+                    {
+                        ContentType = "application/json",
+                        Contents = p_Writer => p_Writer.Write(s_Encoded, 0, s_Encoded.Length)
+                    };
+                }
             };
 
             Get["/songs/add"] = p_Parameters =>

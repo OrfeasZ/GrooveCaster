@@ -47,7 +47,7 @@
                     <div class="panel panel-default guest-panel">
                         <div class="panel-heading">@Current.Username (@Current.UserID)</div>
                         <div class="panel-body">
-                            <form action="/guests/update/@Current.UserID" method="POST" class="guest-form">
+                            <form action="/guests/update/@Current.UserID" method="POST" class="guest-form" data-id="@Current.UserID" data-permissions="@Current.Permissions">
                                 <label>
                                     @If.CanEditTitle
                                         <input type="checkbox" name="title" checked="checked"/>
@@ -94,11 +94,10 @@
                                     Super Guest
                                 </label>
                                 <br/>
-                                <label>
-                                    Channel Permissions
-                                    <input type="number" class="form-control" placeholder="0" name="permissions" value="@Current.Permissions" required>
+                                <label class="channel-perm-label">
+                                    <button type="button" class="btn btn-default permissions-btn">Channel Permissions</button>
+                                    <input type="hidden" name="permissions" value="@Current.Permissions">
                                 </label>
-                                <br/><br />
                                 <a href="/guests/delete/@Current.UserID" class="btn btn-danger">Delete</a>
                                 <button type="submit" class="btn btn-primary">Save</button>
                             </form>
@@ -110,3 +109,147 @@
     </div>
 </div>
 @EndSection['Content']
+
+@Section['Scripts']
+
+<script type="text/javascript">
+var GetContent = function(p_Permissions)
+{
+	var s_Content = '';
+
+	s_Content += '<button type="button" class="btn auto-approve-btn btn-xs';
+	s_Content += (p_Permissions & 1) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Add Songs</button>';
+
+	s_Content += '<button type="button" class="btn suggestions-btn btn-xs';
+	s_Content += (p_Permissions & 2) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Manage Suggestions</button>';
+
+	s_Content += '<button type="button" class="btn chat-moderate-btn btn-xs';
+	s_Content += (p_Permissions & 4) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Moderate Chat</button>';
+
+	s_Content += '<button type="button" class="btn metadata-btn btn-xs';
+	s_Content += (p_Permissions & 8) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Change Details</button>';
+
+	s_Content += '<button type="button" class="btn features-btn btn-xs';
+	s_Content += (p_Permissions & 16) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Toggle Chat/Suggestions</button>';
+
+	s_Content += '<button type="button" class="btn callouts-btn btn-xs';
+	s_Content += (p_Permissions & 32) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Make Recordings</button>';
+
+	s_Content += '<button type="button" class="btn play-next-btn btn-xs';
+	s_Content += (p_Permissions & 64) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Override Next Song</button>';
+
+	return s_Content;
+};
+
+$('.guest-form').each(function() {
+	var s_Form = $(this);
+	var s_Permissions = parseInt($(this).attr('data-permissions'), 10);
+	var s_PermissionsInput = $(this).find('input[name="permissions"]');
+
+	var s_Parent = $(this).find('.permissions-btn').popover({
+		placement: 'bottom',
+		html: true,
+		content: GetContent(s_Permissions)
+	}).parent();
+
+	s_Parent.on('click', 'button.auto-approve-btn', function() {
+		if ($(this).hasClass('btn-primary')) {
+			$(this).addClass('btn-default').removeClass('btn-primary');
+			s_Permissions &= ~1;
+		} else {
+			$(this).removeClass('btn-default').addClass('btn-primary');
+			s_Permissions |= 1;
+		}
+
+		s_Form.attr('data-permissions', s_Permissions);
+		s_PermissionsInput.val(s_Permissions);
+	});
+
+	s_Parent.on('click', 'button.suggestions-btn', function() {
+		if ($(this).hasClass('btn-primary')) {
+			$(this).addClass('btn-default').removeClass('btn-primary');
+			s_Permissions &= ~2;
+		} else {
+			$(this).removeClass('btn-default').addClass('btn-primary');
+			s_Permissions |= 2;
+		}
+
+		s_Form.attr('data-permissions', s_Permissions);
+		s_PermissionsInput.val(s_Permissions);
+	});
+
+	s_Parent.on('click', 'button.chat-moderate-btn', function() {
+		if ($(this).hasClass('btn-primary')) {
+			$(this).addClass('btn-default').removeClass('btn-primary');
+			s_Permissions &= ~4;
+		} else {
+			$(this).removeClass('btn-default').addClass('btn-primary');
+			s_Permissions |= 4;
+		}
+
+		s_Form.attr('data-permissions', s_Permissions);
+		s_PermissionsInput.val(s_Permissions);
+	});
+
+	s_Parent.on('click', 'button.metadata-btn', function() {
+		if ($(this).hasClass('btn-primary')) {
+			$(this).addClass('btn-default').removeClass('btn-primary');
+			s_Permissions &= ~8;
+		} else {
+			$(this).removeClass('btn-default').addClass('btn-primary');
+			s_Permissions |= 8;
+		}
+
+		s_Form.attr('data-permissions', s_Permissions);
+		s_PermissionsInput.val(s_Permissions);
+	});
+
+	s_Parent.on('click', 'button.features-btn', function() {
+		if ($(this).hasClass('btn-primary')) {
+			$(this).addClass('btn-default').removeClass('btn-primary');
+			s_Permissions &= ~16;
+		} else {
+			$(this).removeClass('btn-default').addClass('btn-primary');
+			s_Permissions |= 16;
+		}
+
+		s_Form.attr('data-permissions', s_Permissions);
+		s_PermissionsInput.val(s_Permissions);
+	});
+
+	s_Parent.on('click', 'button.callouts-btn', function() {
+		if ($(this).hasClass('btn-primary')) {
+			$(this).addClass('btn-default').removeClass('btn-primary');
+			s_Permissions &= ~32;
+		} else {
+			$(this).removeClass('btn-default').addClass('btn-primary');
+			s_Permissions |= 32;
+		}
+
+		s_Form.attr('data-permissions', s_Permissions);
+		s_PermissionsInput.val(s_Permissions);
+	});
+
+	s_Parent.on('click', 'button.play-next-btn', function() {
+		if ($(this).hasClass('btn-primary')) {
+			$(this).addClass('btn-default').removeClass('btn-primary');
+			s_Permissions &= ~64;
+		} else {
+			$(this).removeClass('btn-default').addClass('btn-primary');
+			s_Permissions |= 64;
+		}
+
+		s_Form.attr('data-permissions', s_Permissions);
+		s_PermissionsInput.val(s_Permissions);
+	});
+});
+</script>
+
+@EndSection['Scripts']

@@ -312,3 +312,17 @@ body {
     min-width: 900px;
     min-height: 300px;
 }
+
+.channel-perm-label {
+    text-align: center;
+    display: block;
+    padding: 10px 0;
+}
+
+.guest-form .popover-content, #guest-add-form .popover-content {
+    text-align: center;
+}
+
+.guest-form .popover-content button, #guest-add-form .popover-content button {
+    margin: 4px;
+}
