@@ -43,7 +43,7 @@
                 <form action="/modules/edit/@Model.Data.Name" method="POST">
                     @If.HasError
                         <div class="alert alert-danger">@Error</div>
-					@Endif
+					@EndIf
                     <label>
                         Module Name<br/>
                         <input type="text" class="form-control" placeholder="Display Name" name="display" value="@Model.Data.DisplayName" required autofocus/>

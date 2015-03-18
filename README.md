@@ -28,13 +28,15 @@ Installation
 For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
 However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.
 
-Latest Release: **1.1.0.0**
+Latest Release: **1.1.2.0**
 
-Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.0.0/GrooveCaster-1.1.0.0-Win32.zip)  
-Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.0.0/GrooveCaster-1.1.0.0-Mono.zip)
+Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.2.0/GrooveCaster-1.1.2.0-Win32.zip)  
+Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.2.0/GrooveCaster-1.1.2.0-Mono.zip)
 
 There's no installation required.  
 Simply download the binaries archive from the links above, and extract them at some location on your drive.
+
+If you wish to upgrade GrooveCaster, simply download the latest archive, delete all previous files (except for `gcaster.sqlite`), and extract the fresh archive in the same directory.
 
 ### Windows Environments
 If you want to run GrooveCaster on a Windows environment you first need to make sure you have .NET Framework 4.5 installed. If you don't already have it installed, make sure to grab it from [here](http://www.microsoft.com/en-us/download/details.aspx?id=40779).
@@ -141,20 +143,17 @@ This information doesn't update automatically currently, so you will have to ref
 ### Guest Management
 The guest management page provides a detailed listing of users with special guest permissions, while also allowing you to edit/delete them, add new guests, and import guests.
 
-The process of adding guests via the admin dashboard is currently relatively manual, but will be improved in the future.
-
 #### Adding Guests
 
 To add a new guest, click on the `Add Guest` button, and fill in the required fields in the page you'll be presented with.
 
-For now, the easiest way of getting the User ID of a user is by having them join your broadcast and type `!ping` in chat. GrooveCaster will respond with a message containing their User ID.
+You can easily search for a user via the provided search-bar, which will automatically provide suggestions when you start typing a users name. However, if you're not sure you've found the correct user, have them join your broadcast and type `!ping` in chat (while having the ping module enabled). GrooveCaster will respond with a message containing their User ID, which you can then use in this page.
 
 The User Name field is only for personal reference, and doesn't have to match the username of the GrooveShark user.
 
-The Channel Permissions field outlines the special guest permissions that are granted to the user.  
-For now, you should leave this to the default value (`6`).
+Clicking on the `Channel Permissions` button you will be presented with a choice of toggle-able special guest permissions that are granted to the user.  
 
-This will give the user suggestion approval/rejection permissions, and the permission to ban/unban users from the broadcast.
+The default selections will give the user suggestion approval/rejection permissions, and the permission to ban/unban users from the broadcast.
 
 #### Importing Guests
 For ease of use, GrooveCaster provides the option to import all the users your GrooveShark account follows as special guests.
@@ -265,7 +264,6 @@ Upcoming Features
 -----------------------
 This is a list of features and fixes that are currently being worked on:
 
- - Better management interface for Guest permissions
  - Broadcast statistics in dashboard
  - Automatic service installation on Windows
  - More advanced logging
