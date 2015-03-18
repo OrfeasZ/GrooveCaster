@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using GrooveCaster.Managers;
@@ -32,21 +33,23 @@ namespace GrooveCaster.Modules
                         return new RedirectResponse("/setup");
                 }
 
-                var s_Status = 0; // Broadcasting
+                var s_Error = false;
+                var s_Message = "Broadcast is created and broadcasting!";
 
                 if (UserManager.Authenticating)
                 {
-                    s_Status = 1; // Authenticating
+                    s_Message = "Authenticating with the GS Backend...";
                 }
                 else if (!UserManager.Authenticating && UserManager.AuthenticationResult != AuthenticationResult.Success)
                 {
-                    s_Status = 2; // Authentication Failure
+                    s_Message = "Authentication failed. Please check your settings.";
+                    s_Error = true;
                 }
                 else if (!UserManager.Authenticating &&
                          UserManager.AuthenticationResult == AuthenticationResult.Success &&
                          BroadcastManager.CreatingBroadcast)
                 {
-                    s_Status = 3; // Creating Broadcast
+                    s_Message = "Creating and initializing broadcast parameters...";
                 }
                 else if (!UserManager.Authenticating &&
                          UserManager.AuthenticationResult == AuthenticationResult.Success &&
@@ -54,26 +57,30 @@ namespace GrooveCaster.Modules
                          Program.Library.Broadcast.ActiveBroadcastID == null &&
                          QueueManager.CollectionSongs.Count < 2)
                 {
-                    s_Status = 4; // Not enough songs
+                    s_Message = "Broadcast didn't start. Not enough songs in collection. Use the \"Song Management\" interface to add songs.";
+                    s_Error = true;
                 }
                 else if (!UserManager.Authenticating &&
                          UserManager.AuthenticationResult == AuthenticationResult.Success &&
                          !BroadcastManager.CreatingBroadcast &&
                          Program.Library.Broadcast.ActiveBroadcastID == null)
                 {
-                    s_Status = 5; // Broadcast creation failed.
+                    s_Message = "Broadcast creation failed. Please check your settings.";
+                    s_Error = true;
                 }
 
                 return View["Index", new
                 {
-                    Status = s_Status,
-                    ModuleErrors = ModuleManager.LoadExceptions
+                    Message = s_Message,
+                    Error = s_Error,
+                    SuperUser = Context.CurrentUser.Claims.Contains("super"),
+                    ModuleErrors = ModuleManager.LoadExceptions.Count > 0 && Context.CurrentUser.Claims.Contains("super")
                 }];
             };
 
             Get["/me/settings"] = p_Parameters =>
             {
-                return View["Settings", new { Error = "" }];
+                return View["Settings", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), HasError = false, Error = "" }];
             };
 
             Post["/me/settings"] = p_Parameters =>
@@ -81,7 +88,7 @@ namespace GrooveCaster.Modules
                 var s_Request = this.Bind<UpdateAccountSettingsRequest>();
 
                 if (s_Request.Password != s_Request.Repeat)
-                    return View["Settings", new { Error = "The passwords you specified don't match." }];
+                    return View["Settings", new { HasError = true, Error = "The passwords you specified don't match." }];
 
                 using (var s_Db = Database.GetConnection())
                 {
@@ -94,7 +101,7 @@ namespace GrooveCaster.Modules
                         var s_HashedPassword = BitConverter.ToString(s_HashBytes).Replace("-", "").ToLowerInvariant();
 
                         if (s_HashedPassword != s_User.Password)
-                            return View["Settings", new { Error = "Your current password doesn't match the one on records." }];
+                            return View["Settings", new { HasError = true, Error = "Your current password doesn't match the one on records." }];
 
                         // Hash new password.
                         s_HashBytes = s_Sha1.ComputeHash(Encoding.UTF8.GetBytes(s_Request.Password));
@@ -102,8 +109,8 @@ namespace GrooveCaster.Modules
 
                         s_User.Password = s_HashedPassword;
                         s_Db.Update(s_User);
-                        
-                        return View["Settings", new { Error = "" }];
+
+                        return View["Settings", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), HasError = false, Error = "" }];
                     }
                 }
             };

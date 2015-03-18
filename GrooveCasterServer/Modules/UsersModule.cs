@@ -23,7 +23,7 @@ namespace GrooveCaster.Modules
                     return new RedirectResponse("/");
 
                 using (var s_Db = Database.GetConnection())
-                    return View["Users", new { Users = s_Db.Select<AdminUser>() }];
+                    return View["Users", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Users = s_Db.Select<AdminUser>() }];
             };
 
             Get["/users/add"] = p_Parameters =>
@@ -31,7 +31,7 @@ namespace GrooveCaster.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                return View["AddUser", new { Error = "" }];
+                return View["AddUser", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Error = "" }];
             };
 
             Post["/users/add"] = p_Parameters =>
@@ -42,7 +42,7 @@ namespace GrooveCaster.Modules
                 var s_Request = this.Bind<LoginRequest>();
 
                 if (s_Request.Username.Length < 3 || s_Request.Password.Length < 3)
-                    return View["AddUser", new { Error = "The information you provided is invalid." }];
+                    return View["AddUser", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Error = "The information you provided is invalid." }];
 
                 using (var s_Db = Database.GetConnection())
                 {
@@ -50,7 +50,7 @@ namespace GrooveCaster.Modules
                     var s_User = s_Db.Single<AdminUser>(p_User => p_User.Username == s_Username);
 
                     if (s_User != null)
-                        return View["AddUser", new { Error = "A user with the specified username already exists." }];
+                        return View["AddUser", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Error = "A user with the specified username already exists." }];
 
                     using (SHA256 s_Sha1 = new SHA256Managed())
                     {

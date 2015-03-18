@@ -318,11 +318,12 @@ namespace GrooveCaster.Managers
 
             s_Songs = s_Songs.OrderBy(s_Song => Guid.NewGuid()).ToArray();
 
+            var s_QueueIDs = new List<Int64>();
+
             for (var i = 0; i < s_SongCount; ++i)
-            {
-                var s_Song = s_Songs[i];
-                Program.Library.Broadcast.MoveSongs(new List<Int64> { s_Song.QueueID }, Program.Library.Queue.GetPlayingSongIndex() + 1 + i);
-            }
+                s_QueueIDs.Add(s_Songs[i].QueueID);
+
+            Program.Library.Broadcast.MoveSongs(s_QueueIDs, Program.Library.Queue.GetPlayingSongIndex() + 1);
 
             Program.Library.Chat.SendChatMessage("Shuffled " + s_SongCount + " songs.");
         }

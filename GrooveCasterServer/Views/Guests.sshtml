@@ -1,9 +1,6 @@
-﻿@using System.Linq
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
+﻿@Master['_Layout.sshtml']
 
+@Section['Content']
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -32,12 +29,11 @@
                     <li><a href="/">Overview</a></li>
                     <li class="active"><a href="/guests">Guest Management <span class="sr-only">(current)</span></a></li>
                     <li><a href="/songs">Song Management</a></li>
-                    @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
-                    {
+                    @If.SuperUser
                         <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li><a href="/users">User Management</a></li>
-                    }
+                    @EndIf
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -47,80 +43,70 @@
                     <a href="/guests/import" class="btn btn-primary btn-sm" id="import-guests">Import Followed Users</a>
                 </h1>
                 <p>Special Guests are GrooveShark Users who have special guest access in your broadcast, allowing them to perform several actions like approving/rejecting suggestions, managing the queue, and more.</p>
-                @foreach (var s_Guest in @Model.Guests)
-                {
+                @Each.Guests
                     <div class="panel panel-default guest-panel">
-                        <div class="panel-heading">@s_Guest.Username (@s_Guest.UserID)</div>
+                        <div class="panel-heading">@Current.Username (@Current.UserID)</div>
                         <div class="panel-body">
-                            <form action="/guests/update/@s_Guest.UserID" method="POST" class="guest-form">
+                            <form action="/guests/update/@Current.UserID" method="POST" class="guest-form">
                                 <label>
-                                    @if (s_Guest.CanEditTitle)
-                                    {
+                                    @If.CanEditTitle
                                         <input type="checkbox" name="title" checked="checked"/>
-                                    }
-                                    else
-                                    {
+                                    @EndIf
+									@IfNot.CanEditTitle
                                         <input type="checkbox" name="title" />
-                                    }
+                                    @EndIf
                                     Can Edit Title
                                 </label>
                                 <label>
-                                    @if (s_Guest.CanEditDescription)
-                                    {
+                                    @If.CanEditDescription
                                         <input type="checkbox" name="description" checked="checked"/>
-                                    }
-                                    else
-                                    {
+                                    @EndIf
+									@IfNot.CanEditDescription
                                         <input type="checkbox" name="description" />
-                                    }
+                                    @EndIf
                                     Can Edit Description
                                 </label>
                                 <label>
-                                    @if (s_Guest.CanAddPermanentGuests)
-                                    {
+                                    @If.CanAddPermanentGuests
                                         <input type="checkbox" name="permanent" checked="checked"/>
-                                    }
-                                    else
-                                    {
+                                    @EndIf
+                                    @IfNot.CanAddPermanentGuests
                                         <input type="checkbox" name="permanent" />
-                                    }
+                                    @EndIf
                                     Can Add Permanent Guests
                                 </label>
                                 <label>
-                                    @if (s_Guest.CanAddTemporaryGuests)
-                                    {
+                                    @If.CanAddTemporaryGuests
                                         <input type="checkbox" name="temporary" checked="checked"/>
-                                    }
-                                    else
-                                    {
+                                    @EndIf
+									@IfNot.CanAddTemporaryGuests
                                         <input type="checkbox" name="temporary" />
-                                    }
+                                    @EndIf
                                     Can Add Temporary Guests
                                 </label>
                                 <label>
-                                    @if (s_Guest.SuperGuest)
-                                    {
+                                    @If.SuperGuest
                                         <input type="checkbox" name="super" checked="checked"/>
-                                    }
-                                    else
-                                    {
+                                    @EndIf
+									@IfNot.SuperGuest
                                         <input type="checkbox" name="super"/>
-                                    }
+                                    @EndIf
                                     Super Guest
                                 </label>
                                 <br/>
                                 <label>
                                     Channel Permissions
-                                    <input type="number" class="form-control" placeholder="0" name="permissions" value="@((byte) s_Guest.Permissions)" required>
+                                    <input type="number" class="form-control" placeholder="0" name="permissions" value="@Current.Permissions" required>
                                 </label>
                                 <br/><br />
-                                <a href="/guests/delete/@s_Guest.UserID" class="btn btn-danger">Delete</a>
+                                <a href="/guests/delete/@Current.UserID" class="btn btn-danger">Delete</a>
                                 <button type="submit" class="btn btn-primary">Save</button>
                             </form>
                         </div>
                     </div>
-                }
+				@EndEach
             </div>
         </div>
     </div>
 </div>
+@EndSection['Content']

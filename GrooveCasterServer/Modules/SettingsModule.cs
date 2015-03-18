@@ -25,6 +25,7 @@ namespace GrooveCaster.Modules
 
                 return View["CoreSettings", new
                 {
+                    SuperUser = Context.CurrentUser.Claims.Contains("super"),
                     History = SettingsManager.MaxHistorySongs(),
                     Threshold = SettingsManager.SongVoteThreshold(),
                     Title = BroadcastManager.GetBroadcastName(),
@@ -61,6 +62,7 @@ namespace GrooveCaster.Modules
 
                 return View["CoreSettings", new
                 {
+                    SuperUser = Context.CurrentUser.Claims.Contains("super"),
                     History = SettingsManager.MaxHistorySongs(),
                     Threshold = SettingsManager.SongVoteThreshold(),
                     Title = BroadcastManager.GetBroadcastName(),

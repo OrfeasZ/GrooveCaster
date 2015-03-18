@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GrooveCaster.Models;
 using GS.Lib.Enums;
 using Nancy;
@@ -19,9 +21,24 @@ namespace GrooveCaster.Modules
             {
                 using (var s_Db = Database.GetConnection())
                 {
-                    var s_Guests = s_Db.Select<SpecialGuest>();
+                    var s_Guests = new List<dynamic>();
 
-                    return View["Guests", new { Guests = s_Guests }];
+                    foreach (var s_Guest in s_Db.Select<SpecialGuest>())
+                    {
+                        s_Guests.Add(new
+                        {
+                            UserID = s_Guest.UserID,
+                            Username = s_Guest.Username,
+                            Permissions = (byte) s_Guest.Permissions,
+                            CanEditTitle = s_Guest.CanEditTitle,
+                            CanEditDescription = s_Guest.CanEditDescription,
+                            CanAddPermanentGuests = s_Guest.CanAddPermanentGuests,
+                            CanAddTemporaryGuests = s_Guest.CanAddTemporaryGuests,
+                            SuperGuest = s_Guest.SuperGuest
+                        });
+                    }
+
+                    return View["Guests", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Guests = s_Guests }];
                 }
             };
 
@@ -70,7 +87,7 @@ namespace GrooveCaster.Modules
 
             Get["/guests/add"] = p_Parameters =>
             {
-                return View["AddGuest"];
+                return View["AddGuest", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), }];
             };
 
             Post["/guests/add"] = p_Parameters =>

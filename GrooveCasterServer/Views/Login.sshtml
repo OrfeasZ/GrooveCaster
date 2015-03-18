@@ -1,8 +1,6 @@
-﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
+﻿@Master['_Layout.sshtml']
 
+@Section['Content']
 <div class="container">
 
     <form class="form-signin" action="/login" method="POST">
@@ -15,3 +13,4 @@
     </form>
 
 </div>
+@EndSection

@@ -1,8 +1,6 @@
-﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
+﻿@Master['_Layout.sshtml']
 
+@Section['Content']
 <div class="container">
 
     @foreach (var s_Library in Model.Libraries)
@@ -15,3 +13,4 @@
     }
 
 </div>
+@EndSection['content']
