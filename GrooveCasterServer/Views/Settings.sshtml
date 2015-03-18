@@ -1,10 +1,6 @@
-﻿@using System
+﻿@Master['_Layout.sshtml']
 
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
-
+@Section['Content']
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -36,10 +32,9 @@
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">Account Settings</h1>
                 <form action="/me/settings" method="POST">
-                    @if (!String.IsNullOrWhiteSpace(Model.Error))
-                    {
+                    @If.HasError
                         <div class="alert alert-danger">@Model.Error</div>
-                    }
+                    @EndIf
                     <label for="inputOldUsername" class="sr-only">Current Password</label>
                     <input type="password" id="inputOldUsername" class="form-control" placeholder="Current Password" name="verification" required autofocus>
                     <label for="inputPassword" class="sr-only">New Password</label>
@@ -53,3 +48,4 @@
         </div>
     </div>
 </div>
+@EndSection['Content']

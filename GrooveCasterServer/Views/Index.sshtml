@@ -1,9 +1,6 @@
-﻿@using System.Linq
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
+﻿@Master['_Layout.sshtml']
 
+@Section['Content']
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -29,33 +26,40 @@
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
-                    <li><a href="/">Overview</a></li>
+                    <li class="active"><a href="/">Overview <span class="sr-only">(current)</span></a></li>
                     <li><a href="/guests">Guest Management</a></li>
-                    <li class="active"><a href="/songs">Song Management <span class="sr-only">(current)</span></a></li>
-                    @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
-                    {
+                    <li><a href="/songs">Song Management</a></li>
+                    @If.SuperUser
                         <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li><a href="/users">User Management</a></li>
-                    }
+                    @EndIf
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">
-                    Song Collection
-                    <a href="/songs/add" class="btn btn-primary btn-sm">Add Song</a>
-                    <a href="/songs/import" class="btn btn-primary btn-sm" id="import-guests">Import From GS Collection</a>
-                </h1>
-                <div class="list-group">
-                    @foreach (var s_Song in Model.Songs)
-                    {
-                        <div class="list-group-item">
-                            <a class="badge error" href="/songs/delete/@s_Song.SongID">x</a>
-                            <strong>@s_Song.SongName</strong>&nbsp;&mdash;&nbsp;<span>@s_Song.ArtistName &bull; @s_Song.AlbumName</span>
+                <h1 class="page-header">Dashboard</h1>
+                <h2 class="sub-header">Server Status</h2>
+                <div>
+                    @If.NeedsUpdate
+                        <div class="alert alert-warning">
+                            It looks like your version of GrooveCaster is out of date (Current: @Program.GetVersion(), Latest: @Program.LatestVersion).<br/>
+                            Please visit <a href="http://orfeasz.github.io/GrooveCaster/" target="_blank">http://orfeasz.github.io/GrooveCaster/</a> for instructions on how to update.
                         </div>
-                    }
+                    @EndIf
+                    
+                    @If.Error
+                        <div class="alert alert-danger">@Model.Message</div>
+                    @EndIf
+                    @IfNot.Error
+                        <div class="alert alert-info">@Model.Message</div>
+                    @EndIf
+
+                    @If.ModuleErrors
+                        <div class="alert alert-danger">Some modules have failed to load. Please visit the <a href="/modules">modules</a> page for more information.</div>
+					@EndIf
                 </div>
             </div>
         </div>
     </div>
 </div>
+@EndSection['Content']

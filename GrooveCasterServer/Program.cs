@@ -204,6 +204,9 @@ namespace GrooveCaster
             QueueManager.Init();
             SettingsManager.Init();
             UserManager.Init();
+            SuggestionManager.Init();
+
+            // ModuleManager should always load last.
             ModuleManager.Init();
 
             using (var s_Db = Database.GetConnection())

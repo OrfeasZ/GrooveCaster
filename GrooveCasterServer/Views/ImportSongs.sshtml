@@ -1,9 +1,6 @@
-﻿@using System.Linq
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
+﻿@Master['_Layout.sshtml']
 
+@Section['Content']
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -32,12 +29,11 @@
                     <li><a href="/">Overview</a></li>
                     <li><a href="/guests">Guest Management</a></li>
                     <li class="active"><a href="/songs">Song Management <span class="sr-only">(current)</span></a></li>
-                    @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
-                    {
+                    @If.SuperUser
                         <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li><a href="/users">User Management</a></li>
-                    }
+                    @EndIf
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -65,3 +61,4 @@
         </div>
     </div>
 </div>
+@EndSection['Content']

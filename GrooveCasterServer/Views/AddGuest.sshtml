@@ -1,0 +1,238 @@
+﻿@Master['_Layout.sshtml']
+
+@Section['Content']
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">GrooveCaster Admin Dashboard</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/">Dashboard</a></li>
+                <li><a href="/me/settings">Settings</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li><a href="/">Overview</a></li>
+                    <li class="active"><a href="/guests">Guest Management <span class="sr-only">(current)</span></a></li>
+                    <li><a href="/songs">Song Management</a></li>
+                    @If.SuperUser
+                        <li><a href="/modules">Module Management</a></li>
+                        <li><a href="/settings">Core Settings</a></li>
+                        <li><a href="/users">User Management</a></li>
+                    @EndIf
+                </ul>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <h1 class="page-header">Add a new Guest</h1>
+                <p>Guests can manage your broadcast when you're away by approving/rejecting suggestions, skipping unpopular songs, etc.</p>
+                <p>In order to get the UserID of a User, have him join your broadcast and type !ping in chat. The bot should respond with his unique UserID.</p>
+                <p>Note: The name you specify below is just for personal identification purposes and doesn't have to match the user's name in GrooveShark.</p>
+                <label>
+                    Search for a User<br />
+                    <input type="text" class="typeahead" placeholder="User Name" id="user-search-input">
+                </label>
+                <br /><br />
+                <form action="/guests/add" method="POST" id="guest-add-form" data-permissions="6">
+                    <label>
+                        User ID
+                        <input type="number" name="user" class="form-control" id="user-input" placeholder="User ID" required autofocus />
+                    </label>
+                    <br/>
+                    <label>
+                        User Name
+                        <input type="text" name="username" class="form-control" id="user-name-input" placeholder="User Name" required />
+                    </label>
+                    <br />
+                    <label>
+                        <input type="checkbox" name="title"/>
+                        Can Edit Title
+                    </label>
+                    <label>
+                        <input type="checkbox" name="description" />
+                        Can Edit Description
+                    </label>
+                    <br />
+                    <label>
+                        <input type="checkbox" name="permanent" />
+                        Can Add Permanent Guests
+                    </label>
+                    <label>
+                        <input type="checkbox" name="temporary" />
+                        Can Add Temporary Guests
+                    </label>
+                    <br />
+                    <label>
+                        <input type="checkbox" name="super" />
+                        Super Guest
+                    </label>
+                    <br />
+                    <label>
+                        <button type="button" class="btn btn-default permissions-btn">Channel Permissions</button>
+                        <input type="hidden" name="permissions" value="6">
+                    </label>
+					<br/>
+					<br/>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@EndSection['Content']
+
+
+@Section['Scripts']
+
+<script type="text/javascript">
+var GetContent = function(p_Permissions)
+{
+	var s_Content = '';
+
+	s_Content += '<button type="button" class="btn auto-approve-btn btn-xs';
+	s_Content += (p_Permissions & 1) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Add Songs</button>';
+
+	s_Content += '<button type="button" class="btn suggestions-btn btn-xs';
+	s_Content += (p_Permissions & 2) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Manage Suggestions</button>';
+
+	s_Content += '<button type="button" class="btn chat-moderate-btn btn-xs';
+	s_Content += (p_Permissions & 4) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Moderate Chat</button>';
+
+	s_Content += '<button type="button" class="btn metadata-btn btn-xs';
+	s_Content += (p_Permissions & 8) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Change Details</button>';
+
+	s_Content += '<button type="button" class="btn features-btn btn-xs';
+	s_Content += (p_Permissions & 16) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Toggle Chat/Suggestions</button>';
+
+	s_Content += '<button type="button" class="btn callouts-btn btn-xs';
+	s_Content += (p_Permissions & 32) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Make Recordings</button>';
+
+	s_Content += '<button type="button" class="btn play-next-btn btn-xs';
+	s_Content += (p_Permissions & 64) ? ' btn-primary' : ' btn-default';
+	s_Content += '">Override Next Song</button>';
+
+	return s_Content;
+};
+
+var s_Form = $("#guest-add-form");
+var s_Permissions = parseInt($("#guest-add-form").attr('data-permissions'), 10);
+var s_PermissionsInput = $("#guest-add-form").find('input[name="permissions"]');
+
+var s_Parent = $("#guest-add-form").find('.permissions-btn').popover({
+	placement: 'right',
+	html: true,
+	content: GetContent(s_Permissions)
+}).parent();
+
+s_Parent.on('click', 'button.auto-approve-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~1;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 1;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.suggestions-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~2;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 2;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.chat-moderate-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~4;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 4;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.metadata-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~8;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 8;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.features-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~16;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 16;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.callouts-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~32;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 32;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+
+s_Parent.on('click', 'button.play-next-btn', function() {
+	if ($(this).hasClass('btn-primary')) {
+		$(this).addClass('btn-default').removeClass('btn-primary');
+		s_Permissions &= ~64;
+	} else {
+		$(this).removeClass('btn-default').addClass('btn-primary');
+		s_Permissions |= 64;
+	}
+
+	s_Form.attr('data-permissions', s_Permissions);
+	s_PermissionsInput.val(s_Permissions);
+});
+</script>
+
+@EndSection['Scripts']

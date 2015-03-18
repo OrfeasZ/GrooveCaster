@@ -1,9 +1,8 @@
-﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
+﻿@Master['_Layout.sshtml']
 
+@Section['Content']
 <div class="container error-container">
     <h1>An error occurred.</h1>
     <h3>@Html.Raw(Model.ErrorText)</h3>
 </div>
+@EndSection['Content']

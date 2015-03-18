@@ -1,9 +1,6 @@
-﻿@using System.Linq
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
+﻿@Master['_Layout.sshtml']
 
+@Section['Content']
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -32,37 +29,33 @@
                     <li><a href="/">Overview</a></li>
                     <li><a href="/guests">Guest Management</a></li>
                     <li><a href="/songs">Song Management</a></li>
-                    @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
-                    {
+                    @If.SuperUser
                         <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li class="active"><a href="/users">User Management <span class="sr-only">(current)</span></a></li>
-                    }
+					@EndIf
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">
-                    Administrative Users
-                    <a href="/users/add" class="btn btn-primary btn-sm">Add User</a>
-                </h1>
-                <p>Administrative Users are users with access to the Admin Dashboard of GrooveCaster.</p>
-                @foreach (var s_User in @Model.Users)
-                {
-                    <div class="panel panel-default user-panel">
-                        <div class="panel-heading">@s_User.Username (@s_User.UserID)</div>
-                        <div class="panel-body">
-                            @if (s_User.Username == "admin")
-                            {
-                                <a href="#" class="btn btn-danger" disabled>Delete</a>
-                            }
-                            else
-                            {
-                                <a href="/users/delete/@s_User.UserID" class="btn btn-danger">Delete</a>
-                            }
-                        </div>
-                    </div>
-                }
+                <h1 class="page-header">Add a new User</h1>
+                <p>Users are granted access to the GrooveCaster Admin Dashboard, allowing them to manage Special Guests, other Users, Broadcast Settings, etc.</p>
+                <p>Please be careful when providing someone with credentials to such a user as access to this system might compromise your Broadcast.</p>
+
+                <form action="/users/add" method="POST" id="user-add-form">
+                    <label>
+                        Username
+                        <input type="text" name="username" class="form-control" placeholder="Username" required autofocus/>
+                    </label>
+                    <br/>
+                    <label>
+                        Password
+                        <input type="password" name="password" class="form-control" placeholder="Password" required />
+                    </label>
+                    <br /><br />
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+@EndSection['Content']

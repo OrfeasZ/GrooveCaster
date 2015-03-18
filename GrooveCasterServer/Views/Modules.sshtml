@@ -1,10 +1,6 @@
-﻿@using System
-@using System.Linq
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@{
-    Layout = "_Layout.cshtml";
-}
+﻿@Master['_Layout.sshtml']
 
+@Section['Content']
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -33,41 +29,44 @@
                     <li><a href="/">Overview</a></li>
                     <li><a href="/guests">Guest Management</a></li>
                     <li><a href="/songs">Song Management</a></li>
-                    @if (@Html.RenderContext.Context.CurrentUser.Claims.Contains("super"))
-                    {
+                    @If.SuperUser
                         <li class="active"><a href="/modules">Module Management <span class="sr-only">(current)</span></a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li><a href="/users">User Management</a></li>
-                    }
+                    @EndIf
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">
-                    Edit Module
+                    Modules
+                    <a href="/modules/add" class="btn btn-primary btn-sm">New Module</a>
                 </h1>
-                <form action="/modules/edit/@Model.Data.Name" method="POST">
-                    @if (!String.IsNullOrWhiteSpace(Model.Error))
-                    {
-                        <div class="alert alert-danger">@Model.Error</div>
-                    }
-                    <label>
-                        Module Name<br/>
-                        <input type="text" class="form-control" placeholder="Display Name" name="display" value="@Model.Data.DisplayName" required autofocus/>
-                    </label>
-                    <br/>
-                    <label>
-                        Module Description<br/>
-                        <input type="text" class="form-control" placeholder="Description" name="description" style="width: 650px;" value="@Model.Data.Description"/>
-                    </label>
-                    <br/>
-                    <label>
-                        Script<br/>
-                        <textarea class="form-control" placeholder="Python Script" name="script" id="module-script-input">@Model.Data.Script</textarea>
-                    </label>
-                    <br/><br/>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
+                <p>Modules are simple python scripts designed to provide additional functionality to GrooveCaster.</p>
+                <p>Any module action (adding, editing, enabling, disabling, removing) will cause all modules to reload.</p>
+                @Each.Errors
+                    <div class="alert alert-danger">Module "@Current.Key" failed to load:<br/>@Current.Value</div>
+                @EndEach
+
+                @Each.Modules
+                    <div class="panel panel-default module-panel">
+                        <div class="panel-heading">@Current.DisplayName (@Current.Name)</div>
+                        <div class="panel-body">
+                            <p>@Current.Description</p>
+                            <a class="btn btn-primary" href="/modules/edit/@Current.Name">Edit</a>
+                            @If.Enabled
+                                <a class="btn btn-warning" href="/modules/disable/@Current.Name">Disable</a>
+                            @EndIf
+                            @IfNot.Enabled
+                                <a class="btn btn-success" href="/modules/enable/@Current.Name">Enable</a>
+                            @EndIf
+                            @IfNot.Default
+                                <a class="btn btn-danger" href="/modules/delete/@Current.Name">Delete</a>
+                            @EndIf
+                        </div>
+                    </div>
+                @EndEach
             </div>
         </div>
     </div>
 </div>
+@EndSection['Content']

@@ -21,7 +21,7 @@ namespace GrooveCaster.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                return View["Modules", new { Modules = ModuleManager.GetModules(), Errors = ModuleManager.LoadExceptions }];
+                return View["Modules", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Modules = ModuleManager.GetModules(), Errors = ModuleManager.LoadExceptions }];
             };
 
             Get["/modules/edit/{module}"] = p_Parameters =>
@@ -36,7 +36,7 @@ namespace GrooveCaster.Modules
                 if (s_Module == null)
                     return new RedirectResponse("/modules");
 
-                return View["EditModule", new { Data = s_Module, Error = "" }];
+                return View["EditModule", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Data = s_Module, HasError = false, Error = "" }];
             };
 
             Post["/modules/edit/{module}"] = p_Parameters =>
@@ -59,7 +59,7 @@ namespace GrooveCaster.Modules
 
                 if (String.IsNullOrWhiteSpace(s_Request.Display) ||
                     String.IsNullOrWhiteSpace(s_Request.Script))
-                    return View["EditModule", new { Data = s_Module, Error = "Please fill in all the required fields." }];
+                    return View["EditModule", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Data = s_Module, HasError = true, Error = "Please fill in all the required fields." }];
 
                 ModuleManager.UpdateModule(s_Module);
                 ModuleManager.ReloadModules();
@@ -72,7 +72,7 @@ namespace GrooveCaster.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                return View["AddModule", new { Data = new AddModuleRequest() { Name = "", Display = "", Description = "", Script = "" }, Error = "" }];
+                return View["AddModule", new { HasError = false, SuperUser = Context.CurrentUser.Claims.Contains("super"), Data = new AddModuleRequest() { Name = "", Display = "", Description = "", Script = "" }, Error = "" }];
             };
 
             Post["/modules/add"] = p_Parameters =>
@@ -84,12 +84,12 @@ namespace GrooveCaster.Modules
 
                 if (String.IsNullOrWhiteSpace(s_Request.Name.Trim()) || String.IsNullOrWhiteSpace(s_Request.Display) ||
                     String.IsNullOrWhiteSpace(s_Request.Script))
-                    return View["AddModule", new { Data = s_Request, Error = "Please fill in all the required fields." }];
+                    return View["AddModule", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Data = s_Request, HasError = true, Error = "Please fill in all the required fields." }];
 
                 var s_ID = s_Request.Name.Trim().ToLowerInvariant();
 
                 if (ModuleManager.GetModule(s_ID) != null)
-                    return View["AddModule", new { Data = s_Request, Error = "A module with that name already exists." }];
+                    return View["AddModule", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), Data = s_Request, HasError = true, Error = "A module with that name already exists." }];
 
                 var s_Module = new GrooveModule
                 {

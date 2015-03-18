@@ -1,0 +1,68 @@
+﻿@Master['_Layout.sshtml']
+
+@Section['Content']
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">GrooveCaster Admin Dashboard</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/">Dashboard</a></li>
+                <li><a href="/me/settings">Settings</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li><a href="/">Overview</a></li>
+                    <li><a href="/guests">Guest Management</a></li>
+                    <li><a href="/songs">Song Management</a></li>
+                    @If.SuperUser
+                        <li class="active"><a href="/modules">Module Management <span class="sr-only">(current)</span></a></li>
+                        <li><a href="/settings">Core Settings</a></li>
+                        <li><a href="/users">User Management</a></li>
+                    @EndIf
+                </ul>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <h1 class="page-header">
+                    Edit Module
+                </h1>
+                <form action="/modules/edit/@Model.Data.Name" method="POST">
+                    @If.HasError
+                        <div class="alert alert-danger">@Error</div>
+					@EndIf
+                    <label>
+                        Module Name<br/>
+                        <input type="text" class="form-control" placeholder="Display Name" name="display" value="@Model.Data.DisplayName" required autofocus/>
+                    </label>
+                    <br/>
+                    <label>
+                        Module Description<br/>
+                        <input type="text" class="form-control" placeholder="Description" name="description" style="width: 650px;" value="@Model.Data.Description"/>
+                    </label>
+                    <br/>
+                    <label>
+                        Script<br/>
+                        <textarea class="form-control" placeholder="Python Script" name="script" id="module-script-input">@Model.Data.Script</textarea>
+                    </label>
+                    <br/><br/>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@EndSection['Content']
