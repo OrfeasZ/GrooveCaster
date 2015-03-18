@@ -23,6 +23,7 @@ namespace GrooveCaster.Managers
             Program.Library.RegisterEventHandler(ClientEvent.SongSuggestion, OnSongSuggestion);
             Program.Library.RegisterEventHandler(ClientEvent.SongSuggestionRemoved, OnSongSuggestionRemoved);
             Program.Library.RegisterEventHandler(ClientEvent.SongSuggestionRejected, OnSongSuggestionRejected);
+            Program.Library.RegisterEventHandler(ClientEvent.SongSuggestionApproved, OnSongSuggestionApproved);
         }
 
         private static void OnSongSuggestion(SharkEvent p_SharkEvent)
@@ -117,6 +118,19 @@ namespace GrooveCaster.Managers
 
             lock (Suggestions)
                 Suggestions.Remove(s_Event.SongID);
+        }
+
+        private static void OnSongSuggestionApproved(SharkEvent p_SharkEvent)
+        {
+            var s_Event = (SongSuggestionApprovalEvent) p_SharkEvent;
+
+            lock (Suggestions)
+                Suggestions.Remove(s_Event.SongID);
+        }
+
+        public static void ApproveSuggestion(SongSuggestion p_Suggestion)
+        {
+            Program.Library.Broadcast.ApproveSuggestion(p_Suggestion.SongID);
         }
     }
 }
