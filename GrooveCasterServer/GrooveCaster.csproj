@@ -129,6 +129,7 @@
     <Compile Include="Managers\ModuleManager.cs" />
     <Compile Include="Managers\QueueManager.cs" />
     <Compile Include="Managers\SettingsManager.cs" />
+    <Compile Include="Managers\SuggestionManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Migrations.cs" />
     <Compile Include="Models\AddGuestRequest.cs" />
@@ -143,8 +144,10 @@
     <Compile Include="Models\ModuleScript.cs" />
     <Compile Include="Models\SaveSettingsRequest.cs" />
     <Compile Include="Models\SetupRequest.cs" />
+    <Compile Include="Models\SimpleUser.cs" />
     <Compile Include="Models\SongEntry.cs" />
     <Compile Include="Models\SongShuffleData.cs" />
+    <Compile Include="Models\SongSuggestion.cs" />
     <Compile Include="Models\UpdateAccountSettingsRequest.cs" />
     <Compile Include="Models\UpdateGuestRequest.cs" />
     <Compile Include="Models\VersionModel.cs" />
