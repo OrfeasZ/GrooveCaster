@@ -201,6 +201,7 @@ namespace GrooveCaster
 
             BroadcastManager.Init();
             ChatManager.Init();
+            PlaylistManager.Init();
             QueueManager.Init();
             SettingsManager.Init();
             UserManager.Init();

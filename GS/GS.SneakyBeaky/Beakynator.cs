@@ -15,8 +15,6 @@ namespace GS.SneakyBeaky
                 return null;
             }
 
-            String s_Key = null;
-
             var s_Match = Regex.Match(s_Script,
               @"hex_sha1\(\[[a-zA-Z0-9_\.]+,[a-zA-Z0-9_\.]+,([a-zA-Z0-9_]+),[a-zA-Z0-9_\.]+\]\.join\("":""\)",
               RegexOptions.IgnoreCase);

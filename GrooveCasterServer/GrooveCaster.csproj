@@ -127,6 +127,7 @@
     <Compile Include="Managers\BroadcastManager.cs" />
     <Compile Include="Managers\ChatManager.cs" />
     <Compile Include="Managers\ModuleManager.cs" />
+    <Compile Include="Managers\PlaylistManager.cs" />
     <Compile Include="Managers\QueueManager.cs" />
     <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\SuggestionManager.cs" />
@@ -139,10 +140,15 @@
     <Compile Include="Models\EditModuleRequest.cs" />
     <Compile Include="Models\ImportSongsFromUserRequest.cs" />
     <Compile Include="Models\LibraryLicense.cs" />
+    <Compile Include="Models\LoadPlaylistRequest.cs" />
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\GrooveModule.cs" />
     <Compile Include="Models\ModuleScript.cs" />
+    <Compile Include="Models\Playlist.cs" />
+    <Compile Include="Models\PlaylistEntry.cs" />
+    <Compile Include="Models\QueueSongRequest.cs" />
     <Compile Include="Models\SaveSettingsRequest.cs" />
+    <Compile Include="Models\SendChatMessageRequest.cs" />
     <Compile Include="Models\SetupRequest.cs" />
     <Compile Include="Models\SimpleUser.cs" />
     <Compile Include="Models\SongEntry.cs" />
@@ -152,9 +158,12 @@
     <Compile Include="Models\UpdateGuestRequest.cs" />
     <Compile Include="Models\VersionModel.cs" />
     <Compile Include="Modules\AuthModule.cs" />
+    <Compile Include="Modules\ChatModule.cs" />
     <Compile Include="Modules\GuestsModule.cs" />
     <Compile Include="Modules\LicenseModule.cs" />
     <Compile Include="Modules\ModulesModule.cs" />
+    <Compile Include="Modules\PlaylistsModule.cs" />
+    <Compile Include="Modules\QueueModule.cs" />
     <Compile Include="Modules\SettingsModule.cs" />
     <Compile Include="Modules\SetupModule.cs" />
     <Compile Include="Modules\SongsModule.cs" />
@@ -291,6 +300,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\_Layout.sshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Playlists.sshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\ImportPlaylists.sshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Queue.sshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="web.config" />

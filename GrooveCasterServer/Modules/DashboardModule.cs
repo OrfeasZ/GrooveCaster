@@ -69,8 +69,13 @@ namespace GrooveCaster.Modules
                     s_Error = true;
                 }
 
+                var s_Index = QueueManager.GetPlayingSongIndex();
+
                 return View["Index", new
                 {
+                    Songs = QueueManager.GetUpcomingSongs(),
+                    Playing = s_Index != -1,
+                    Song = s_Index != -1 ? QueueManager.GetCurrentQueue()[s_Index] : null,
                     Message = s_Message,
                     Error = s_Error,
                     SuperUser = Context.CurrentUser.Claims.Contains("super"),

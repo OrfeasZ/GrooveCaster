@@ -326,3 +326,24 @@ body {
 .guest-form .popover-content button, #guest-add-form .popover-content button {
     margin: 4px;
 }
+
+tr.queue-song-row:last-child .move-down-btn {
+    display: none;
+}
+
+tr.queue-song-row:first-child .move-up-btn {
+    display: none;
+}
+
+.btn-xs .glyphicon {
+    font-size: 10px;
+}
+
+.queue-song-row td.actions-container {
+    min-width: 125px;
+}
+
+#chat-container {
+    height: 500px;
+    overflow-y: scroll;
+}

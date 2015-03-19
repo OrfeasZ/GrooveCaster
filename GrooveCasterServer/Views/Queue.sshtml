@@ -1,0 +1,173 @@
+﻿@Master['_Layout.sshtml']
+
+@Section['Content']
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">GrooveCaster Admin Dashboard</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/">Dashboard</a></li>
+                <li><a href="/me/settings">Settings</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li><a href="/">Overview</a></li>
+                    <li class="active"><a href="/queue">Queue Management <span class="sr-only">(current)</span></a></li>
+                    <li><a href="/guests">Guest Management</a></li>
+                    <li><a href="/songs">Song Management</a></li>
+                    <li><a href="/playlists">Playlist Management</a></li>
+                    @If.SuperUser
+                        <li><a href="/modules">Module Management</a></li>
+                        <li><a href="/settings">Core Settings</a></li>
+                        <li><a href="/users">User Management</a></li>
+                    @EndIf
+                </ul>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <h1 class="page-header">
+                    Queue Management
+                    <a href="/queue/empty" class="btn btn-warning btn-sm" id="import-guests">Empty Queue</a>
+                </h1>
+                @If.PlaylistActive
+                    <div class="alert alert-info">Currently playing from playlist: <strong>@Model.Playlist.Name</strong> &mdash; <a class="btn btn-warning btn-sm" href="/queue/playlist/disable">Disable</a></div>
+                @EndIf
+                @IfNot.PlaylistActive
+                    <div class="alert alert-info">
+                        Currently playing from collection &mdash; <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#playlist-modal">Load Playlist</a>
+                    </div>
+                @EndIf
+                <div id="queue-container">
+                    @If.Playing
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Now Playing <a href="/queue/song/skip" class="btn btn-default btn-xs">Skip</a></div>
+                        <div class="panel-body">
+                            <h3 style="margin: 0">@Model.Song.SongName</h3>
+                            @Model.Song.ArtistName &bull; @Model.Song.AlbumName
+                        </div>
+                    </div>
+                    @EndIf
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Queue a Song</div>
+                        <div class="panel-body">
+                            <input type="text" class="typeahead" placeholder="Song Name" id="song-search-input-local">
+                            <br/><br/>
+                            <form action="/queue/song/add" method="POST">
+                                <input type="hidden" name="song" value="" id="queue-song-input"/>
+                                <button type="submit" class="btn btn-primary btn-sm">Queue</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Upcoming Songs</div>
+                        <table class="table table-hover">
+                            <tbody>
+                                @Each.Songs
+                                    <tr class="queue-song-row">
+                                        <td><strong>@Current.SongName</strong> &mdash; @Current.ArtistName &bull; @Current.AlbumName</td>
+                                        <td style="text-align: right;" class="actions-container">
+                                            <a href="/queue/song/move-up/@Current.QueueID" class="btn btn-default btn-xs btn-sm move-up-btn"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                                            <a href="/queue/song/move-down/@Current.QueueID" class="btn btn-default btn-xs btn-sm move-down-btn"><span class="glyphicon glyphicon-arrow-down"></span></a>
+                                            <a href="/queue/song/remove/@Current.QueueID" class="btn btn-danger btn-xs btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
+                                            <a href="/queue/song/play/@Current.QueueID" class="btn btn-success btn-xs btn-sm"><span class="glyphicon glyphicon-play"></span></a>
+                                        </td>
+                                    </tr>
+                                @EndEach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="playlist-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="playlist-modal-title">
+    <div class="modal-dialog">
+        <form class="modal-content" action="/queue/playlist/load" method="post">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="playlist-modal-title">Load Playlist</h4>
+            </div>
+            <div class="modal-body">
+                @IfNot.HasPlaylists
+                    <p>You currently have no playlists.</p>
+                @EndIf
+                @If.HasPlaylists
+                    <p>Note: The playlist will start playing after the end of your current queue.</p>
+                    <p>To directly skip to the playlist simply load it and then click on the Empty Queue button.</p>
+                    <hr/>
+                    <label>
+                        <select class="form-control" name="playlist" required>
+                            @Each.Playlists
+                            <option value="@Current.ID">@Current.Name</option>
+                            @EndEach
+                        </select>
+                    </label><br/>
+                    <label>
+                        Shuffle Playlist 
+                        <input type="checkbox" name="shuffle" />
+                    </label>
+                @EndIf
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @If.HasPlaylists
+                    <button type="submit" class="btn btn-primary">Load Playlist</button>                
+                @EndIf
+            </div>
+        </form>
+    </div>
+</div>
+
+@EndSection['Content']
+
+@Section['Scripts']
+
+<script type="application/javascript">
+var s_SongSource = new Bloodhound({
+    datumTokenizer: function (p_Datum) {
+        return Bloodhound.tokenizers.whitespace(p_Datum.songName);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+        url: '/queue/autocomplete/%QUERY.json'
+    }
+});
+
+s_SongSource.initialize();
+
+var s_SongSearchInput = $("#song-search-input-local");
+
+s_SongSearchInput.typeahead(null, {
+    displayKey: 'songName',
+    source: s_SongSource.ttAdapter(),
+    templates: {
+        empty: '<div>No results found.</div>',
+        suggestion: Handlebars.compile('<div class="song-suggestion"><strong>{{songName}}</strong><br/><div class="song-details">{{artistName}} &bull; {{albumName}}</div></div>')
+    }
+});
+
+s_SongSearchInput.bind('typeahead:selected', function(p_Obj, p_Datum, p_Name) {
+    if (p_Datum == null)
+        return;
+
+    $('#queue-song-input').val(p_Datum.songID);
+});
+</script>
+
+@EndSection['Scripts']

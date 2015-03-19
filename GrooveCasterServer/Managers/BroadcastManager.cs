@@ -22,6 +22,60 @@ namespace GrooveCaster.Managers
             CreatingBroadcast = false;
             Program.Library.RegisterEventHandler(ClientEvent.BroadcastCreated, OnBroadcastCreated);
             Program.Library.RegisterEventHandler(ClientEvent.BroadcastCreationFailed, OnBroadcastCreationFailed);
+            Program.Library.RegisterEventHandler(ClientEvent.ComplianceIssue, OnComplianceIssue);
+            Program.Library.RegisterEventHandler(ClientEvent.PendingDestruction, OnPendingDestruction);
+        }
+
+        private static void OnPendingDestruction(SharkEvent p_SharkEvent)
+        {
+            // Allows for custom queuing logic by Modules.
+            if (!ModuleManager.OnFetchingNextSong())
+                return;
+
+            if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
+            {
+                var s_SongID = PlaylistManager.DequeueNextSong();
+                Program.Library.Broadcast.PlaySong(s_SongID,  Program.Library.Broadcast.AddSongs(new List<Int64> { s_SongID })[s_SongID]);
+                return;
+            }
+
+            // Broadcast ran out of songs somehow; add and play a random song.
+            var s_Random = new Random();
+            var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
+            var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];
+
+            var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
+
+            Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
+        }
+
+        private static void OnComplianceIssue(SharkEvent p_SharkEvent)
+        {
+            if (!SettingsManager.MobileCompliance())
+            {
+                DisableMobileCompliance();
+                return;
+            }
+
+            // Allows for custom queuing logic by Modules.
+            if (!ModuleManager.OnFetchingNextSong())
+                return;
+
+            // Try to play a new song.
+            if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
+            {
+                var s_SongID = PlaylistManager.DequeueNextSong();
+                Program.Library.Broadcast.PlaySong(s_SongID, Program.Library.Broadcast.AddSongs(new List<Int64> { s_SongID })[s_SongID]);
+                return;
+            }
+
+            var s_Random = new Random();
+            var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
+            var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];
+
+            var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
+
+            Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
         }
 
         internal static void CreateBroadcast()
@@ -107,7 +161,7 @@ namespace GrooveCaster.Managers
 
                 var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
 
-                 Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
+                Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
             }
             else if (Program.Library.Broadcast.PlayingSongID != 0)
             {

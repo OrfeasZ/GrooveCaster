@@ -27,8 +27,10 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li><a href="/">Overview</a></li>
+                    <li><a href="/queue">Queue Management</a></li>
                     <li><a href="/guests">Guest Management</a></li>
                     <li class="active"><a href="/songs">Song Management <span class="sr-only">(current)</span></a></li>
+                    <li><a href="/playlists">Playlist Management</a></li>
                     @If.SuperUser
                         <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
@@ -54,6 +56,16 @@
                         User ID
                         <input type="number" class="form-control" name="user" id="user-input" placeholder="User ID" value="@Model.User" />
                     </label>
+					<br/>
+					<label>
+						Import Favorites
+						<input type="checkbox" name="favorites" />
+					</label>
+					<br/>
+					<label>
+						Only Import Favorites
+						<input type="checkbox" name="only" />
+					</label>
                     <br /><br />
                     <button type="submit" class="btn btn-primary" id="song-import-btn">Import</button>
                 </form>

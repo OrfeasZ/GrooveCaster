@@ -52,6 +52,16 @@ namespace GrooveCaster
                     SetupDefaultModules(s_Db);
                 }
 
+                if (!s_Db.TableExists<Playlist>())
+                {
+                    s_Db.CreateTable<Playlist>();
+                }
+
+                if (!s_Db.TableExists<PlaylistEntry>())
+                {
+                    s_Db.CreateTable<PlaylistEntry>();
+                }
+
                 var s_DatabaseVersionString = s_Db.SingleById<CoreSetting>("gcver").Value;
                 var s_DatabaseVersion = new Version(s_DatabaseVersionString);
                 var s_CurrentVersion = new Version(Program.GetVersion());

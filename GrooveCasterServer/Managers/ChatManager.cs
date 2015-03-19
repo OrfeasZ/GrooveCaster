@@ -10,7 +10,9 @@ namespace GrooveCaster.Managers
 {
     public static class ChatManager
     {
-        private static Dictionary<String, ChatCommand> m_ChatCommands; 
+        private static Dictionary<String, ChatCommand> m_ChatCommands;
+
+        private static List<ChatMessageEvent> m_ChatHistory; 
 
         static ChatManager()
         {
@@ -20,6 +22,8 @@ namespace GrooveCaster.Managers
         internal static void Init()
         {
             m_ChatCommands = new Dictionary<string, ChatCommand>();
+            m_ChatHistory = new List<ChatMessageEvent>();
+
             Program.Library.RegisterEventHandler(ClientEvent.ChatMessage, OnChatMessage);
 
             // Register internal commands.
@@ -27,9 +31,20 @@ namespace GrooveCaster.Managers
             RegisterCommandInternal("help", " [command]: Displays detailed information about the command [command]. Displays all available commands if [command] is not specified.", OnHelp);
         }
 
+        public static List<ChatMessageEvent> GetChatHistory()
+        {
+            return m_ChatHistory;
+        }
+
         private static void OnChatMessage(SharkEvent p_SharkEvent)
         {
             var s_Event = p_SharkEvent as ChatMessageEvent;
+
+            // Record the last 20 messages in chat history.
+            m_ChatHistory.Add(s_Event);
+
+            for (var i = 0; i < m_ChatHistory.Count - 20; ++i)
+                m_ChatHistory.RemoveAt(0);
 
             // Disregard messages that are sent by the bot.
             if (s_Event.UserID == Program.Library.User.Data.UserID)

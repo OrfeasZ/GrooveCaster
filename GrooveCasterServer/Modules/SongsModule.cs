@@ -6,6 +6,7 @@ using GrooveCaster.Managers;
 using GrooveCaster.Models;
 using GS.Lib.Models;
 using Nancy;
+using Nancy.Extensions;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
@@ -141,37 +142,75 @@ namespace GrooveCaster.Modules
 
                 var s_PreviousSongCount = QueueManager.CollectionSongs.Count;
 
-                var s_Songs = Program.Library.User.GetSongsInLibrary(s_Request.User);
-
                 var s_SongEntries = new List<SongEntry>();
 
-                foreach (var s_Song in s_Songs)
+                // Fetch collection songs.
+                if (!s_Request.Only)
                 {
-                    try
+                    var s_Songs = Program.Library.User.GetSongsInLibrary(s_Request.User);
+                    
+                    foreach (var s_Song in s_Songs)
                     {
-                        var s_SongEntry = new SongEntry()
+                        try
                         {
-                            SongID = Int64.Parse(s_Song.SongID),
-                            SongName = s_Song.Name,
-                            ArtistID = Int64.Parse(s_Song.ArtistID),
-                            ArtistName = s_Song.ArtistName,
-                            AlbumID = Int64.Parse(s_Song.AlbumID),
-                            AlbumName = s_Song.AlbumName
-                        };
+                            var s_SongEntry = new SongEntry()
+                            {
+                                SongID = Int64.Parse(s_Song.SongID),
+                                SongName = s_Song.Name,
+                                ArtistID = Int64.Parse(s_Song.ArtistID),
+                                ArtistName = s_Song.ArtistName,
+                                AlbumID = Int64.Parse(s_Song.AlbumID),
+                                AlbumName = s_Song.AlbumName
+                            };
 
-                        s_SongEntries.Add(s_SongEntry);
-                    }
-                    catch
-                    {
-                        continue;
+                            s_SongEntries.Add(s_SongEntry);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
                     }
                 }
 
+                // Fetch favorite songs.
+                if (s_Request.Favorites || s_Request.Only)
+                {
+                    var s_Favorites = Program.Library.User.GetFavorites("Songs", s_Request.User);
+
+                    foreach (var s_Song in s_Favorites)
+                    {
+                        try
+                        {
+                            var s_SongEntry = new SongEntry()
+                            {
+                                SongID = Int64.Parse(s_Song.SongID),
+                                SongName = s_Song.Name,
+                                ArtistID = Int64.Parse(s_Song.ArtistID),
+                                ArtistName = s_Song.ArtistName,
+                                AlbumID = Int64.Parse(s_Song.AlbumID),
+                                AlbumName = s_Song.AlbumName
+                            };
+
+                            s_SongEntries.Add(s_SongEntry);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                // Remove duplicates.
+                s_SongEntries = s_SongEntries.DistinctBy(p_Entry => p_Entry.SongID).ToList();
+
+                // Store
                 using (var s_Db = Database.GetConnection())
                     s_Db.SaveAll(s_SongEntries);
 
+                // Update loaded collection
                 QueueManager.FetchCollectionSongs();
 
+                // Create the broadcast (if needed).
                 if (s_PreviousSongCount < 2 && QueueManager.CollectionSongs.Count >= 2)
                     BroadcastManager.CreateBroadcast();
 

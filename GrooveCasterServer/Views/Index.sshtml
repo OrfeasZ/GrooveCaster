@@ -27,8 +27,10 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li class="active"><a href="/">Overview <span class="sr-only">(current)</span></a></li>
+                    <li><a href="/queue">Queue Management</a></li>
                     <li><a href="/guests">Guest Management</a></li>
                     <li><a href="/songs">Song Management</a></li>
+                    <li><a href="/playlists">Playlist Management</a></li>
                     @If.SuperUser
                         <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
@@ -38,7 +40,6 @@
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">Dashboard</h1>
-                <h2 class="sub-header">Server Status</h2>
                 <div>
                     @If.NeedsUpdate
                         <div class="alert alert-warning">
@@ -58,8 +59,90 @@
                         <div class="alert alert-danger">Some modules have failed to load. Please visit the <a href="/modules">modules</a> page for more information.</div>
 					@EndIf
                 </div>
+                <div class="row">
+                    <div class="col-md-9">
+                        @If.Playing
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Now Playing <a href="/queue/song/skip" class="btn btn-default btn-xs">Skip</a></div>
+                            <div class="panel-body">
+                                <h3 style="margin: 0">@Model.Song.SongName</h3>
+                                @Model.Song.ArtistName &bull; @Model.Song.AlbumName
+                            </div>
+                        </div>
+                        @EndIf
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Upcoming Songs</div>
+                            <table class="table table-hover">
+                                <tbody>
+                                    @Each.Songs
+                                    <tr class="queue-song-row">
+                                        <td><strong>@Current.SongName</strong> &mdash; @Current.ArtistName &bull; @Current.AlbumName</td>
+                                        <td style="text-align: right;" class="actions-container">
+                                            <a href="/queue/song/move-up/@Current.QueueID" class="btn btn-default btn-xs btn-sm move-up-btn"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                                            <a href="/queue/song/move-down/@Current.QueueID" class="btn btn-default btn-xs btn-sm move-down-btn"><span class="glyphicon glyphicon-arrow-down"></span></a>
+                                            <a href="/queue/song/remove/@Current.QueueID" class="btn btn-danger btn-xs btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
+                                            <a href="/queue/song/play/@Current.QueueID" class="btn btn-success btn-xs btn-sm"><span class="glyphicon glyphicon-play"></span></a>
+                                        </td>
+                                    </tr>
+                                    @EndEach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Broadcast Chat</div>
+                            <div id="chat-container">
+                                <table class="table table-striped">
+                                    <tbody id="chat-messages-table">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <form action="/chat/send" method="POST" id="send-chat-form">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Chat Message" name="message" id="chat-message-input">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="submit">Send</button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>               
             </div>
         </div>
     </div>
 </div>
 @EndSection['Content']
+
+@Section['Scripts']
+
+<script type="text/javascript">
+
+    var FetchChat = function() {
+        $.getJSON('/chat/history.json', function(p_Data) {
+            var s_Table = $("#chat-messages-table");
+
+            s_Table.empty();
+
+            for (var i = 0; i < p_Data.length; ++i) {
+                var s_Element = $('<tr><td class="chat-message"><strong>' + _.escape(p_Data[i].userName) + '</strong><br/><p>' +
+                    _.escape(p_Data[i].chatMessage) + '</p></td></tr>');
+                s_Table.append(s_Element);
+            }
+
+            // Scroll to bottom of chat.
+            $("#chat-container").scrollTop($('#chat-container')[0].scrollHeight);
+        });
+    };
+
+    $("#send-chat-form").ajaxForm({
+        clearForm: true
+    });
+
+    FetchChat();
+    setInterval(FetchChat, 1000);
+
+</script>
+
+@EndSection['Scripts']
