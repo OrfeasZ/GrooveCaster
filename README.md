@@ -28,10 +28,10 @@ Installation
 For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
 However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.
 
-Latest Release: **1.1.2.1**
+Latest Release: **1.2.0.0**
 
-Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.2.1/GrooveCaster-1.1.2.1-Win32.zip)  
-Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.2.1/GrooveCaster-1.1.2.1-Mono.zip)
+Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.2.0.0/GrooveCaster-1.2.0.0-Win32.zip)  
+Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.2.0.0/GrooveCaster-1.2.0.0-Mono.zip)
 
 There's no installation required.  
 Simply download the binaries archive from the links above, and extract them at some location on your drive.
@@ -135,10 +135,27 @@ The Admin Dashboard
 --------------------------
 
 ### Overview
-The overview page provides a quick overview of the current status of GrooveCaster.  
-Currently, there's not much information except for the status of the current broadcast.
+The overview page provides a quick overview of the current status of GrooveCaster and your broadcast.  
 
-This information doesn't update automatically currently, so you will have to refresh the page to see changes.
+This dashboard also provides you with information about the currently playing song, the upcoming songs in your queue, some basic queue management functions, and a chat box which you can use to interact with your listeners.
+
+GrooveCaster currently only keeps track of the last 20 chat messages.
+
+> **Note**  
+> Most information information doesn't update automatically currently, so you will have to refresh the page to see changes.
+
+### Queue Management
+The queue management page provides detailed information about the queue of your broadcast.
+
+From this page you can really easily manage your queue, by adding or removing songs, moving them in the queue, or directly skipping to them.
+
+Additionally, you are provided with the option to completely empty the queue, by clicking on the `Empty Queue` button.
+
+Moreover, you can load a playlist into your broadcast by clicking on the `Load Playlist` button, which will make GrooveCaster automatically load songs from that playlist (either in their normal order, or shuffled).
+
+If a playlist is already running, you can disable it by clicking on the `Disable` button.
+
+For more information about playlist management, refer to [Playlist Management](#playlist-management).
 
 ### Guest Management
 The guest management page provides a detailed listing of users with special guest permissions, while also allowing you to edit/delete them, add new guests, and import guests.
@@ -183,7 +200,25 @@ To do so, simply click on the `Import from GS Collection` button present in the 
 
 By default, the User ID field will contain the ID of the current broadcast user (the user you set up GrooveCaster with).
 
+Normally, GrooveCaster only imports songs from the users collection. If you also want to import songs from the users favorites (or only from the favorites), you can use the provided checkboxes to specify your preference.
+
 Collection importing might take some time, so don't worry if you don't see any immediate progress.
+
+### Playlist Management
+The playlist management page provides a listing of locally available playlists, which can be used for maintaining more control over the queue.
+
+From this page you can also remove existing playlists, or import playlists from a GrooveShark user.
+
+#### Importing Playlists
+GrooveCaster provides the ability to very easily import song playlists from another GrooveShark user.
+
+To do so, simply click on the `Import GS Playlists` button present in the Playlist Management page, find the use whose playlists you want to import using the search box, and then choose the ones you need from the options that will be presented to you.
+
+You can either import all playlists at once, by clicking on the `Import all Playlists` button (present at the bottom of the playlist list), or individually, by clicking the `Import` button next to each playlist.
+
+One thing you should note is that GrooveCaster will automatically add songs that are in imported playlists to your collection (if they don't already exist).
+
+Playlist importing might take some time, so don't worry if you don't see any immediate progress.
 
 ### Module Management
 The module management page provides a detailed listing of available modules, while also allowing editing, enabling, disabling, or removing them, as well as creating entirely modules.
@@ -203,6 +238,7 @@ Currently available settings are:
 | Max History Songs           | The maximum number of songs to keep in history. This prevents GrooveCaster from playing the same songs. Input `0` to disable.                               |
 | Song Vote Threshold         | The maximum number of votes a song has to get in order for GrooveCaster to automatically skip it. Only accepts negative values. Input `0` to disable.       |
 | Command Prefix 			  | The prefix used to identify chat commands. Defaults to `!` and can only be a single non-alphanumeric character. |
+| Commands without Guest 	  | Allows users to execute chat commands without requiring an active guest status in the broadcast. Defaults to true. |
 
 ### User Management
 The user management page provides a detailed listing of users with access to the GrooveCaster administration dashboard.
@@ -217,7 +253,8 @@ Using a set of commands, listeners with special guest permissions can remotely m
 
 By default, all users who are added as a Special Guest from the admin dashboard, have guesting permissions in the broadcast itself. However, some commands are only available to users with the required flags.
 
-All commands start with the specified command prefix (defaults to `!`) and can be used regardless if the user invoking them is currently a special guest in the broadcast or not.
+All commands start with the specified command prefix (defaults to `!`).
+You can configure command execution from the [Core Settings](#core-settings) page in order to allow only active guests to use commands.
 
 Currently, all commands are implemented in the form of modules you can selectively enable. For more information about available commands refer to [the module system](#the-module-system).
 
@@ -229,7 +266,7 @@ All GrooveCaster modules are simple Python scripts (using [IronPython](http://ir
 
 All changes to modules are being propagated immediately, requiring no code recompilation or restarts.
 
-By default, GrooveCaster comes with several built-in modules which provide custom commands for the chat interface.
+By default, GrooveCaster comes with several toggle-able built-in modules which provide custom commands for the chat interface.
 
 The default commands are the following:
 
@@ -258,13 +295,13 @@ The default commands are the following:
 | `about`		| `!about`: Displays information about the GrooveCaster bot. |
 | `help`		| `!help [command]`: Displays detailed information about the command `[command]`. Displays all available commands if `[command]` is not specified. |
 
-For more details on how to implement your own modules, example modules, and documentation on the available APIs, please refer to the [Wiki](https://github.com/OrfeasZ/GrooveCaster/wiki).
+For more details on how to implement your own modules, sample modules, and documentation on the available APIs, please refer to the [Wiki](https://github.com/OrfeasZ/GrooveCaster/wiki).
 
 Upcoming Features
 -----------------------
 This is a list of features and fixes that are currently being worked on:
 
- - Broadcast statistics in dashboard
+ - Statistics!
  - Automatic service installation on Windows
  - More advanced logging
 

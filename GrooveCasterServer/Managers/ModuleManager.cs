@@ -109,6 +109,7 @@ namespace GrooveCaster.Managers
                 m_ScriptEngine.Execute("from GrooveCaster import *", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster.Managers import BroadcastManager, ChatManager, QueueManager, SettingsManager, UserManager, SuggestionManager, PlaylistManager", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster.Program import Library as SharpShark", s_Scope);
+                m_ScriptEngine.Execute("from GrooveCaster.Util import ModuleTimer as Timer", s_Scope);
 
 
                 var s_ScriptSource = m_ScriptEngine.CreateScriptSourceFromString(p_Module.Script.Trim(), SourceCodeKind.File);
