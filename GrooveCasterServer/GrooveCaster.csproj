@@ -133,6 +133,11 @@
     <Compile Include="Managers\SuggestionManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Migrations.cs" />
+    <Compile Include="Migrations\1010.cs" />
+    <Compile Include="Migrations\1100.cs" />
+    <Compile Include="Migrations\1200.cs" />
+    <Compile Include="Migrations\1121.cs" />
+    <Compile Include="Migrations\1120.cs" />
     <Compile Include="Models\AddGuestRequest.cs" />
     <Compile Include="Models\AddModuleRequest.cs" />
     <Compile Include="Models\AddSongRequest.cs" />

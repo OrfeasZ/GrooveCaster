@@ -3,14 +3,13 @@
 @Section['Content']
 <div class="container">
 
-    @foreach (var s_Library in Model.Libraries)
-    {
+    @Each.Libraries
         <div class="library">
-            <h2>@s_Library.Name</h2>
-            <textarea class="form-control" style="min-height: 440px;" disabled>@s_Library.License</textarea>
+            <h2>@Current.Name</h2>
+            <textarea class="form-control" style="min-height: 440px;" disabled>@Current.License</textarea>
         </div>
         <br/>
-    }
+    @EndEach
 
 </div>
 @EndSection['content']

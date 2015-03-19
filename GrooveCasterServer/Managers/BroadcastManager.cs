@@ -28,6 +28,9 @@ namespace GrooveCaster.Managers
 
         private static void OnPendingDestruction(SharkEvent p_SharkEvent)
         {
+            if (Program.Library.Broadcast.CurrentBroadcastStatus != BroadcastStatus.Broadcasting)
+                return;
+
             // Allows for custom queuing logic by Modules.
             if (!ModuleManager.OnFetchingNextSong())
                 return;
