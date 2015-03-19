@@ -82,7 +82,7 @@ namespace GrooveCaster.Managers
 
                 m_ScriptEngine.Execute("clr.AddReference('GrooveCaster')", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster import *", s_Scope);
-                m_ScriptEngine.Execute("from GrooveCaster.Managers import BroadcastManager, ChatManager, QueueManager, SettingsManager, UserManager", s_Scope);
+                m_ScriptEngine.Execute("from GrooveCaster.Managers import BroadcastManager, ChatManager, QueueManager, SettingsManager, UserManager, SuggestionManager", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster.Program import Library as SharpShark", s_Scope);
 
 
