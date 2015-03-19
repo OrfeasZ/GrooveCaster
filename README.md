@@ -1,6 +1,8 @@
 GrooveCaster
 ===========
-The most advanced broadcasting bot for GrooveShark.
+The most advanced broadcasting bot for GrooveShark.  
+
+![Screenshot of the Administration Dashboard](http://i.nofate.me/MsDD8e3W.png)
 
 ----------
 
