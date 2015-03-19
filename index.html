@@ -65,13 +65,15 @@ GrooveCaster is still at an early stage of development, so some features may sti
 <p>For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
 However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.</p>
 
-<p>Latest Release: <strong>1.1.0.0</strong></p>
+<p>Latest Release: <strong>1.2.0.0</strong></p>
 
-<p>Windows Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.0.0/GrooveCaster-1.1.0.0-Win32.zip">Download</a><br>
-Mono Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.1.0.0/GrooveCaster-1.1.0.0-Mono.zip">Download</a></p>
+<p>Windows Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.2.0.0/GrooveCaster-1.2.0.0-Win32.zip">Download</a><br>
+Mono Binaries: <a href="https://github.com/OrfeasZ/GrooveCaster/releases/download/1.2.0.0/GrooveCaster-1.2.0.0-Mono.zip">Download</a></p>
 
 <p>There's no installation required.<br>
 Simply download the binaries archive from the links above, and extract them at some location on your drive.</p>
+
+<p>If you wish to upgrade GrooveCaster, simply download the latest archive, delete all previous files (except for <code>gcaster.sqlite</code>), and extract the fresh archive in the same directory.</p>
 
 <h3>
 <a id="windows-environments" class="anchor" href="#windows-environments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Windows Environments</h3>
@@ -177,7 +179,7 @@ $ supervisor&gt;start groovecaster</p>
 
 <p>The default credentials are <code>admin</code> as a username and <code>admin</code> as a password.</p>
 
-<p>After you've successfully logged in, you'll be presented with the setup wizard, where you will be required to setup your GrooveShark account, as long as the details of your broadcast.</p>
+<p>After you've successfully logged in, you'll be presented with the setup wizard, where you will be required to setup your GrooveShark account, as well as the details of your broadcast.</p>
 
 <p>Once you've finished the setup wizard you will be redirected to the admin dashboard, from where you can manage the settings of the bot, your song collection, special guests, and additional users with access to the admin dashboard.</p>
 
@@ -197,31 +199,49 @@ GrooveCaster will not start broadcasting until there's at least 2 songs in your 
 <h3>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h3>
 
-<p>The overview page provides a quick overview of the current status of GrooveCaster.<br>
-Currently, there's not much information except for the status of the current broadcast.</p>
+<p>The overview page provides a quick overview of the current status of GrooveCaster and your broadcast.  </p>
 
-<p>This information doesn't update automatically currently, so you will have to refresh the page to see changes.</p>
+<p>This dashboard also provides you with information about the currently playing song, the upcoming songs in your queue, some basic queue management functions, and a chat box which you can use to interact with your listeners.</p>
+
+<p>GrooveCaster currently only keeps track of the last 20 chat messages.</p>
+
+<blockquote>
+<p><strong>Note</strong><br>
+Most information information doesn't update automatically currently, so you will have to refresh the page to see changes.</p>
+</blockquote>
+
+<h3>
+<a id="queue-management" class="anchor" href="#queue-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Queue Management</h3>
+
+<p>The queue management page provides detailed information about the queue of your broadcast.</p>
+
+<p>From this page you can really easily manage your queue, by adding or removing songs, moving them in the queue, or directly skipping to them.</p>
+
+<p>Additionally, you are provided with the option to completely empty the queue, by clicking on the <code>Empty Queue</code> button.</p>
+
+<p>Moreover, you can load a playlist into your broadcast by clicking on the <code>Load Playlist</code> button, which will make GrooveCaster automatically load songs from that playlist (either in their normal order, or shuffled).</p>
+
+<p>If a playlist is already running, you can disable it by clicking on the <code>Disable</code> button.</p>
+
+<p>For more information about playlist management, refer to <a href="#playlist-management">Playlist Management</a>.</p>
 
 <h3>
 <a id="guest-management" class="anchor" href="#guest-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Guest Management</h3>
 
 <p>The guest management page provides a detailed listing of users with special guest permissions, while also allowing you to edit/delete them, add new guests, and import guests.</p>
 
-<p>The process of adding guests via the admin dashboard is currently relatively manual, but will be improved in the future.</p>
-
 <h4>
 <a id="adding-guests" class="anchor" href="#adding-guests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding Guests</h4>
 
 <p>To add a new guest, click on the <code>Add Guest</code> button, and fill in the required fields in the page you'll be presented with.</p>
 
-<p>For now, the easiest way of getting the User ID of a user is by having them join your broadcast and type <code>!ping</code> in chat. GrooveCaster will respond with a message containing their User ID.</p>
+<p>You can easily search for a user via the provided search-bar, which will automatically provide suggestions when you start typing a users name. However, if you're not sure you've found the correct user, have them join your broadcast and type <code>!ping</code> in chat (while having the ping module enabled). GrooveCaster will respond with a message containing their User ID, which you can then use in this page.</p>
 
 <p>The User Name field is only for personal reference, and doesn't have to match the username of the GrooveShark user.</p>
 
-<p>The Channel Permissions field outlines the special guest permissions that are granted to the user.<br>
-For now, you should leave this to the default value (<code>6</code>).</p>
+<p>Clicking on the <code>Channel Permissions</code> button you will be presented with a choice of toggle-able special guest permissions that are granted to the user.  </p>
 
-<p>This will give the user suggestion approval/rejection permissions, and the permission to ban/unban users from the broadcast.</p>
+<p>The default selections will give the user suggestion approval/rejection permissions, and the permission to ban/unban users from the broadcast.</p>
 
 <h4>
 <a id="importing-guests" class="anchor" href="#importing-guests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Importing Guests</h4>
@@ -259,7 +279,29 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 
 <p>By default, the User ID field will contain the ID of the current broadcast user (the user you set up GrooveCaster with).</p>
 
+<p>Normally, GrooveCaster only imports songs from the users collection. If you also want to import songs from the users favorites (or only from the favorites), you can use the provided checkboxes to specify your preference.</p>
+
 <p>Collection importing might take some time, so don't worry if you don't see any immediate progress.</p>
+
+<h3>
+<a id="playlist-management" class="anchor" href="#playlist-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Playlist Management</h3>
+
+<p>The playlist management page provides a listing of locally available playlists, which can be used for maintaining more control over the queue.</p>
+
+<p>From this page you can also remove existing playlists, or import playlists from a GrooveShark user.</p>
+
+<h4>
+<a id="importing-playlists" class="anchor" href="#importing-playlists" aria-hidden="true"><span class="octicon octicon-link"></span></a>Importing Playlists</h4>
+
+<p>GrooveCaster provides the ability to very easily import song playlists from another GrooveShark user.</p>
+
+<p>To do so, simply click on the <code>Import GS Playlists</code> button present in the Playlist Management page, find the use whose playlists you want to import using the search box, and then choose the ones you need from the options that will be presented to you.</p>
+
+<p>You can either import all playlists at once, by clicking on the <code>Import all Playlists</code> button (present at the bottom of the playlist list), or individually, by clicking the <code>Import</code> button next to each playlist.</p>
+
+<p>One thing you should note is that GrooveCaster will automatically add songs that are in imported playlists to your collection (if they don't already exist).</p>
+
+<p>Playlist importing might take some time, so don't worry if you don't see any immediate progress.</p>
 
 <h3>
 <a id="module-management" class="anchor" href="#module-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Module Management</h3>
@@ -303,6 +345,10 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 <td>Command Prefix</td>
 <td>The prefix used to identify chat commands. Defaults to <code>!</code> and can only be a single non-alphanumeric character.</td>
 </tr>
+<tr>
+<td>Commands without Guest</td>
+<td>Allows users to execute chat commands without requiring an active guest status in the broadcast. Defaults to true.</td>
+</tr>
 </tbody>
 </table>
 
@@ -322,7 +368,8 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 
 <p>By default, all users who are added as a Special Guest from the admin dashboard, have guesting permissions in the broadcast itself. However, some commands are only available to users with the required flags.</p>
 
-<p>All commands start with the specified command prefix (defaults to <code>!</code>) and can be used regardless if the user invoking them is currently a special guest in the broadcast or not.</p>
+<p>All commands start with the specified command prefix (defaults to <code>!</code>).
+You can configure command execution from the <a href="#core-settings">Core Settings</a> page in order to allow only active guests to use commands.</p>
 
 <p>Currently, all commands are implemented in the form of modules you can selectively enable. For more information about available commands refer to <a href="#the-module-system">the module system</a>.</p>
 
@@ -335,7 +382,7 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 
 <p>All changes to modules are being propagated immediately, requiring no code recompilation or restarts.</p>
 
-<p>By default, GrooveCaster comes with several built-in modules which provide custom commands for the chat interface.</p>
+<p>By default, GrooveCaster comes with several toggle-able built-in modules which provide custom commands for the chat interface.</p>
 
 <p>The default commands are the following:</p>
 
@@ -460,7 +507,7 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 </tbody>
 </table>
 
-<p>For more details on how to implement your own modules, example modules, and documentation on the available APIs, please refer to the <a href="https://github.com/OrfeasZ/GrooveCaster/wiki">Wiki</a>.</p>
+<p>For more details on how to implement your own modules, sample modules, and documentation on the available APIs, please refer to the <a href="https://github.com/OrfeasZ/GrooveCaster/wiki">Wiki</a>.</p>
 
 <h2>
 <a id="upcoming-features" class="anchor" href="#upcoming-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upcoming Features</h2>
@@ -468,8 +515,7 @@ For now, you should leave this to the default value (<code>6</code>).</p>
 <p>This is a list of features and fixes that are currently being worked on:</p>
 
 <ul>
-<li>Better management interface for Guest permissions</li>
-<li>Broadcast statistics in dashboard</li>
+<li>Statistics!</li>
 <li>Automatic service installation on Windows</li>
 <li>More advanced logging</li>
 </ul>
