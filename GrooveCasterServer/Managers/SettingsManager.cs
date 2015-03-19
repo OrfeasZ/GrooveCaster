@@ -9,7 +9,7 @@ namespace GrooveCaster.Managers
         private static int? m_MaxHistorySongs;
         private static int? m_SongVoteThreshold;
         private static char? m_CommandPrefix;
-        //private static bool? m_CanCommandWithoutGuest;
+        private static bool? m_CanCommandWithoutGuest;
 
         static SettingsManager()
         {
@@ -20,7 +20,7 @@ namespace GrooveCaster.Managers
             m_MaxHistorySongs = null;
             m_SongVoteThreshold = null;
             m_CommandPrefix = null;
-            //m_CanCommandWithoutGuest = null;
+            m_CanCommandWithoutGuest = null;
         }
 
         public static int MaxHistorySongs()
@@ -155,7 +155,7 @@ namespace GrooveCaster.Managers
             m_CommandPrefix = p_Prefix;
         }
 
-        /*public static bool CanCommandWithoutGuest()
+        public static bool CanCommandWithoutGuest()
         {
             if (m_CanCommandWithoutGuest.HasValue)
                 return m_CanCommandWithoutGuest.Value;
@@ -166,7 +166,7 @@ namespace GrooveCaster.Managers
 
                 if (s_Setting == null)
                 {
-                    s_Setting = new CoreSetting() { Key = "cmdguest", Value = "0" };
+                    s_Setting = new CoreSetting() { Key = "cmdguest", Value = true.ToString() };
                     s_Db.Insert(s_Setting);
                 }
 
@@ -195,7 +195,7 @@ namespace GrooveCaster.Managers
             }
 
             m_CanCommandWithoutGuest = p_Value;
-        }*/
+        }
 
         public static bool MobileCompliance()
         {

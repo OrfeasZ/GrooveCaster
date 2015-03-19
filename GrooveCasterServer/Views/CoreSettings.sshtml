@@ -54,7 +54,16 @@
                     <input type="number" id="inputVoteThreshold" class="form-control" placeholder="0" name="threshold" value="@Model.Threshold" required>
                     <label for="inputCommandPrefix">Chat Command Prefix (defaults to !)</label>
                     <input type="text" id="inputCommandPrefix" class="form-control" placeholder="Command Prefix" maxlength="1" name="prefix" value="@Model.CommandPrefix" required>
-                    <br />
+                    <label>
+                        Can use commands without guest<br/>
+                        @If.WithoutGuest
+                            <input type="checkbox" name="guest" checked />
+                        @EndIf 
+                        @IfNot.WithoutGuest
+                            <input type="checkbox" name="guest" />
+                        @EndIf
+                    </label>
+                    <br /><br/>
                     <button type="submit" class="btn btn-primary" id="setup-next-account">Save</button>
                 </form>
             </div>

@@ -284,5 +284,16 @@ namespace GrooveCaster.Managers
         {
             Program.Library.Broadcast.UpdateBroadcastDescription(p_Description);
         }
+
+        public static bool CanUseCommands(SpecialGuest p_Guest)
+        {
+            if (p_Guest == null)
+                return false;
+
+            if (SettingsManager.CanCommandWithoutGuest())
+                return true;
+
+            return HasActiveGuest(p_Guest.UserID);
+        }
     }
 }
