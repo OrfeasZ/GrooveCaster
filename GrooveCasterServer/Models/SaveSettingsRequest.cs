@@ -9,5 +9,6 @@ namespace GrooveCaster.Models
         public String Title { get; set; }
         public String Description { get; set; }
         public String Prefix { get; set; }
+        public bool Guest { get; set; }
     }
 }

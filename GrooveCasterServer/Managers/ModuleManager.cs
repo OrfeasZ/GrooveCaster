@@ -36,7 +36,10 @@ namespace GrooveCaster.Managers
             {
                 try
                 {
-                    var s_Function = s_Pair.Value.Scope.GetVariable<Action>("OnUnload");
+                    Action s_Function;
+
+                    if (!s_Pair.Value.Scope.TryGetVariable("OnUnload", out s_Function))
+                        continue;
 
                     if (s_Function != null)
                         s_Function();
@@ -57,6 +60,28 @@ namespace GrooveCaster.Managers
             foreach (var s_Module in GetModules())
                 if (s_Module.Enabled)
                     CompileModule(s_Module);
+        }
+
+        internal static bool OnFetchingNextSong()
+        {
+            foreach (var s_Pair in m_LoadedModules)
+            {
+                try
+                {
+                    Func<bool> s_Function;
+                    if (!s_Pair.Value.Scope.TryGetVariable("OnFetchingNextSong", out s_Function))
+                        continue;
+
+                    if (s_Function != null && !s_Function())
+                        return false;
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
+            return true;
         }
 
         internal static void CompileModule(GrooveModule p_Module)
@@ -82,8 +107,9 @@ namespace GrooveCaster.Managers
 
                 m_ScriptEngine.Execute("clr.AddReference('GrooveCaster')", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster import *", s_Scope);
-                m_ScriptEngine.Execute("from GrooveCaster.Managers import BroadcastManager, ChatManager, QueueManager, SettingsManager, UserManager, SuggestionManager", s_Scope);
+                m_ScriptEngine.Execute("from GrooveCaster.Managers import BroadcastManager, ChatManager, QueueManager, SettingsManager, UserManager, SuggestionManager, PlaylistManager", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster.Program import Library as SharpShark", s_Scope);
+                m_ScriptEngine.Execute("from GrooveCaster.Util import ModuleTimer as Timer", s_Scope);
 
 
                 var s_ScriptSource = m_ScriptEngine.CreateScriptSourceFromString(p_Module.Script.Trim(), SourceCodeKind.File);

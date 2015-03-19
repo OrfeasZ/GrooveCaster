@@ -24,15 +24,6 @@ namespace GrooveCaster.Modules
                 if (String.IsNullOrWhiteSpace(Program.SecretKey))
                     return View["Error", new { ErrorText = "Failed to fetch SecretKey from GrooveShark.<br/>Please make sure GrooveCaster is up-to-date and that you're not banned from GrooveShark." }];
                 
-                using (var s_Db = Database.GetConnection())
-                {
-                    var s_GSUsername = s_Db.SingleById<CoreSetting>("gsun");
-                    var s_GSPassword = s_Db.SingleById<CoreSetting>("gspw");
-
-                    if (s_GSUsername == null || s_GSPassword == null)
-                        return new RedirectResponse("/setup");
-                }
-
                 var s_Error = false;
                 var s_Message = "Broadcast is created and broadcasting!";
 
@@ -69,8 +60,13 @@ namespace GrooveCaster.Modules
                     s_Error = true;
                 }
 
+                var s_Index = QueueManager.GetPlayingSongIndex();
+
                 return View["Index", new
                 {
+                    Songs = QueueManager.GetUpcomingSongs(),
+                    Playing = s_Index != -1,
+                    Song = s_Index != -1 ? QueueManager.GetCurrentQueue()[s_Index] : null,
                     Message = s_Message,
                     Error = s_Error,
                     SuperUser = Context.CurrentUser.Claims.Contains("super"),

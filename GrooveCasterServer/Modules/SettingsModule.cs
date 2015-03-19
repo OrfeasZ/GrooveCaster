@@ -30,7 +30,8 @@ namespace GrooveCaster.Modules
                     Threshold = SettingsManager.SongVoteThreshold(),
                     Title = BroadcastManager.GetBroadcastName(),
                     Description = BroadcastManager.GetBroadcastDescription(),
-                    CommandPrefix = SettingsManager.CommandPrefix().ToString()
+                    CommandPrefix = SettingsManager.CommandPrefix().ToString(),
+                    WithoutGuest = SettingsManager.CanCommandWithoutGuest()
                 }];
             };
 
@@ -44,6 +45,7 @@ namespace GrooveCaster.Modules
                 SettingsManager.MaxHistorySongs(s_Request.History);
                 SettingsManager.SongVoteThreshold(s_Request.Threshold);
                 SettingsManager.CommandPrefix(s_Request.Prefix[0]);
+                SettingsManager.CanCommandWithoutGuest(s_Request.Guest);
 
                 using (var s_Db = Database.GetConnection())
                 {
@@ -67,7 +69,8 @@ namespace GrooveCaster.Modules
                     Threshold = SettingsManager.SongVoteThreshold(),
                     Title = BroadcastManager.GetBroadcastName(),
                     Description = BroadcastManager.GetBroadcastDescription(),
-                    CommandPrefix = SettingsManager.CommandPrefix().ToString()
+                    CommandPrefix = SettingsManager.CommandPrefix().ToString(),
+                    WithoutGuest = SettingsManager.CanCommandWithoutGuest()
                 }];
             };
 
@@ -79,7 +82,8 @@ namespace GrooveCaster.Modules
                 using (var s_Db = Database.GetConnection())
                 {
                     // Delete all settings.
-                    s_Db.DeleteByIds<CoreSetting>(new List<String> { "gsun", "gspw", "gssess", "bcmobile", "bcname", "bcdesc", "bctag" });
+                    s_Db.DeleteByIds<CoreSetting>(new List<String> { "gsun", "gspw", "gssess", "bcmobile", "bcname", "bcdesc", 
+                        "bctag", "cmdprefix", "cmdguest", "votethreshold", "history" });
 
                     // Stop the broadcast.
                     Program.Library.Broadcast.DestroyBroadcast();

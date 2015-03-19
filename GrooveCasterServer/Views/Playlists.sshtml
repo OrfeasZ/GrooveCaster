@@ -30,9 +30,9 @@
                     <li><a href="/queue">Queue Management</a></li>
                     <li><a href="/guests">Guest Management</a></li>
                     <li><a href="/songs">Song Management</a></li>
-                    <li><a href="/playlists">Playlist Management</a></li>
+                    <li class="active"><a href="/playlists">Playlist Management <span class="sr-only">(current)</span></a></li>
                     @If.SuperUser
-                        <li class="active"><a href="/modules">Module Management <span class="sr-only">(current)</span></a></li>
+                        <li><a href="/modules">Module Management</a></li>
                         <li><a href="/settings">Core Settings</a></li>
                         <li><a href="/users">User Management</a></li>
                     @EndIf
@@ -40,36 +40,19 @@
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">
-                    Create a new Module
+                    Song Playlists
+                    <a href="/playlists/import" class="btn btn-primary btn-sm" id="import-guests">Import GS Playlists</a>
                 </h1>
-                <form action="/modules/add" method="POST">
-                    @If.HasError
-                        <div class="alert alert-danger">@Model.Error</div>
-                    @EndIf
-                    <label>
-                        Module Name<br/>
-                        <input type="text" class="form-control" placeholder="Display Name" name="display" value="@Model.Data.Display" id="module-name-input" required autofocus/>
-                    </label>
-                    <br/>
-                    <label>
-                        Module ID<br/>
-                        <input type="text" class="form-control" placeholder="ID" name="name" value="@Model.Data.Name" id="module-id-input" required/>
-                    </label>
-                    <br/>
-                    <label>
-                        Module Description<br/>
-                        <input type="text" class="form-control" placeholder="Description" name="description" style="width: 650px;" value="@Model.Data.Description"/>
-                    </label>
-                    <br/>
-                    <label>
-                        Script<br/>
-                        <textarea class="form-control" placeholder="Python Script" name="script" id="module-script-input">@Model.Data.Script</textarea>
-                    </label>
-                    <br/><br/>
-                    <button type="submit" class="btn btn-primary">Create</button>
-                </form>
+                <div class="list-group" id="songs-list">
+					@Each.Playlists
+						<div class="list-group-item">
+							<a class="badge error" href="/playlists/delete/@Current.ID">x</a>
+							<a href="/playlists/edit/@Current.ID"><strong>@Current.Name</strong></a>&nbsp;&mdash;&nbsp;<span>@Current.Description</span>
+						</div>
+					@EndEach
+                </div>
             </div>
         </div>
     </div>
 </div>
-@EndSection['content']
+@EndSection['Content']

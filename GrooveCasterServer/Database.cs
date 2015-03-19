@@ -52,6 +52,16 @@ namespace GrooveCaster
                     SetupDefaultModules(s_Db);
                 }
 
+                if (!s_Db.TableExists<Playlist>())
+                {
+                    s_Db.CreateTable<Playlist>();
+                }
+
+                if (!s_Db.TableExists<PlaylistEntry>())
+                {
+                    s_Db.CreateTable<PlaylistEntry>();
+                }
+
                 var s_DatabaseVersionString = s_Db.SingleById<CoreSetting>("gcver").Value;
                 var s_DatabaseVersion = new Version(s_DatabaseVersionString);
                 var s_CurrentVersion = new Version(Program.GetVersion());
@@ -148,7 +158,7 @@ def OnUnload():
 def OnRemoveNext(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest):
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -181,7 +191,7 @@ def OnUnload():
 def OnRemoveLast(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest):
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -214,7 +224,7 @@ def OnUnload():
 def OnFetchByName(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest):
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -243,7 +253,7 @@ def OnUnload():
 def OnFetchLast(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest):
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -268,7 +278,7 @@ def OnUnload():
 def OnRemoveByName(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest):
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -297,7 +307,7 @@ def OnUnload():
 def OnSkip(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest):
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -322,7 +332,7 @@ def OnUnload():
 def OnShuffle(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest):
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -348,7 +358,7 @@ from GS.Lib.Enums import VIPPermissions
 def OnMakeGuest(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.CanAddTemporaryGuests:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.CanAddTemporaryGuests:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -376,7 +386,7 @@ def OnUnload():
                         DisplayName = "Peek",
                         Description = "Displays a list of upcoming songs in the queue.",
                         Script =
-                            "from GS.Lib.Events import ChatMessageEvent\r\n\r\ndef OnPeek(p_Event, p_Data):\r\n    s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)\r\n\r\n    if s_SpecialGuest == None:\r\n        ChatManager.SendChatMessage(\"Sorry %s, but you don\'t have permission to use this feature.\" % p_Event.UserName)\r\n        return\r\n\r\n    s_MaxCount = 6\r\n\r\n    if p_Data.strip().replace(\"-\", \"\").isdigit():\r\n        s_MaxCount = int(p_Data.strip())\r\n    \r\n    if s_MaxCount <= 0:\r\n        ChatManager.SendChatMessage(\"You can only peek into the future, not the past, silly %s!\" % p_Event.UserName)\r\n        return\r\n\r\n    s_Index = QueueManager.GetPlayingSongIndex()\r\n    s_SongCount = len(QueueManager.GetCurrentQueue()) - s_Index - 1\r\n\r\n    if s_SongCount > s_MaxCount:\r\n        s_SongCount = s_MaxCount\r\n\r\n    s_UpcomingSongs = []\r\n\r\n    for i in range(s_Index + 1, s_Index + 1 + s_SongCount):\r\n        s_UpcomingSongs.append(QueueManager.GetCurrentQueue()[i])\r\n\r\n    if len(s_UpcomingSongs) == 0:\r\n        ChatManager.SendChatMessage(\'There are no upcoming songs in the queue.\')\r\n        return\r\n\r\n    s_Songs = \'Upcoming songs: \'\r\n\r\n    for i in range(0, len(s_UpcomingSongs)):\r\n        s_Songs += \'%s • %s | \' % (s_UpcomingSongs[i].SongName, s_UpcomingSongs[i].ArtistName)\r\n\r\n    ChatManager.SendChatMessage(s_Songs[:-3])\r\n\r\nChatManager.RegisterCommand(\'peek\', \' [count]: Displays a list of [count] upcoming songs from the queue ([count] defaults to 6 if not specified).\', Action[ChatMessageEvent, object](OnPeek))\r\n\r\ndef OnUnload():\r\n    ChatManager.RemoveCommand(\'peek\')",
+                            "from GS.Lib.Events import ChatMessageEvent\r\n\r\ndef OnPeek(p_Event, p_Data):\r\n    s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)\r\n\r\n    if not BroadcastManager.CanUseCommands(s_SpecialGuest):\r\n        ChatManager.SendChatMessage(\"Sorry %s, but you don\'t have permission to use this feature.\" % p_Event.UserName)\r\n        return\r\n\r\n    s_MaxCount = 6\r\n\r\n    if p_Data.strip().replace(\"-\", \"\").isdigit():\r\n        s_MaxCount = int(p_Data.strip())\r\n    \r\n    if s_MaxCount <= 0:\r\n        ChatManager.SendChatMessage(\"You can only peek into the future, not the past, silly %s!\" % p_Event.UserName)\r\n        return\r\n\r\n    s_Index = QueueManager.GetPlayingSongIndex()\r\n    s_SongCount = len(QueueManager.GetCurrentQueue()) - s_Index - 1\r\n\r\n    if s_SongCount > s_MaxCount:\r\n        s_SongCount = s_MaxCount\r\n\r\n    s_UpcomingSongs = []\r\n\r\n    for i in range(s_Index + 1, s_Index + 1 + s_SongCount):\r\n        s_UpcomingSongs.append(QueueManager.GetCurrentQueue()[i])\r\n\r\n    if len(s_UpcomingSongs) == 0:\r\n        ChatManager.SendChatMessage(\'There are no upcoming songs in the queue.\')\r\n        return\r\n\r\n    s_Songs = \'Upcoming songs: \'\r\n\r\n    for i in range(0, len(s_UpcomingSongs)):\r\n        s_Songs += \'%s • %s | \' % (s_UpcomingSongs[i].SongName, s_UpcomingSongs[i].ArtistName)\r\n\r\n    ChatManager.SendChatMessage(s_Songs[:-3])\r\n\r\nChatManager.RegisterCommand(\'peek\', \' [count]: Displays a list of [count] upcoming songs from the queue ([count] defaults to 6 if not specified).\', Action[ChatMessageEvent, object](OnPeek))\r\n\r\ndef OnUnload():\r\n    ChatManager.RemoveCommand(\'peek\')",
                         Enabled = true,
                         Default = true
                     }
@@ -392,7 +402,7 @@ def OnUnload():
 def OnQueueRandom(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest):
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -423,7 +433,7 @@ from GS.Lib.Enums import VIPPermissions
 def OnAddGuest(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.CanAddPermanentGuests:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.CanAddPermanentGuests:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -463,7 +473,7 @@ from GS.Lib.Enums import VIPPermissions
 def OnRemoveGuest(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.CanAddPermanentGuests:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.CanAddPermanentGuests:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -497,7 +507,7 @@ from GS.Lib.Enums import VIPPermissions
 def OnUnguest(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.CanAddTemporaryGuests:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.CanAddTemporaryGuests:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -534,7 +544,7 @@ from GS.Lib.Enums import VIPPermissions
 def OnSetTitle(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.CanEditTitle:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.CanEditTitle:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -564,7 +574,7 @@ from GS.Lib.Enums import VIPPermissions
 def OnSetDescription(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.CanEditDescription:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.CanEditDescription:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -593,7 +603,7 @@ def OnUnload():
 def OnAddToCollection(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.SuperGuest:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.SuperGuest:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -622,7 +632,7 @@ def OnUnload():
 def OnRemoveFromCollection(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.SuperGuest:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.SuperGuest:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 
@@ -651,7 +661,7 @@ def OnUnload():
 def OnSeek(p_Event, p_Data):
     s_SpecialGuest = BroadcastManager.GetGuestForUserID(p_Event.UserID)
 
-    if s_SpecialGuest == None or not s_SpecialGuest.SuperGuest:
+    if not BroadcastManager.CanUseCommands(s_SpecialGuest) or not s_SpecialGuest.SuperGuest:
         ChatManager.SendChatMessage(""Sorry %s, but you don't have permission to use this feature."" % p_Event.UserName)
         return
 

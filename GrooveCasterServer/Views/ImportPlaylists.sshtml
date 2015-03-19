@@ -1,0 +1,155 @@
+﻿@Master['_Layout.sshtml']
+
+@Section['Content']
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">GrooveCaster Admin Dashboard</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/">Dashboard</a></li>
+                <li><a href="/me/settings">Settings</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li><a href="/">Overview</a></li>
+                    <li><a href="/queue">Queue Management</a></li>
+                    <li><a href="/guests">Guest Management</a></li>
+                    <li><a href="/songs">Song Management</a></li>
+                    <li class="active"><a href="/playlists">Playlist Management <span class="sr-only">(current)</span></a></li>
+                    @If.SuperUser
+                        <li><a href="/modules">Module Management</a></li>
+                        <li><a href="/settings">Core Settings</a></li>
+                        <li><a href="/users">User Management</a></li>
+                    @EndIf
+                </ul>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+               <h1 class="page-header">
+                    Import Playlists
+                </h1>
+                <p>From this page you can easily import playlists from your (or another users) account.</p>
+                <p>All songs that exist in playlists but not in your collection will be automatically added.</p>
+				<p>Use the search-box to find a user, select him, and you will be presented with all available playlists.</p>
+                <br />
+                <label>
+                    Search for a User<br />
+                    <input type="text" class="typeahead" placeholder="User Name" id="user-search-input-playlist">
+                </label>
+                <br />
+				<div id="loading-playlists" style="display: none">
+					<span class="glyphicon glyphicon-refresh glyphicon-spin" aria-hidden="true"></span> Loading playlists. Please wait...
+				</div>
+				<div id="playlist-results" style="display: none">
+					<div class="panel panel-default">
+						<div class="panel-heading">Available Playlists</div>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>&nbsp;</th>
+									<th>Name</th>
+									<th>Description</th>
+									<th>&nbsp;</th>
+								</tr>
+							</thead>
+							<tbody class="results">
+
+							</tbody>
+						</table>
+					</div>
+					<a class="btn btn-primary playlist-import-btn" href="#" id="import-all-btn">Import all Playlists</a>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+@EndSection['Content']
+
+@Section['Scripts']
+
+<script type="text/javascript">
+
+var s_LoadingPlaylists = $("#loading-playlists");
+var s_PlaylistResults = $("#playlist-results");
+var s_ResultsContainer = s_PlaylistResults.find('.results');
+var s_ImportAllBtn = $("#import-all-btn");
+
+var s_UserSource = new Bloodhound({
+    datumTokenizer: function (p_Datum) {
+        return Bloodhound.tokenizers.whitespace(p_Datum.name);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+        url: '/songs/import/autocomplete/%QUERY.json'
+    }
+});
+
+var s_UserSearchInput = $("#user-search-input-playlist");
+
+s_UserSource.initialize();
+
+s_UserSearchInput.typeahead(null, {
+    displayKey: 'name',
+    source: s_UserSource.ttAdapter(),
+    templates: {
+        empty: '<div>No results found.</div>',
+        suggestion: Handlebars.compile('<div class="song-suggestion"><strong>{{name}}</strong></div>')
+    }
+});
+
+s_UserSearchInput.bind('typeahead:selected', function (p_Obj, p_Datum, p_Name) {
+    if (p_Datum == null)
+        return;
+
+	s_LoadingPlaylists.show();
+	s_PlaylistResults.hide();
+	s_ResultsContainer.empty();
+	
+	s_ImportAllBtn.attr('href', '/playlists/import/user/' + p_Datum.userID);
+
+	$.getJSON('/playlists/fetch/' + p_Datum.userID, function(p_Data) {
+		for (var i = 0; i < p_Data.length; ++i) {
+			var s_Element = $('<tr><td>&nbsp;</td><td>' + _.escape(p_Data[i].Name) + '</td><td>' + _.escape(p_Data[i].About) + '</td><td style="text-align: right"><a href="/playlists/import/playlist/' + 
+				p_Data[i].PlaylistID + '" class="btn btn-primary playlist-import-btn">Import</a></td></tr>');
+			s_ResultsContainer.append(s_Element);
+		}
+
+		s_LoadingPlaylists.hide();
+		s_PlaylistResults.show();
+		s_ImportAllBtn.html('Import all Playlists').prop('disabled', false);
+	});
+});
+
+s_PlaylistResults.on('click', '.playlist-import-btn', function(p_Event) {
+	p_Event.preventDefault();
+
+	var s_Link = $(this).attr('href');
+
+	var s_Button = $(this);
+	s_Button.attr('disabled', 'disabled');
+	s_Button.html('<span class="glyphicon glyphicon-refresh glyphicon-spin" aria-hidden="true"></span> Importing');
+
+	$.get(s_Link).done(function() {
+		s_Button.html('Imported!').removeClass('btn-primary').addClass('btn-success')	
+	}).fail(function() {
+		s_Button.html('Error').removeClass('btn-primary').addClass('btn-danger');
+	});
+});
+
+</script>
+
+@EndSection['Scripts']
