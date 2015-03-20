@@ -34,7 +34,7 @@ namespace GrooveCaster.Managers
 
             if (Program.Library.User.Data != null && Program.Library.User.Data.UserID > 0)
             {
-                Program.Library.Chat.Connect();
+                Program.Library.Chat.Connect(true);
                 return;
             }
 
@@ -62,7 +62,7 @@ namespace GrooveCaster.Managers
                 return;
             }
 
-            Program.Library.Chat.Connect();
+            Program.Library.Chat.Connect(true);
         }
 
         private static void AuthenticateUsingCredentials(String p_Username, String p_Password)
@@ -77,7 +77,7 @@ namespace GrooveCaster.Managers
             using (var s_Db = Database.GetConnection())
                 s_Db.Update(new CoreSetting() { Key = "gssess", Value = Program.Library.User.SessionID });
 
-            Program.Library.Chat.Connect();
+            Program.Library.Chat.Connect(true);
         }
 
         private static void OnAuthenticated(SharkEvent p_SharkEvent)

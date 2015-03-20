@@ -1,0 +1,5 @@
+GrooveCasterServer/Content/js/* linguist-vendored
+app.js linguist-vendored=false
+
+GrooveCasterServer/Content/css/* linguist-vendored
+style.css linguist-vendored=false
