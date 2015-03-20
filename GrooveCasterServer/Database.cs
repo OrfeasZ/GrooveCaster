@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using GrooveCaster.Models;
@@ -22,6 +23,9 @@ namespace GrooveCaster
             OrmLiteConfig.DialectProvider = SqliteDialect.Provider;
             m_DbConnectionString = "gcaster.sqlite";
 
+            if (!Application.SelfHosted)
+                m_DbConnectionString = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "gcaster.sqlite");
+            
             using (var s_Db = GetConnection())
             {
                 if (!s_Db.TableExists<AdminUser>())

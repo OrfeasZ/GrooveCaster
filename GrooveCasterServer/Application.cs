@@ -21,8 +21,23 @@ namespace GrooveCaster
 
         public static String LatestVersion { get; set; }
 
+        internal static bool SelfHosted { get; private set; }
+
+        static Application()
+        {
+            SelfHosted = false;
+        }
+
+        public static void SetSelfHosted()
+        {
+            SelfHosted = true;
+        }
+
         public static void Init()
         {
+            if (!SelfHosted)
+                FetchKey();
+
             // Initialize local database.
             Database.Init();
 
@@ -66,6 +81,7 @@ namespace GrooveCaster
             SettingsManager.Init();
             UserManager.Init();
             SuggestionManager.Init();
+            StatisticsManager.Init();
 
             // ModuleManager should always load last.
             ModuleManager.Init();

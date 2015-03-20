@@ -4,6 +4,8 @@ using GrooveCaster.Models;
 using Nancy;
 using Nancy.Authentication.Forms;
 using Nancy.Bootstrapper;
+using Nancy.Hosting.Aspnet;
+using Nancy.Hosting.Self;
 using Nancy.Responses;
 using Nancy.TinyIoc;
 using Nancy.ViewEngines.SuperSimpleViewEngine;
@@ -15,6 +17,9 @@ namespace GrooveCaster.Nancy
     {
         protected override void ApplicationStartup(TinyIoCContainer p_Container, IPipelines p_Pipelines)
         {
+            if (!Application.SelfHosted)
+                Application.Init();
+
             Console.WriteLine("Bootstrapping SharpShark library...");
 
             // Bootstrap SharpShark library.
@@ -63,6 +68,16 @@ namespace GrooveCaster.Nancy
             base.ConfigureApplicationContainer(p_Container);
 
             p_Container.Register<IEnumerable<ISuperSimpleViewEngineMatcher>>((c, p) => new List<ISuperSimpleViewEngineMatcher> { new GrooveCasterMatcher() });
+        }
+
+        protected override IRootPathProvider RootPathProvider
+        {
+            get
+            {
+                return Application.SelfHosted
+                    ? (IRootPathProvider) new FileSystemRootPathProvider()
+                    : new AspNetRootPathProvider();
+            }
         }
     }
 }

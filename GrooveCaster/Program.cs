@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Threading;
 using Nancy.Hosting.Self;
 using NDesk.Options;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 
 namespace GrooveCaster
 {
@@ -29,11 +32,6 @@ namespace GrooveCaster
             m_Host = "http://localhost:42278";
             m_ShowHelp = false;
             m_Verbose = false;
-
-#if DEBUG
-            // Always enable verbose output in debug builds.
-            m_Verbose = true;
-#endif
 
             m_Options = new OptionSet()
             {
@@ -94,6 +92,7 @@ namespace GrooveCaster
             Console.WriteLine("GrooveCaster is initializing. Please wait...");
             Console.WriteLine("Fetching latest Secret Key from GrooveShark...");
 
+            Application.SetSelfHosted();
             Application.FetchKey();
             Application.Init();
 
@@ -153,10 +152,42 @@ namespace GrooveCaster
             m_Options.WriteOptionDescriptions(Console.Out);
         }
 
+        private static void InitLogging()
+        {
+            var s_Config = new LoggingConfiguration();
+
+            var s_ConsoleTarget = new ColoredConsoleTarget();
+            s_Config.AddTarget("console", s_ConsoleTarget);
+
+            s_ConsoleTarget.Layout = @"[${date:format=HH\:mm\:ss.fff}] ${logger} >> ${message}";
+
+            var s_ConsoleRule = new LoggingRule("*", LogLevel.Trace, s_ConsoleTarget);
+            s_Config.LoggingRules.Add(s_ConsoleRule);
+
+            var s_FileTarget = new FileTarget();
+            s_Config.AddTarget("file", s_FileTarget);
+
+            s_FileTarget.FileName = "${basedir}/GrooveCaster.log";
+            s_FileTarget.Layout = @"[${date:format=HH\:mm\:ss.fff}] ${logger} >> ${message}";
+            s_FileTarget.ArchiveFileName = "${basedir}/GrooveCaster.{#}.log";
+            s_FileTarget.ArchiveEvery = FileArchivePeriod.Day;
+            s_FileTarget.ArchiveNumbering = ArchiveNumberingMode.Date;
+            s_FileTarget.ArchiveDateFormat = "yyyMMdd";
+
+            var s_FileRule = new LoggingRule("*", LogLevel.Trace, s_FileTarget);
+            s_Config.LoggingRules.Add(s_FileRule);
+
+            LogManager.Configuration = s_Config;
+        }
+
         private static void EnableVerboseOutput()
         {
-            var s_Writer = new TextWriterTraceListener(Console.Out);
-            Trace.Listeners.Add(s_Writer);
+            InitLogging();
+
+            LogManager.GetLogger("GrooveCaster").Info("Starting GrooveCaster at {0}.", DateTime.UtcNow);
+
+            var s_Listener = new NLogTraceListener();
+            Trace.Listeners.Add(s_Listener);
         }
     }
 }
