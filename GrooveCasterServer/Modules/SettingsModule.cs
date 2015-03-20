@@ -52,13 +52,13 @@ namespace GrooveCaster.Modules
                     if (s_Request.Title.Trim().Length > 3)
                     {
                         s_Db.Update(new CoreSetting() { Key = "bcname", Value = s_Request.Title.Trim() });
-                        Program.Library.Broadcast.UpdateBroadcastName(s_Request.Title.Trim());
+                        Application.Library.Broadcast.UpdateBroadcastName(s_Request.Title.Trim());
                     }
 
                     if (s_Request.Description.Trim().Length > 3)
                     {
                         s_Db.Update(new CoreSetting() { Key = "bcdesc", Value = s_Request.Description.Trim() });
-                        Program.Library.Broadcast.UpdateBroadcastDescription(s_Request.Description.Trim());
+                        Application.Library.Broadcast.UpdateBroadcastDescription(s_Request.Description.Trim());
                     }
                 }
 
@@ -86,12 +86,12 @@ namespace GrooveCaster.Modules
                         "bctag", "cmdprefix", "cmdguest", "votethreshold", "history" });
 
                     // Stop the broadcast.
-                    Program.Library.Broadcast.DestroyBroadcast();
+                    Application.Library.Broadcast.DestroyBroadcast();
 
                     // Re-initialize SharpShark.
-                    Program.Library.Chat.Disconnect();
-                    Program.Library = new SharpShark(Program.SecretKey);
-                    Program.BootstrapLibrary();
+                    Application.Library.Chat.Disconnect();
+                    Application.Library = new SharpShark(Application.SecretKey);
+                    Application.BootstrapLibrary();
 
                     return new RedirectResponse("/setup");
                 }

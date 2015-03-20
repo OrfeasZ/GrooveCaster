@@ -1,30 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net;
-using System.Reflection;
 using System.Threading;
-using GrooveCaster.Managers;
-using GrooveCaster.Models;
-using GS.Lib;
-using GS.SneakyBeaky;
-using Nancy;
 using Nancy.Hosting.Self;
 using NDesk.Options;
-using Newtonsoft.Json;
-using ServiceStack.OrmLite;
-using Timer = System.Timers.Timer;
 
 namespace GrooveCaster
 {
-    public class Program
+    internal class Program
     {
-        public static SharpShark Library { get; set; }
-
         internal static NancyHost Host { get; set; }
-
-        internal static String SecretKey { get; set; }
-
-        public static String LatestVersion { get; set; }
 
         private static bool m_Daemonize;
 
@@ -32,16 +16,24 @@ namespace GrooveCaster
 
         private static bool m_ShowHelp;
 
+        private static bool m_Verbose;
+
         private static OptionSet m_Options;
 
-        internal static void Main(string[] p_Args)
+        static void Main(string[] p_Args)
         {
-            Console.Title = "GrooveCaster " + GetVersion();
+            Console.Title = "GrooveCaster " + Application.GetVersion();
 
             // Default values.
             m_Daemonize = false;
             m_Host = "http://localhost:42278";
             m_ShowHelp = false;
+            m_Verbose = false;
+
+#if DEBUG
+            // Always enable verbose output in debug builds.
+            m_Verbose = true;
+#endif
 
             m_Options = new OptionSet()
             {
@@ -56,6 +48,10 @@ namespace GrooveCaster
                 {
                     "h|help", "Show this message and exit GrooveCaster.",
                     v => m_ShowHelp = v != null
+                },
+                {
+                    "v|verbose", "Enables verbose debugging output.",
+                    v => m_Verbose = v != null
                 }
             };
 
@@ -71,6 +67,9 @@ namespace GrooveCaster
                 Console.WriteLine("Try `GrooveCaster --help' for more information.");
                 return;
             }
+
+            if (m_Verbose)
+                EnableVerboseOutput();
 
             // If the user requested help, show him help!
             if (m_ShowHelp)
@@ -93,47 +92,20 @@ namespace GrooveCaster
             }
 
             Console.WriteLine("GrooveCaster is initializing. Please wait...");
-
-            // Initialize local database.
-            Database.Init();
-
             Console.WriteLine("Fetching latest Secret Key from GrooveShark...");
 
-            // Fetch secret keys.
-            SecretKey = Beakynator.FetchSecretKey();
-            Library = new SharpShark(SecretKey);
-
-            // Fetch latest GrooveCaster version.
-            LatestVersion = GetLatestVersion();
-
-            // Check for updates every hour.
-            var s_VersionCheckTimer = new Timer()
-            {
-                Interval = 3600000,
-                AutoReset = true
-            };
-
-            s_VersionCheckTimer.Elapsed += (p_Sender, p_EventArgs) =>
-            {
-                LatestVersion = GetLatestVersion();
-            };
-
-            s_VersionCheckTimer.Start();
-
-            // Enable error traces.
-            StaticConfiguration.DisableErrorTraces = false;
+            Application.FetchKey();
+            Application.Init();
 
             // Start Nancy host.
             using (Host = new NancyHost(new HostConfiguration()
             {
-                UrlReservations = new UrlReservations()                 
+                UrlReservations = new UrlReservations()
                 {
                     CreateAutomatically = true
                 }
             }, s_HostUri))
             {
-                Console.WriteLine("Starting web host...");
-
                 try
                 {
                     Host.Start();
@@ -146,28 +118,15 @@ namespace GrooveCaster
                     return;
                 }
 
-                Console.WriteLine("Bootstrapping SharpShark library...");
-
-                // Bootstrap SharpShark library.
-                var s_Setup = BootstrapLibrary();
-
                 Console.WriteLine("GrooveCaster is active and running on " + s_HostUri);
 
-                if (NeedsUpdate())
+                if (Application.NeedsUpdate())
                 {
                     Console.WriteLine();
                     Console.WriteLine();
-                    Console.WriteLine("Your version of GrooveCaster is out of date (Current: {0}, Latest: {1}).", GetVersion(), LatestVersion);
+                    Console.WriteLine("Your version of GrooveCaster is out of date (Current: {0}, Latest: {1}).", Application.GetVersion(), Application.LatestVersion);
                     Console.WriteLine("Visit http://orfeasz.github.io/GrooveCaster/ for instructions on how to update.");
                     Console.WriteLine();
-                }
-
-                // Has the user setup the bot?
-                if (!s_Setup)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("It looks like GrooveCaster has not been set up yet.");
-                    Console.WriteLine("Visit " + s_HostUri + " from a web browser, login with the username and password \"admin\", and follow the on-screen instructions in order to fully setup GrooveCaster.");
                 }
 
                 // Should we daemonize this?
@@ -194,56 +153,10 @@ namespace GrooveCaster
             m_Options.WriteOptionDescriptions(Console.Out);
         }
 
-        internal static bool BootstrapLibrary()
+        private static void EnableVerboseOutput()
         {
-            if (String.IsNullOrWhiteSpace(SecretKey))
-                return true;
-
-            BroadcastManager.Init();
-            ChatManager.Init();
-            PlaylistManager.Init();
-            QueueManager.Init();
-            SettingsManager.Init();
-            UserManager.Init();
-            SuggestionManager.Init();
-
-            // ModuleManager should always load last.
-            ModuleManager.Init();
-
-            using (var s_Db = Database.GetConnection())
-                if (s_Db.SingleById<CoreSetting>("gsun") == null || s_Db.SingleById<CoreSetting>("gspw") == null)
-                    return false;
-            
-            UserManager.Authenticate();
-            return true;
-        }
-
-        public static String GetVersion()
-        {
-            return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-        }
-
-        public static String GetLatestVersion()
-        {
-            try
-            {
-                var s_VersionData = new WebClient().DownloadString("http://orfeasz.github.io/GrooveCaster/version.json");
-                var s_Version = JsonConvert.DeserializeObject<VersionModel>(s_VersionData);
-                return s_Version.Version;
-            }
-            catch
-            {
-                return GetVersion();
-            }
-        }
-
-        public static bool NeedsUpdate()
-        {
-            var s_CurrentVersion = new Version(GetVersion());
-            var s_LatestVersion = new Version(LatestVersion);
-
-            var s_Result = s_CurrentVersion.CompareTo(s_LatestVersion);
-            return s_Result < 0;
+            var s_Writer = new TextWriterTraceListener(Console.Out);
+            Trace.Listeners.Add(s_Writer);
         }
     }
 }

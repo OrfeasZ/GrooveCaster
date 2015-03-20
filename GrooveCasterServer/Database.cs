@@ -64,7 +64,7 @@ namespace GrooveCaster
 
                 var s_DatabaseVersionString = s_Db.SingleById<CoreSetting>("gcver").Value;
                 var s_DatabaseVersion = new Version(s_DatabaseVersionString);
-                var s_CurrentVersion = new Version(Program.GetVersion());
+                var s_CurrentVersion = new Version(Application.GetVersion());
 
                 if (s_DatabaseVersion.CompareTo(s_CurrentVersion) < 0)
                     Migrations.RunMigrations(s_Db, s_DatabaseVersionString);
@@ -92,7 +92,7 @@ namespace GrooveCaster
         internal static void SetupBaseSettings(IDbConnection p_Connection)
         {
             // Store current version; used for migrations.
-            p_Connection.Insert(new CoreSetting() { Key = "gcver", Value = Program.GetVersion() });
+            p_Connection.Insert(new CoreSetting() { Key = "gcver", Value = Application.GetVersion() });
         }
 
         internal static void SetupDefaultModules(IDbConnection p_Connection)

@@ -105,10 +105,10 @@ namespace GrooveCaster.Managers
                 m_ScriptEngine.Execute("clr.AddReference('GS.Lib')", s_Scope);
                 m_ScriptEngine.Execute("from GS.Lib import *", s_Scope);
 
-                m_ScriptEngine.Execute("clr.AddReference('GrooveCaster')", s_Scope);
+                m_ScriptEngine.Execute("clr.AddReference('GrooveCasterServer')", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster import *", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster.Managers import BroadcastManager, ChatManager, QueueManager, SettingsManager, UserManager, SuggestionManager, PlaylistManager", s_Scope);
-                m_ScriptEngine.Execute("from GrooveCaster.Program import Library as SharpShark", s_Scope);
+                m_ScriptEngine.Execute("from GrooveCaster.Application import Library as SharpShark", s_Scope);
                 m_ScriptEngine.Execute("from GrooveCaster.Util import ModuleTimer as Timer", s_Scope);
 
 

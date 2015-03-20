@@ -27,9 +27,9 @@ namespace GrooveCaster.Managers
             PlayedSongs.Clear();
             CollectionSongs.Clear();
             
-            Program.Library.RegisterEventHandler(ClientEvent.SongPlaying, OnSongPlaying);
-            Program.Library.RegisterEventHandler(ClientEvent.SongVote, OnSongVote);
-            Program.Library.RegisterEventHandler(ClientEvent.QueueUpdated, OnQueueUpdated);
+            Application.Library.RegisterEventHandler(ClientEvent.SongPlaying, OnSongPlaying);
+            Application.Library.RegisterEventHandler(ClientEvent.SongVote, OnSongVote);
+            Application.Library.RegisterEventHandler(ClientEvent.QueueUpdated, OnQueueUpdated);
         }
 
         private static void OnQueueUpdated(SharkEvent p_SharkEvent)
@@ -54,7 +54,7 @@ namespace GrooveCaster.Managers
 
         public static void QueueRandomSongs(int p_Count)
         {
-            Program.Library.Broadcast.AddSongs(GetRandomSongIDs(p_Count));
+            Application.Library.Broadcast.AddSongs(GetRandomSongIDs(p_Count));
         }
 
         public static List<Int64> GetRandomSongIDs(int p_Count)
@@ -88,7 +88,7 @@ namespace GrooveCaster.Managers
         {
             var s_Event = (SongPlayingEvent)p_SharkEvent;
 
-            Debug.WriteLine("Currently playing song: {0} ({1})", s_Event.SongName, s_Event.SongID);
+            Trace.WriteLine(String.Format("Currently playing song: {0} ({1})", s_Event.SongName, s_Event.SongID));
 
             if (s_Event.SongID == 0)
             {
@@ -102,8 +102,8 @@ namespace GrooveCaster.Managers
                 if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
                 {
                     var s_SongID = PlaylistManager.DequeueNextSong();
-                    var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_SongID });
-                    Program.Library.Broadcast.PlaySong(s_SongID, s_QueueIDs[s_SongID]);
+                    var s_QueueIDs = Application.Library.Broadcast.AddSongs(new List<Int64> { s_SongID });
+                    Application.Library.Broadcast.PlaySong(s_SongID, s_QueueIDs[s_SongID]);
                     return;
                 }
 
@@ -120,8 +120,8 @@ namespace GrooveCaster.Managers
                     s_SecondSong = CollectionSongs[s_SecondSongIndex];
                 }
 
-                var s_Songs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong, s_SecondSong });
-                Program.Library.Broadcast.PlaySong(s_FirstSong, s_Songs[s_FirstSong]);
+                var s_Songs = Application.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong, s_SecondSong });
+                Application.Library.Broadcast.PlaySong(s_FirstSong, s_Songs[s_FirstSong]);
                 return;
             }
 
@@ -136,12 +136,12 @@ namespace GrooveCaster.Managers
 
         internal static void UpdateQueue()
         {
-            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+            var s_Index = Application.Library.Queue.GetPlayingSongIndex();
 
-            Debug.WriteLine("Updating Queue. Current Song: {0} - Total Songs: {1}", s_Index, Program.Library.Queue.CurrentQueue.Count);
+            Trace.WriteLine(String.Format("Updating Queue. Current Song: {0} - Total Songs: {1}", s_Index, Application.Library.Queue.CurrentQueue.Count));
 
             // We're running out of songs; add new ones.
-            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
+            if (s_Index + 1 >= Application.Library.Queue.CurrentQueue.Count)
             {
                 // Allows for custom queuing logic by Modules.
                 if (!ModuleManager.OnFetchingNextSong())
@@ -150,7 +150,7 @@ namespace GrooveCaster.Managers
                 if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
                 {
                     var s_PlaylistSongID = PlaylistManager.DequeueNextSong();
-                    Program.Library.Broadcast.AddSongs(new List<Int64> { s_PlaylistSongID });
+                    Application.Library.Broadcast.AddSongs(new List<Int64> { s_PlaylistSongID });
                     return;
                 }
 
@@ -169,9 +169,9 @@ namespace GrooveCaster.Managers
                     s_SongID = CollectionSongs[s_RandomSongIndex];
                 }
 
-                Debug.WriteLine("Adding song {0} to queue (from collection).", s_SongID);
+                Trace.WriteLine(String.Format("Adding song {0} to queue (from collection).", s_SongID));
 
-                Program.Library.Broadcast.AddSongs(new List<Int64> { s_SongID });
+                Application.Library.Broadcast.AddSongs(new List<Int64> { s_SongID });
             }
         }
 
@@ -191,126 +191,126 @@ namespace GrooveCaster.Managers
 
         public static void SkipSong()
         {
-            if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
-                Program.Library.Broadcast.PlayingSongQueueID == 0)
+            if (Application.Library.Broadcast.ActiveBroadcastID == null || Application.Library.Broadcast.PlayingSongID == 0 ||
+                Application.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
             // Get the next song ID.
-            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+            var s_Index = Application.Library.Queue.GetPlayingSongIndex();
 
-            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
+            if (s_Index + 1 >= Application.Library.Queue.CurrentQueue.Count)
                 return;
 
-            var s_NextSong = Program.Library.Queue.CurrentQueue[s_Index + 1];
+            var s_NextSong = Application.Library.Queue.CurrentQueue[s_Index + 1];
 
-            Program.Library.Broadcast.PlaySong(s_NextSong.SongID, s_NextSong.QueueID);
+            Application.Library.Broadcast.PlaySong(s_NextSong.SongID, s_NextSong.QueueID);
         }
 
         public static void RemoveNext(int p_Count = 1)
         {
-            if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
-                Program.Library.Broadcast.PlayingSongQueueID == 0)
+            if (Application.Library.Broadcast.ActiveBroadcastID == null || Application.Library.Broadcast.PlayingSongID == 0 ||
+                Application.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
             // Get the next song ID.
-            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+            var s_Index = Application.Library.Queue.GetPlayingSongIndex();
 
-            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
+            if (s_Index + 1 >= Application.Library.Queue.CurrentQueue.Count)
                 return;
 
             var s_QueueIDs = new List<Int64>();
 
             for (var i = 0; i < p_Count; ++i)
             {
-                if (s_Index + i + 1 >= Program.Library.Queue.CurrentQueue.Count)
+                if (s_Index + i + 1 >= Application.Library.Queue.CurrentQueue.Count)
                     break;
 
-                s_QueueIDs.Add(Program.Library.Queue.CurrentQueue[s_Index + i + 1].QueueID);
+                s_QueueIDs.Add(Application.Library.Queue.CurrentQueue[s_Index + i + 1].QueueID);
             }
 
-            Program.Library.Broadcast.RemoveSongs(s_QueueIDs);
+            Application.Library.Broadcast.RemoveSongs(s_QueueIDs);
         }
 
         public static void RemoveLast(int p_Count = 1)
         {
-            if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
-                  Program.Library.Broadcast.PlayingSongQueueID == 0)
+            if (Application.Library.Broadcast.ActiveBroadcastID == null || Application.Library.Broadcast.PlayingSongID == 0 ||
+                  Application.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
-            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+            var s_Index = Application.Library.Queue.GetPlayingSongIndex();
 
-            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
+            if (s_Index + 1 >= Application.Library.Queue.CurrentQueue.Count)
                 return;
 
             var s_QueueIDs = new List<Int64>();
 
             for (var i = p_Count - 1; i >= 0; --i)
             {
-                if (Program.Library.Queue.CurrentQueue.Count - 1 - i == s_Index)
+                if (Application.Library.Queue.CurrentQueue.Count - 1 - i == s_Index)
                     break;
 
-                s_QueueIDs.Add(Program.Library.Queue.CurrentQueue[Program.Library.Queue.CurrentQueue.Count - 1 - i].QueueID);
+                s_QueueIDs.Add(Application.Library.Queue.CurrentQueue[Application.Library.Queue.CurrentQueue.Count - 1 - i].QueueID);
             }
 
-            Program.Library.Broadcast.RemoveSongs(s_QueueIDs);
+            Application.Library.Broadcast.RemoveSongs(s_QueueIDs);
         }
 
         public static void RemoveByName(String p_Name)
         {
-            if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
-                   Program.Library.Broadcast.PlayingSongQueueID == 0)
+            if (Application.Library.Broadcast.ActiveBroadcastID == null || Application.Library.Broadcast.PlayingSongID == 0 ||
+                   Application.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
             // Get the next song ID.
-            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+            var s_Index = Application.Library.Queue.GetPlayingSongIndex();
 
-            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count)
+            if (s_Index + 1 >= Application.Library.Queue.CurrentQueue.Count)
                 return;
 
             var s_QueueIDs = new List<Int64>();
 
-            for (var i = s_Index + 1; i < Program.Library.Queue.CurrentQueue.Count; ++i)
+            for (var i = s_Index + 1; i < Application.Library.Queue.CurrentQueue.Count; ++i)
             {
-                if (Program.Library.Queue.CurrentQueue[i].SongName.ToLowerInvariant().Contains(p_Name.ToLowerInvariant()))
-                    s_QueueIDs.Add(Program.Library.Queue.CurrentQueue[i].QueueID);
+                if (Application.Library.Queue.CurrentQueue[i].SongName.ToLowerInvariant().Contains(p_Name.ToLowerInvariant()))
+                    s_QueueIDs.Add(Application.Library.Queue.CurrentQueue[i].QueueID);
             }
 
-            Program.Library.Broadcast.RemoveSongs(s_QueueIDs);
+            Application.Library.Broadcast.RemoveSongs(s_QueueIDs);
         }
 
         public static void FetchLast()
         {
-            if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
-                     Program.Library.Broadcast.PlayingSongQueueID == 0)
+            if (Application.Library.Broadcast.ActiveBroadcastID == null || Application.Library.Broadcast.PlayingSongID == 0 ||
+                     Application.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
-            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+            var s_Index = Application.Library.Queue.GetPlayingSongIndex();
 
-            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count - 1)
+            if (s_Index + 1 >= Application.Library.Queue.CurrentQueue.Count - 1)
                 return;
 
-            var s_SongData = Program.Library.Queue.CurrentQueue[Program.Library.Queue.CurrentQueue.Count - 1];
+            var s_SongData = Application.Library.Queue.CurrentQueue[Application.Library.Queue.CurrentQueue.Count - 1];
 
-            Program.Library.Broadcast.MoveSongs(new List<Int64> { s_SongData.QueueID }, Program.Library.Queue.GetPlayingSongIndex() + 1);
+            Application.Library.Broadcast.MoveSongs(new List<Int64> { s_SongData.QueueID }, Application.Library.Queue.GetPlayingSongIndex() + 1);
         }
 
         public static void FetchByName(String p_Name)
         {
-            if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
-                        Program.Library.Broadcast.PlayingSongQueueID == 0)
+            if (Application.Library.Broadcast.ActiveBroadcastID == null || Application.Library.Broadcast.PlayingSongID == 0 ||
+                        Application.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
-            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+            var s_Index = Application.Library.Queue.GetPlayingSongIndex();
 
-            if (s_Index + 1 >= Program.Library.Queue.CurrentQueue.Count - 1)
+            if (s_Index + 1 >= Application.Library.Queue.CurrentQueue.Count - 1)
                 return;
 
-            for (var i = s_Index + 1; i < Program.Library.Queue.CurrentQueue.Count; ++i)
+            for (var i = s_Index + 1; i < Application.Library.Queue.CurrentQueue.Count; ++i)
             {
-                if (Program.Library.Queue.CurrentQueue[i].SongName.ToLowerInvariant()
+                if (Application.Library.Queue.CurrentQueue[i].SongName.ToLowerInvariant()
                     .Contains(p_Name.ToLowerInvariant()))
                 {
-                    Program.Library.Broadcast.MoveSongs(new List<Int64> { Program.Library.Queue.CurrentQueue[i].QueueID }, Program.Library.Queue.GetPlayingSongIndex() + 1);
+                    Application.Library.Broadcast.MoveSongs(new List<Int64> { Application.Library.Queue.CurrentQueue[i].QueueID }, Application.Library.Queue.GetPlayingSongIndex() + 1);
                     break;
                 }
             }
@@ -318,13 +318,13 @@ namespace GrooveCaster.Managers
 
         public static void Shuffle()
         {
-             if (Program.Library.Broadcast.ActiveBroadcastID == null || Program.Library.Broadcast.PlayingSongID == 0 ||
-                     Program.Library.Broadcast.PlayingSongQueueID == 0)
+             if (Application.Library.Broadcast.ActiveBroadcastID == null || Application.Library.Broadcast.PlayingSongID == 0 ||
+                     Application.Library.Broadcast.PlayingSongQueueID == 0)
                 return;
 
-            var s_Index = Program.Library.Queue.GetPlayingSongIndex();
+            var s_Index = Application.Library.Queue.GetPlayingSongIndex();
 
-            var s_SongCount = Program.Library.Queue.CurrentQueue.Count - (s_Index + 1);
+            var s_SongCount = Application.Library.Queue.CurrentQueue.Count - (s_Index + 1);
 
             if (s_SongCount <= 1)
                 return;
@@ -336,7 +336,7 @@ namespace GrooveCaster.Managers
                 s_Songs[i] = new SongShuffleData()
                 {
                     LastIndex = i,
-                    QueueID = Program.Library.Queue.CurrentQueue[s_Index + i + 1].QueueID
+                    QueueID = Application.Library.Queue.CurrentQueue[s_Index + i + 1].QueueID
                 };
             }
 
@@ -347,28 +347,28 @@ namespace GrooveCaster.Managers
             for (var i = 0; i < s_SongCount; ++i)
                 s_QueueIDs.Add(s_Songs[i].QueueID);
 
-            Program.Library.Broadcast.MoveSongs(s_QueueIDs, Program.Library.Queue.GetPlayingSongIndex() + 1);
+            Application.Library.Broadcast.MoveSongs(s_QueueIDs, Application.Library.Queue.GetPlayingSongIndex() + 1);
 
-            Program.Library.Chat.SendChatMessage("Shuffled " + s_SongCount + " songs.");
+            Application.Library.Chat.SendChatMessage("Shuffled " + s_SongCount + " songs.");
         }
 
         public static bool AddPlayingSongToCollection()
         {
             using (var s_Db = Database.GetConnection())
             {
-                var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
+                var s_Song = s_Db.SingleById<SongEntry>(Application.Library.Broadcast.PlayingSongID);
 
                 if (s_Song != null)
                     return false;
 
                 s_Song = new SongEntry()
                 {
-                    AlbumID = Program.Library.Broadcast.PlayingAlbumID,
-                    AlbumName = Program.Library.Broadcast.PlayingSongAlbum,
-                    ArtistID = Program.Library.Broadcast.PlayingArtistID,
-                    ArtistName = Program.Library.Broadcast.PlayingSongArtist,
-                    SongID = Program.Library.Broadcast.PlayingSongID,
-                    SongName = Program.Library.Broadcast.PlayingSongName
+                    AlbumID = Application.Library.Broadcast.PlayingAlbumID,
+                    AlbumName = Application.Library.Broadcast.PlayingSongAlbum,
+                    ArtistID = Application.Library.Broadcast.PlayingArtistID,
+                    ArtistName = Application.Library.Broadcast.PlayingSongArtist,
+                    SongID = Application.Library.Broadcast.PlayingSongID,
+                    SongName = Application.Library.Broadcast.PlayingSongName
                 };
 
                 s_Db.Insert(s_Song);
@@ -382,7 +382,7 @@ namespace GrooveCaster.Managers
         {
             using (var s_Db = Database.GetConnection())
             {
-                var s_Song = s_Db.SingleById<SongEntry>(Program.Library.Broadcast.PlayingSongID);
+                var s_Song = s_Db.SingleById<SongEntry>(Application.Library.Broadcast.PlayingSongID);
 
                 if (s_Song == null)
                     return false;
@@ -396,17 +396,17 @@ namespace GrooveCaster.Managers
 
         public static int GetPlayingSongIndex()
         {
-            return Program.Library.Queue.GetPlayingSongIndex();
+            return Application.Library.Queue.GetPlayingSongIndex();
         }
 
         public static List<QueueSongData> GetCurrentQueue()
         {
-            return Program.Library.Queue.CurrentQueue;
+            return Application.Library.Queue.CurrentQueue;
         }
 
         public static void SeekCurrentSong(float p_Seconds)
         {
-            Program.Library.Broadcast.SeekCurrentSong(p_Seconds);
+            Application.Library.Broadcast.SeekCurrentSong(p_Seconds);
         }
 
         public static void EmptyQueue()
@@ -419,59 +419,59 @@ namespace GrooveCaster.Managers
             for (var i = s_Index + 1; i < s_Index + 1 + s_SongCount; ++i)
                 s_SongsToRemove.Add(GetCurrentQueue()[i].QueueID);
 
-            Program.Library.Broadcast.RemoveSongs(s_SongsToRemove);
+            Application.Library.Broadcast.RemoveSongs(s_SongsToRemove);
         }
 
         public static void QueueSong(Int64 p_SongID)
         {
-            Program.Library.Broadcast.AddSongs(new List<Int64>() { p_SongID });
+            Application.Library.Broadcast.AddSongs(new List<Int64>() { p_SongID });
         }
 
         public static void QueueSongs(List<Int64> p_SongIDs)
         {
-            Program.Library.Broadcast.AddSongs(p_SongIDs);
+            Application.Library.Broadcast.AddSongs(p_SongIDs);
         }
 
         public static void MoveSong(Int64 p_QueueID, int p_Index)
         {
-            Program.Library.Broadcast.MoveSongs(new List<Int64> { p_QueueID }, p_Index);
+            Application.Library.Broadcast.MoveSongs(new List<Int64> { p_QueueID }, p_Index);
         }
 
         public static void MoveSongs(List<Int64> p_QueueIDs, int p_Index)
         {
-            Program.Library.Broadcast.MoveSongs(p_QueueIDs, p_Index);
+            Application.Library.Broadcast.MoveSongs(p_QueueIDs, p_Index);
         }
 
         public static void RemoveSong(Int64 p_QueueID)
         {
-            Program.Library.Broadcast.RemoveSongs(new List<Int64> { p_QueueID });
+            Application.Library.Broadcast.RemoveSongs(new List<Int64> { p_QueueID });
         }
 
         public static void RemoveSongs(List<Int64> p_QueueIDs)
         {
-            Program.Library.Broadcast.RemoveSongs(p_QueueIDs);
+            Application.Library.Broadcast.RemoveSongs(p_QueueIDs);
         }
 
         public static void PlaySong(Int64 p_QueueID)
         {
-            var s_SongIndex = Program.Library.Queue.GetInternalIndexForSong(p_QueueID);
+            var s_SongIndex = Application.Library.Queue.GetInternalIndexForSong(p_QueueID);
 
             if (s_SongIndex == -1)
                 return;
 
-            var s_Song = Program.Library.Queue.CurrentQueue[s_SongIndex];
+            var s_Song = Application.Library.Queue.CurrentQueue[s_SongIndex];
 
-            Program.Library.Broadcast.PlaySong(s_Song.SongID, s_Song.QueueID);
+            Application.Library.Broadcast.PlaySong(s_Song.SongID, s_Song.QueueID);
         }
 
         public static int GetSongIndex(Int64 p_QueueID)
         {
-            return Program.Library.Queue.GetInternalIndexForSong(p_QueueID);
+            return Application.Library.Queue.GetInternalIndexForSong(p_QueueID);
         }
 
         public static int GetSongIDIndex(Int64 p_SongID)
         {
-            return Program.Library.Queue.GetInternalIndexForSongID(p_SongID);
+            return Application.Library.Queue.GetInternalIndexForSongID(p_SongID);
         }
 
         public static List<QueueSongData> GetUpcomingSongs()

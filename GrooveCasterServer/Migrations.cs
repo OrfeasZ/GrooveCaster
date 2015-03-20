@@ -43,7 +43,7 @@ namespace GrooveCaster
             }
 
             var s_Version = p_Connection.SingleById<CoreSetting>("gcver");
-            s_Version.Value = Program.GetVersion();
+            s_Version.Value = Application.GetVersion();
 
             p_Connection.Update(s_Version);
         }

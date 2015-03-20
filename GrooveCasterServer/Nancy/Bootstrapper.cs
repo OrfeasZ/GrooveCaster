@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GrooveCaster.Models;
 using Nancy;
 using Nancy.Authentication.Forms;
@@ -14,6 +15,20 @@ namespace GrooveCaster.Nancy
     {
         protected override void ApplicationStartup(TinyIoCContainer p_Container, IPipelines p_Pipelines)
         {
+            Console.WriteLine("Bootstrapping SharpShark library...");
+
+            // Bootstrap SharpShark library.
+            var s_Setup = Application.BootstrapLibrary();
+
+            // Has the user setup the bot?
+            if (!s_Setup)
+            {
+                Console.WriteLine();
+                Console.WriteLine("It looks like GrooveCaster has not been set up yet.");
+                Console.WriteLine("Visit the web interface from a web browser, login with the username and password \"admin\", and follow the on-screen instructions in order to fully setup GrooveCaster.");
+                Console.WriteLine();
+            }
+
             FormsAuthentication.Enable(p_Pipelines, new FormsAuthenticationConfiguration()
             {
                 RedirectUrl = "~/login",

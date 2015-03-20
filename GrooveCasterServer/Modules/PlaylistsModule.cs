@@ -36,7 +36,7 @@ namespace GrooveCaster.Modules
             {
                 Int64 s_UserID = p_Parameters.user;
 
-                var s_Songs = Program.Library.User.GetPlaylists(s_UserID);
+                var s_Songs = Application.Library.User.GetPlaylists(s_UserID);
 
                 var s_Serialized = JsonConvert.SerializeObject(s_Songs);
                 var s_Encoded = Encoding.UTF8.GetBytes(s_Serialized);

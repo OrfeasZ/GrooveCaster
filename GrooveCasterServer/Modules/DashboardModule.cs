@@ -21,7 +21,7 @@ namespace GrooveCaster.Modules
 
             Get["/"] = p_Parameters =>
             {
-                if (String.IsNullOrWhiteSpace(Program.SecretKey))
+                if (String.IsNullOrWhiteSpace(Application.SecretKey))
                     return View["Error", new { ErrorText = "Failed to fetch SecretKey from GrooveShark.<br/>Please make sure GrooveCaster is up-to-date and that you're not banned from GrooveShark." }];
                 
                 var s_Error = false;
@@ -45,7 +45,7 @@ namespace GrooveCaster.Modules
                 else if (!UserManager.Authenticating &&
                          UserManager.AuthenticationResult == AuthenticationResult.Success &&
                          !BroadcastManager.CreatingBroadcast &&
-                         Program.Library.Broadcast.ActiveBroadcastID == null &&
+                         Application.Library.Broadcast.ActiveBroadcastID == null &&
                          QueueManager.CollectionSongs.Count < 2)
                 {
                     s_Message = "Broadcast didn't start. Not enough songs in collection. Use the \"Song Management\" interface to add songs.";
@@ -54,7 +54,7 @@ namespace GrooveCaster.Modules
                 else if (!UserManager.Authenticating &&
                          UserManager.AuthenticationResult == AuthenticationResult.Success &&
                          !BroadcastManager.CreatingBroadcast &&
-                         Program.Library.Broadcast.ActiveBroadcastID == null)
+                         Application.Library.Broadcast.ActiveBroadcastID == null)
                 {
                     s_Message = "Broadcast creation failed. Please check your settings.";
                     s_Error = true;

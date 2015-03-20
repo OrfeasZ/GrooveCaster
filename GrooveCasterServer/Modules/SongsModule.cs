@@ -49,7 +49,7 @@ namespace GrooveCaster.Modules
             Get["/songs/autocomplete/{query}.json"] = p_Parameters =>
             {
                 String s_Query = p_Parameters.query;
-                var s_Results = Program.Library.Search.GetAutocomplete(s_Query, "song");
+                var s_Results = Application.Library.Search.GetAutocomplete(s_Query, "song");
 
                 if (s_Results.ContainsKey("song"))
                     return s_Results["song"];
@@ -121,14 +121,14 @@ namespace GrooveCaster.Modules
 
             Get["/songs/import"] = p_Parameters =>
             {
-                return View["ImportSongs", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), User = Program.Library.User.Data.UserID }];
+                return View["ImportSongs", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), User = Application.Library.User.Data.UserID }];
             };
 
             Get["/songs/import/autocomplete/{query}.json"] = p_Parameters =>
             {
                 String s_Query = p_Parameters.query;
 
-                var s_Results = Program.Library.Search.GetAutocomplete(s_Query, "user");
+                var s_Results = Application.Library.Search.GetAutocomplete(s_Query, "user");
 
                 if (s_Results.ContainsKey("user"))
                     return s_Results["user"];
@@ -147,7 +147,7 @@ namespace GrooveCaster.Modules
                 // Fetch collection songs.
                 if (!s_Request.Only)
                 {
-                    var s_Songs = Program.Library.User.GetSongsInLibrary(s_Request.User);
+                    var s_Songs = Application.Library.User.GetSongsInLibrary(s_Request.User);
                     
                     foreach (var s_Song in s_Songs)
                     {
@@ -175,7 +175,7 @@ namespace GrooveCaster.Modules
                 // Fetch favorite songs.
                 if (s_Request.Favorites || s_Request.Only)
                 {
-                    var s_Favorites = Program.Library.User.GetFavorites("Songs", s_Request.User);
+                    var s_Favorites = Application.Library.User.GetFavorites("Songs", s_Request.User);
 
                     foreach (var s_Song in s_Favorites)
                     {

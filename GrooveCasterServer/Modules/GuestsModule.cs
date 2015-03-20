@@ -121,7 +121,7 @@ namespace GrooveCaster.Modules
 
             Get["/guests/import"] = p_Parameters =>
             {
-                var s_FollowingUsers = Program.Library.User.GetFollowingUsers();
+                var s_FollowingUsers = Application.Library.User.GetFollowingUsers();
 
                 using (var s_Db = Database.GetConnection())
                 {

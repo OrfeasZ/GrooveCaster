@@ -94,7 +94,7 @@ namespace GrooveCaster.Managers
 
         public static void ImportPlaylistsForUser(Int64 p_UserID)
         {
-            var s_Playlists = Program.Library.User.GetPlaylists(p_UserID);
+            var s_Playlists = Application.Library.User.GetPlaylists(p_UserID);
 
             foreach (var s_Playlist in s_Playlists)
                 ImportPlaylist(s_Playlist.PlaylistID);
@@ -102,7 +102,7 @@ namespace GrooveCaster.Managers
 
         public static void ImportPlaylist(Int64 p_ExternalID)
         {
-            var s_PlaylistData = Program.Library.User.GetPlaylistData(p_ExternalID);
+            var s_PlaylistData = Application.Library.User.GetPlaylistData(p_ExternalID);
 
             if (s_PlaylistData == null)
                 return;
