@@ -87,6 +87,13 @@ namespace GrooveCaster.Managers
             PlaylistActive = false;
         }
 
+        public static void ClearPlaylist()
+        {
+            DisablePlaylist();
+            ActivePlaylist = null;
+            m_Entries.Clear();
+        }
+
         public static void EnablePlaylist()
         {
             PlaylistActive = true;
@@ -164,6 +171,17 @@ namespace GrooveCaster.Managers
 
                 // Import the new ones.
                 s_Db.SaveAll(s_Songs);
+            }
+        }
+
+        public static void DeleteAllPlaylists()
+        {
+            ClearPlaylist();
+
+            using (var s_Db = Database.GetConnection())
+            {
+                s_Db.DeleteAll<PlaylistEntry>();
+                s_Db.DeleteAll<Playlist>();
             }
         }
 

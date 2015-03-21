@@ -42,7 +42,8 @@
                 <h1 class="page-header">
                     Song Collection
                     <a href="/songs/add" class="btn btn-primary btn-sm">Add Song</a>
-                    <a href="/songs/import" class="btn btn-primary btn-sm" id="import-guests">Import From GS Collection</a>
+                    <a href="/songs/import" class="btn btn-primary btn-sm">Import From GS Collection</a>
+                    <a href="/songs/wipe" class="btn btn-danger btn-sm" id="empty-collection-btn">Empty Collection</a>
                 </h1>
                 <div class="list-group" id="songs-list">
                 </div>
@@ -64,6 +65,14 @@ $.getJSON('/songs/all.json', function(p_Data) {
 
 	$("#songs-list").append($(s_Items));
 });
+
+$('#empty-collection-btn').click(function() {
+	if (!confirm("WARNING! This will remove all songs from your collection (except for 2), and destroy all your playlists.\n\nAre you sure you want to continue?"))
+        return false;
+
+    return true;
+});
+
 </script>
 
 @EndSection['Scripts']

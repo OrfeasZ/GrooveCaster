@@ -113,6 +113,8 @@ namespace GrooveCaster.Modules
                         return new RedirectResponse("/songs");
 
                     QueueManager.CollectionSongs.Remove(s_SongID);
+
+                    s_Db.Delete<PlaylistEntry>(p_Entry => p_Entry.SongID == s_Song.SongID); 
                     s_Db.Delete(s_Song);
                 }
 
@@ -213,6 +215,31 @@ namespace GrooveCaster.Modules
                 // Create the broadcast (if needed).
                 if (s_PreviousSongCount < 2 && QueueManager.CollectionSongs.Count >= 2)
                     BroadcastManager.CreateBroadcast();
+
+                return new RedirectResponse("/songs");
+            };
+
+            Get["/songs/wipe"] = p_Parameters =>
+            {
+                using (var s_Db = Database.GetConnection())
+                {
+                    // Get all songs.
+                    var s_Songs = s_Db.Select<SongEntry>();
+
+                    if (s_Songs.Count <= 2)
+                        return new RedirectResponse("/songs");
+
+                    // Drop all playlists.
+                    PlaylistManager.DeleteAllPlaylists();
+
+                    var s_IDs = s_Songs.Select(p_Song => p_Song.SongID).ToList();
+
+                    // Keep the first two songs.
+                    s_IDs.RemoveRange(0, 2);
+
+                    // Delete all songs.
+                    s_Db.DeleteByIds<SongEntry>(s_IDs);
+                }
 
                 return new RedirectResponse("/songs");
             };
