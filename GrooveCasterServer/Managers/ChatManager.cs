@@ -24,7 +24,7 @@ namespace GrooveCaster.Managers
             m_ChatCommands = new Dictionary<string, ChatCommand>();
             m_ChatHistory = new List<ChatMessageEvent>();
 
-            Program.Library.RegisterEventHandler(ClientEvent.ChatMessage, OnChatMessage);
+            Application.Library.RegisterEventHandler(ClientEvent.ChatMessage, OnChatMessage);
 
             // Register internal commands.
             RegisterCommandInternal("about", ": Displays information about the GrooveCaster bot.", OnAbout);
@@ -47,10 +47,10 @@ namespace GrooveCaster.Managers
                 m_ChatHistory.RemoveAt(0);
 
             // Disregard messages that are sent by the bot.
-            if (s_Event.UserID == Program.Library.User.Data.UserID)
+            if (s_Event.UserID == Application.Library.User.Data.UserID)
                 return;
 
-            Debug.WriteLine("[CHAT] {0}: {1}", s_Event.UserName, s_Event.ChatMessage);
+            Trace.WriteLine(String.Format("[CHAT] {0}: {1}", s_Event.UserName, s_Event.ChatMessage));
 
             if (s_Event.ChatMessage.Trim().Length < 2 || s_Event.ChatMessage.Trim()[0] != SettingsManager.CommandPrefix())
                 return;
@@ -69,7 +69,7 @@ namespace GrooveCaster.Managers
 
         private static void OnAbout(ChatMessageEvent p_Event, String p_Data)
         {
-            SendChatMessage("This broadcast is powered by GrooveCaster " + Program.GetVersion() + ". For more information visit http://orfeasz.github.io/GrooveCaster/.");
+            SendChatMessage("This broadcast is powered by GrooveCaster " + Application.GetVersion() + ". For more information visit http://orfeasz.github.io/GrooveCaster/.");
         }
 
         private static void OnHelp(ChatMessageEvent p_Event, String p_Data)
@@ -117,7 +117,7 @@ namespace GrooveCaster.Managers
 
         public static void SendChatMessage(String p_Message)
         {
-            Program.Library.Chat.SendChatMessage(p_Message);
+            Application.Library.Chat.SendChatMessage(p_Message);
         }
 
         private static void RegisterCommandInternal(String p_Command, String p_Description,

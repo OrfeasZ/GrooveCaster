@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrooveCaster", "GrooveCasterServer\GrooveCaster.csproj", "{68F5F5F3-B8BB-4911-875F-6F00AAE04EA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrooveCasterServer", "GrooveCasterServer\GrooveCasterServer.csproj", "{68F5F5F3-B8BB-4911-875F-6F00AAE04EA6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GS", "GS", "{82E464BF-9CD4-410C-BAF9-A2A080903042}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GS.SneakyBeaky", "GS\GS.SneakyBeaky\GS.SneakyBeaky.csproj", "{6AC621AC-0E58-4949-9208-07C47459F908}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GS.Lib", "GS\GS.Lib\GS.Lib.csproj", "{9EA608D1-F6BF-475C-B59D-3314D8793067}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrooveCaster", "GrooveCaster\GrooveCaster.csproj", "{06815160-1054-4708-B8FD-18829D51A3F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{9EA608D1-F6BF-475C-B59D-3314D8793067}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EA608D1-F6BF-475C-B59D-3314D8793067}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EA608D1-F6BF-475C-B59D-3314D8793067}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06815160-1054-4708-B8FD-18829D51A3F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06815160-1054-4708-B8FD-18829D51A3F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06815160-1054-4708-B8FD-18829D51A3F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06815160-1054-4708-B8FD-18829D51A3F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

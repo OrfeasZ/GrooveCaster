@@ -11,19 +11,26 @@ namespace GrooveCaster
         {
             switch (p_DatabaseVersion)
             {
+                case "1.2.0.0":
+                    RunMigrations1300(p_Connection);
+                    break;
+
                 case "1.1.2.1":
                     RunMigrations1200(p_Connection);
+                    RunMigrations1300(p_Connection);
                     break;
 
                 case "1.1.2.0":
                     RunMigrations1121(p_Connection);
                     RunMigrations1200(p_Connection);
+                    RunMigrations1300(p_Connection);
                     break;
 
                 case "1.1.0.0":
                     RunMigrations1120(p_Connection);
                     RunMigrations1121(p_Connection);
                     RunMigrations1200(p_Connection);
+                    RunMigrations1300(p_Connection);
                     break;
 
                 case "1.0.1.0":
@@ -31,6 +38,7 @@ namespace GrooveCaster
                     RunMigrations1120(p_Connection);
                     RunMigrations1121(p_Connection);
                     RunMigrations1200(p_Connection);
+                    RunMigrations1300(p_Connection);
                     break;
 
                 case "1.0.0.0":
@@ -39,11 +47,12 @@ namespace GrooveCaster
                     RunMigrations1120(p_Connection);
                     RunMigrations1121(p_Connection);
                     RunMigrations1200(p_Connection);
+                    RunMigrations1300(p_Connection);
                     break;
             }
 
             var s_Version = p_Connection.SingleById<CoreSetting>("gcver");
-            s_Version.Value = Program.GetVersion();
+            s_Version.Value = Application.GetVersion();
 
             p_Connection.Update(s_Version);
         }

@@ -61,15 +61,13 @@
                 </div>
                 <div class="row">
                     <div class="col-md-9">
-                        @If.Playing
-                        <div class="panel panel-default">
-                            <div class="panel-heading">Now Playing <a href="/queue/song/skip" class="btn btn-default btn-xs">Skip</a></div>
-                            <div class="panel-body">
-                                <h3 style="margin: 0">@Model.Song.SongName</h3>
-                                @Model.Song.ArtistName &bull; @Model.Song.AlbumName
-                            </div>
-                        </div>
-                        @EndIf
+						<div class="panel panel-default">
+								<div class="panel-heading">Broadcast Listeners (past 24h)</div>
+								<div class="panel-body">
+									<div class="listener-stats" style="height: 250px;"></div>
+								</div>
+						</div>
+                       
                         <div class="panel panel-default">
                             <div class="panel-heading">Upcoming Songs</div>
                             <table class="table table-hover">
@@ -90,6 +88,15 @@
                         </div>
                     </div>
                     <div class="col-md-3">
+						@If.Playing
+							<div class="panel panel-default">
+								<div class="panel-heading">Now Playing <a href="/queue/song/skip" class="btn btn-default btn-xs">Skip</a></div>
+								<div class="panel-body">
+									<h4 style="margin: 0">@Model.Song.SongName</h4>
+									@Model.Song.ArtistName &bull; @Model.Song.AlbumName
+								</div>
+							</div>
+						@EndIf
                         <div class="panel panel-default">
                             <div class="panel-heading">Broadcast Chat</div>
                             <div id="chat-container">
@@ -119,6 +126,8 @@
 
 <script type="text/javascript">
 
+	var s_ChatRefresh = null;
+
     var FetchChat = function() {
         $.getJSON('/chat/history.json', function(p_Data) {
             var s_Table = $("#chat-messages-table");
@@ -133,7 +142,9 @@
 
             // Scroll to bottom of chat.
             $("#chat-container").scrollTop($('#chat-container')[0].scrollHeight);
-        });
+        }).fail(function() {
+			clearInterval(s_ChatRefresh);
+		});
     };
 
     $("#send-chat-form").ajaxForm({
@@ -141,7 +152,7 @@
     });
 
     FetchChat();
-    setInterval(FetchChat, 1000);
+    s_ChatRefresh = setInterval(FetchChat, 1500);
 
 </script>
 

@@ -5,10 +5,10 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{68F5F5F3-B8BB-4911-875F-6F00AAE04EA6}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GrooveCaster</RootNamespace>
-    <AssemblyName>GrooveCaster</AssemblyName>
+    <AssemblyName>GrooveCasterServer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -88,6 +88,9 @@
     <Reference Include="Nancy.Authentication.Forms">
       <HintPath>..\packages\Nancy.Authentication.Forms.1.1\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.Hosting.Aspnet">
+      <HintPath>..\packages\Nancy.Hosting.Aspnet.1.1\lib\net40\Nancy.Hosting.Aspnet.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy.Hosting.Self, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Nancy.Hosting.Self.1.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
@@ -130,6 +133,7 @@
     <Compile Include="Managers\PlaylistManager.cs" />
     <Compile Include="Managers\QueueManager.cs" />
     <Compile Include="Managers\SettingsManager.cs" />
+    <Compile Include="Managers\StatisticsManager.cs" />
     <Compile Include="Managers\SuggestionManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Migrations.cs" />
@@ -138,6 +142,7 @@
     <Compile Include="Migrations\1200.cs" />
     <Compile Include="Migrations\1121.cs" />
     <Compile Include="Migrations\1120.cs" />
+    <Compile Include="Migrations\1300.cs" />
     <Compile Include="Models\AddGuestRequest.cs" />
     <Compile Include="Models\AddModuleRequest.cs" />
     <Compile Include="Models\AddSongRequest.cs" />
@@ -159,6 +164,7 @@
     <Compile Include="Models\SongEntry.cs" />
     <Compile Include="Models\SongShuffleData.cs" />
     <Compile Include="Models\SongSuggestion.cs" />
+    <Compile Include="Models\StatisticsUnit.cs" />
     <Compile Include="Models\UpdateAccountSettingsRequest.cs" />
     <Compile Include="Models\UpdateGuestRequest.cs" />
     <Compile Include="Models\VersionModel.cs" />
@@ -172,6 +178,7 @@
     <Compile Include="Modules\SettingsModule.cs" />
     <Compile Include="Modules\SetupModule.cs" />
     <Compile Include="Modules\SongsModule.cs" />
+    <Compile Include="Modules\StatisticsModule.cs" />
     <Compile Include="Modules\UsersModule.cs" />
     <Compile Include="Nancy\Bootstrapper.cs" />
     <Compile Include="Modules\DashboardModule.cs" />
@@ -181,7 +188,7 @@
     <Compile Include="Nancy\GrooveCasterMatcher.cs" />
     <Compile Include="Nancy\UserIdentity.cs" />
     <Compile Include="Nancy\UserMapper.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Application.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\ModuleTimer.cs" />
   </ItemGroup>
@@ -192,16 +199,16 @@
     <Content Include="Content\css\jquery-ui.min.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\js\bootstrap.min.js">
+    <Content Include="Content\js\bootstrap.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\js\codemirror.js">
+    <Content Include="Content\js\codemirror\lib\codemirror.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\js\handlebars.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\js\jquery-2.1.3.min.js">
+    <Content Include="Content\js\jquery-2.1.3.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="app.config" />
@@ -218,10 +225,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
-    <Content Include="Content\js\jquery-ui.min.js">
+    <Content Include="Content\js\jquery-ui.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\js\python.js">
+    <Content Include="Content\js\codemirror\mode\python.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\js\jquery.canvasjs.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\js\typeahead.bundle.min.js">
@@ -317,7 +327,7 @@
     <Content Include="Views\Queue.sshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="web.config" />
+    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GS\GS.Lib\GS.Lib.csproj">

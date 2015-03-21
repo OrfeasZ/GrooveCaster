@@ -21,7 +21,7 @@ namespace GrooveCaster.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                if (String.IsNullOrWhiteSpace(Program.SecretKey))
+                if (String.IsNullOrWhiteSpace(Application.SecretKey))
                     return View["Error", new { ErrorText = "Failed to fetch SecretKey from GrooveShark. Please make sure GrooveCaster is up-to-date and that you're not banned from GrooveShark." }];
                 
                 using (var s_Db = Database.GetConnection())
@@ -43,7 +43,7 @@ namespace GrooveCaster.Modules
 
                 var s_Request = this.Bind<LoginRequest>();
 
-                var s_Result = Program.Library.User.Authenticate(s_Request.Username, s_Request.Password);
+                var s_Result = Application.Library.User.Authenticate(s_Request.Username, s_Request.Password);
 
                 return new { Result = s_Result };
             };
@@ -53,7 +53,7 @@ namespace GrooveCaster.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                var s_LastBroadcast = Program.Library.Broadcast.GetLastBroadcast();
+                var s_LastBroadcast = Application.Library.Broadcast.GetLastBroadcast();
                 return s_LastBroadcast;
             };
 
@@ -62,7 +62,7 @@ namespace GrooveCaster.Modules
                 if (!Context.CurrentUser.Claims.Contains("super"))
                     return new RedirectResponse("/");
 
-                var s_Categories = Program.Library.Broadcast.GetCategoryTags();
+                var s_Categories = Application.Library.Broadcast.GetCategoryTags();
                 return s_Categories;
             };
 
@@ -75,7 +75,7 @@ namespace GrooveCaster.Modules
 
                 if (String.IsNullOrWhiteSpace(s_Request.Username) || String.IsNullOrWhiteSpace(s_Request.Password) ||
                     String.IsNullOrWhiteSpace(s_Request.Title) || String.IsNullOrWhiteSpace(s_Request.Description) ||
-                    String.IsNullOrWhiteSpace(s_Request.Tag) || String.IsNullOrWhiteSpace(Program.Library.User.SessionID))
+                    String.IsNullOrWhiteSpace(s_Request.Tag) || String.IsNullOrWhiteSpace(Application.Library.User.SessionID))
                     return new RedirectResponse("/setup");
 
                 using (var s_Db = Database.GetConnection())
@@ -88,7 +88,7 @@ namespace GrooveCaster.Modules
 
                     s_Db.Insert(new CoreSetting() { Key = "gsun", Value = s_Request.Username });
                     s_Db.Insert(new CoreSetting() { Key = "gspw", Value = s_Request.Password });
-                    s_Db.Insert(new CoreSetting() { Key = "gssess", Value = Program.Library.User.SessionID });
+                    s_Db.Insert(new CoreSetting() { Key = "gssess", Value = Application.Library.User.SessionID });
                     s_Db.Insert(new CoreSetting() { Key = "bcname", Value = s_Request.Title });
                     s_Db.Insert(new CoreSetting() { Key = "bcdesc", Value = s_Request.Description });
                     s_Db.Insert(new CoreSetting() { Key = "bctag", Value = s_Request.Tag });

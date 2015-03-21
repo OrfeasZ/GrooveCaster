@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GrooveCaster.Models;
 using Nancy;
 using Nancy.Authentication.Forms;
 using Nancy.Bootstrapper;
+using Nancy.Hosting.Aspnet;
+using Nancy.Hosting.Self;
 using Nancy.Responses;
 using Nancy.TinyIoc;
 using Nancy.ViewEngines.SuperSimpleViewEngine;
@@ -14,6 +17,23 @@ namespace GrooveCaster.Nancy
     {
         protected override void ApplicationStartup(TinyIoCContainer p_Container, IPipelines p_Pipelines)
         {
+            if (!Application.SelfHosted)
+                Application.Init();
+
+            Console.WriteLine("Bootstrapping SharpShark library...");
+
+            // Bootstrap SharpShark library.
+            var s_Setup = Application.BootstrapLibrary();
+
+            // Has the user setup the bot?
+            if (!s_Setup)
+            {
+                Console.WriteLine();
+                Console.WriteLine("It looks like GrooveCaster has not been set up yet.");
+                Console.WriteLine("Visit the web interface from a web browser, login with the username and password \"admin\", and follow the on-screen instructions in order to fully setup GrooveCaster.");
+                Console.WriteLine();
+            }
+
             FormsAuthentication.Enable(p_Pipelines, new FormsAuthenticationConfiguration()
             {
                 RedirectUrl = "~/login",
@@ -48,6 +68,16 @@ namespace GrooveCaster.Nancy
             base.ConfigureApplicationContainer(p_Container);
 
             p_Container.Register<IEnumerable<ISuperSimpleViewEngineMatcher>>((c, p) => new List<ISuperSimpleViewEngineMatcher> { new GrooveCasterMatcher() });
+        }
+
+        protected override IRootPathProvider RootPathProvider
+        {
+            get
+            {
+                return Application.SelfHosted
+                    ? (IRootPathProvider) new FileSystemRootPathProvider()
+                    : new AspNetRootPathProvider();
+            }
         }
     }
 }

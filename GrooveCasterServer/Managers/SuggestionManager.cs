@@ -20,10 +20,10 @@ namespace GrooveCaster.Managers
         {
             Suggestions = new Dictionary<long, SongSuggestion>();
 
-            Program.Library.RegisterEventHandler(ClientEvent.SongSuggestion, OnSongSuggestion);
-            Program.Library.RegisterEventHandler(ClientEvent.SongSuggestionRemoved, OnSongSuggestionRemoved);
-            Program.Library.RegisterEventHandler(ClientEvent.SongSuggestionRejected, OnSongSuggestionRejected);
-            Program.Library.RegisterEventHandler(ClientEvent.SongSuggestionApproved, OnSongSuggestionApproved);
+            Application.Library.RegisterEventHandler(ClientEvent.SongSuggestion, OnSongSuggestion);
+            Application.Library.RegisterEventHandler(ClientEvent.SongSuggestionRemoved, OnSongSuggestionRemoved);
+            Application.Library.RegisterEventHandler(ClientEvent.SongSuggestionRejected, OnSongSuggestionRejected);
+            Application.Library.RegisterEventHandler(ClientEvent.SongSuggestionApproved, OnSongSuggestionApproved);
         }
 
         private static void OnSongSuggestion(SharkEvent p_SharkEvent)
@@ -130,7 +130,7 @@ namespace GrooveCaster.Managers
 
         public static void ApproveSuggestion(SongSuggestion p_Suggestion)
         {
-            Program.Library.Broadcast.ApproveSuggestion(p_Suggestion.SongID);
+            Application.Library.Broadcast.ApproveSuggestion(p_Suggestion.SongID);
         }
     }
 }

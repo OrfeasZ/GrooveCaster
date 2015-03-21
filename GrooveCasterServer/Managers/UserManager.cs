@@ -21,8 +21,8 @@ namespace GrooveCaster.Managers
             Authenticating = false;
             AuthenticationResult = AuthenticationResult.Success;
             
-            Program.Library.RegisterEventHandler(ClientEvent.Authenticated, OnAuthenticated);
-            Program.Library.RegisterEventHandler(ClientEvent.AuthenticationFailed, OnAuthenticationFailed);
+            Application.Library.RegisterEventHandler(ClientEvent.Authenticated, OnAuthenticated);
+            Application.Library.RegisterEventHandler(ClientEvent.AuthenticationFailed, OnAuthenticationFailed);
         }
 
         internal static void Authenticate()
@@ -32,9 +32,9 @@ namespace GrooveCaster.Managers
 
             Authenticating = true;
 
-            if (Program.Library.User.Data != null && Program.Library.User.Data.UserID > 0)
+            if (Application.Library.User.Data != null && Application.Library.User.Data.UserID > 0)
             {
-                Program.Library.Chat.Connect();
+                Application.Library.Chat.Connect(true);
                 return;
             }
 
@@ -48,7 +48,7 @@ namespace GrooveCaster.Managers
 
         private static void AuthenticateUsingSession(String p_SessionID)
         {
-            if ((AuthenticationResult = Program.Library.User.Authenticate(p_SessionID)) != AuthenticationResult.Success)
+            if ((AuthenticationResult = Application.Library.User.Authenticate(p_SessionID)) != AuthenticationResult.Success)
             {
                 // Session-based authentication failed; retry with stored username and password.
                 using (var s_Db = Database.GetConnection())
@@ -62,12 +62,12 @@ namespace GrooveCaster.Managers
                 return;
             }
 
-            Program.Library.Chat.Connect();
+            Application.Library.Chat.Connect(true);
         }
 
         private static void AuthenticateUsingCredentials(String p_Username, String p_Password)
         {
-            if ((AuthenticationResult = Program.Library.User.Authenticate(p_Username, p_Password)) != AuthenticationResult.Success)
+            if ((AuthenticationResult = Application.Library.User.Authenticate(p_Username, p_Password)) != AuthenticationResult.Success)
             {
                 Authenticating = false;
                 return;
@@ -75,9 +75,9 @@ namespace GrooveCaster.Managers
 
             // Store new session ID in database.
             using (var s_Db = Database.GetConnection())
-                s_Db.Update(new CoreSetting() { Key = "gssess", Value = Program.Library.User.SessionID });
+                s_Db.Update(new CoreSetting() { Key = "gssess", Value = Application.Library.User.SessionID });
 
-            Program.Library.Chat.Connect();
+            Application.Library.Chat.Connect(true);
         }
 
         private static void OnAuthenticated(SharkEvent p_SharkEvent)

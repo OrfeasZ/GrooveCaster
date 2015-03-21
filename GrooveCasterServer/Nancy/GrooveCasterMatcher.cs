@@ -6,7 +6,7 @@ namespace GrooveCaster.Nancy
     {
         public string Invoke(string p_Content, dynamic p_Model, IViewEngineHost p_Host)
         {
-            return p_Content.Replace("@GrooveCaster.Version", Program.GetVersion());
+            return p_Content.Replace("@GrooveCaster.Version", Application.GetVersion());
         }
     }
 }

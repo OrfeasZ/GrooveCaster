@@ -49,7 +49,7 @@ namespace GrooveCaster.Modules
             Get["/songs/autocomplete/{query}.json"] = p_Parameters =>
             {
                 String s_Query = p_Parameters.query;
-                var s_Results = Program.Library.Search.GetAutocomplete(s_Query, "song");
+                var s_Results = Application.Library.Search.GetAutocomplete(s_Query, "song");
 
                 if (s_Results.ContainsKey("song"))
                     return s_Results["song"];
@@ -113,6 +113,8 @@ namespace GrooveCaster.Modules
                         return new RedirectResponse("/songs");
 
                     QueueManager.CollectionSongs.Remove(s_SongID);
+
+                    s_Db.Delete<PlaylistEntry>(p_Entry => p_Entry.SongID == s_Song.SongID); 
                     s_Db.Delete(s_Song);
                 }
 
@@ -121,14 +123,14 @@ namespace GrooveCaster.Modules
 
             Get["/songs/import"] = p_Parameters =>
             {
-                return View["ImportSongs", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), User = Program.Library.User.Data.UserID }];
+                return View["ImportSongs", new { SuperUser = Context.CurrentUser.Claims.Contains("super"), User = Application.Library.User.Data.UserID }];
             };
 
             Get["/songs/import/autocomplete/{query}.json"] = p_Parameters =>
             {
                 String s_Query = p_Parameters.query;
 
-                var s_Results = Program.Library.Search.GetAutocomplete(s_Query, "user");
+                var s_Results = Application.Library.Search.GetAutocomplete(s_Query, "user");
 
                 if (s_Results.ContainsKey("user"))
                     return s_Results["user"];
@@ -147,7 +149,7 @@ namespace GrooveCaster.Modules
                 // Fetch collection songs.
                 if (!s_Request.Only)
                 {
-                    var s_Songs = Program.Library.User.GetSongsInLibrary(s_Request.User);
+                    var s_Songs = Application.Library.User.GetSongsInLibrary(s_Request.User);
                     
                     foreach (var s_Song in s_Songs)
                     {
@@ -175,7 +177,7 @@ namespace GrooveCaster.Modules
                 // Fetch favorite songs.
                 if (s_Request.Favorites || s_Request.Only)
                 {
-                    var s_Favorites = Program.Library.User.GetFavorites("Songs", s_Request.User);
+                    var s_Favorites = Application.Library.User.GetFavorites("Songs", s_Request.User);
 
                     foreach (var s_Song in s_Favorites)
                     {
@@ -213,6 +215,31 @@ namespace GrooveCaster.Modules
                 // Create the broadcast (if needed).
                 if (s_PreviousSongCount < 2 && QueueManager.CollectionSongs.Count >= 2)
                     BroadcastManager.CreateBroadcast();
+
+                return new RedirectResponse("/songs");
+            };
+
+            Get["/songs/wipe"] = p_Parameters =>
+            {
+                using (var s_Db = Database.GetConnection())
+                {
+                    // Get all songs.
+                    var s_Songs = s_Db.Select<SongEntry>();
+
+                    if (s_Songs.Count <= 2)
+                        return new RedirectResponse("/songs");
+
+                    // Drop all playlists.
+                    PlaylistManager.DeleteAllPlaylists();
+
+                    var s_IDs = s_Songs.Select(p_Song => p_Song.SongID).ToList();
+
+                    // Keep the first two songs.
+                    s_IDs.RemoveRange(0, 2);
+
+                    // Delete all songs.
+                    s_Db.DeleteByIds<SongEntry>(s_IDs);
+                }
 
                 return new RedirectResponse("/songs");
             };

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GrooveCaster.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
@@ -20,25 +21,79 @@ namespace GrooveCaster.Managers
         internal static void Init()
         {
             CreatingBroadcast = false;
-            Program.Library.RegisterEventHandler(ClientEvent.BroadcastCreated, OnBroadcastCreated);
-            Program.Library.RegisterEventHandler(ClientEvent.BroadcastCreationFailed, OnBroadcastCreationFailed);
-            Program.Library.RegisterEventHandler(ClientEvent.ComplianceIssue, OnComplianceIssue);
-            Program.Library.RegisterEventHandler(ClientEvent.PendingDestruction, OnPendingDestruction);
+            Application.Library.RegisterEventHandler(ClientEvent.BroadcastCreated, OnBroadcastCreated);
+            Application.Library.RegisterEventHandler(ClientEvent.BroadcastCreationFailed, OnBroadcastCreationFailed);
+            Application.Library.RegisterEventHandler(ClientEvent.ComplianceIssue, OnComplianceIssue);
+            Application.Library.RegisterEventHandler(ClientEvent.PendingDestruction, OnPendingDestruction);
+            Application.Library.RegisterEventHandler(ClientEvent.PlaybackStatusUpdate, OnPlaybackStatusUpdate);
+        }
+
+        private static void OnPlaybackStatusUpdate(SharkEvent p_SharkEvent)
+        {
+            if (Application.Library.Broadcast.CurrentBroadcastStatus != BroadcastStatus.Broadcasting)
+                return;
+
+            var s_Event = (PlaybackStatusUpdateEvent) p_SharkEvent;
+
+            if (s_Event.Status != PlaybackStatus.Completed && s_Event.Status != PlaybackStatus.Paused &&
+                s_Event.Status != PlaybackStatus.Suspended)
+                return;
+
+            var s_CurrentIndex = QueueManager.GetPlayingSongIndex();
+
+            if (s_CurrentIndex != -1 && s_CurrentIndex < QueueManager.GetCurrentQueue().Count - 2)
+            {
+                var s_NextSong = QueueManager.GetCurrentQueue()[s_CurrentIndex + 1];
+                Application.Library.Broadcast.PlaySong(s_NextSong.SongID, s_NextSong.QueueID);
+                return;
+            }
+
+            // Allows for custom queuing logic by Modules.
+            var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+            if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+            {
+                var s_First = s_ModuleSongs.First();
+                Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
+                return;
+            }
+
+            // Try to play a new song.
+            if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
+            {
+                var s_SongID = PlaylistManager.DequeueNextSong();
+                Application.Library.Broadcast.PlaySong(s_SongID, Application.Library.Broadcast.AddSongs(new List<Int64> { s_SongID })[s_SongID]);
+                return;
+            }
+
+            var s_Random = new Random();
+            var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
+            var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];
+
+            var s_QueueIDs = Application.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
+
+            Application.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
         }
 
         private static void OnPendingDestruction(SharkEvent p_SharkEvent)
         {
-            if (Program.Library.Broadcast.CurrentBroadcastStatus != BroadcastStatus.Broadcasting)
+            if (Application.Library.Broadcast.CurrentBroadcastStatus != BroadcastStatus.Broadcasting)
                 return;
 
             // Allows for custom queuing logic by Modules.
-            if (!ModuleManager.OnFetchingNextSong())
+            var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+            if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+            {
+                var s_First = s_ModuleSongs.First();
+                Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
                 return;
+            }
 
             if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
             {
                 var s_SongID = PlaylistManager.DequeueNextSong();
-                Program.Library.Broadcast.PlaySong(s_SongID,  Program.Library.Broadcast.AddSongs(new List<Int64> { s_SongID })[s_SongID]);
+                Application.Library.Broadcast.PlaySong(s_SongID,  Application.Library.Broadcast.AddSongs(new List<Int64> { s_SongID })[s_SongID]);
                 return;
             }
 
@@ -47,9 +102,9 @@ namespace GrooveCaster.Managers
             var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
             var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];
 
-            var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
+            var s_QueueIDs = Application.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
 
-            Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
+            Application.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
         }
 
         private static void OnComplianceIssue(SharkEvent p_SharkEvent)
@@ -61,14 +116,20 @@ namespace GrooveCaster.Managers
             }
 
             // Allows for custom queuing logic by Modules.
-            if (!ModuleManager.OnFetchingNextSong())
+            var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+            if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+            {
+                var s_First = s_ModuleSongs.First();
+                Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
                 return;
+            }
 
             // Try to play a new song.
             if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
             {
                 var s_SongID = PlaylistManager.DequeueNextSong();
-                Program.Library.Broadcast.PlaySong(s_SongID, Program.Library.Broadcast.AddSongs(new List<Int64> { s_SongID })[s_SongID]);
+                Application.Library.Broadcast.PlaySong(s_SongID, Application.Library.Broadcast.AddSongs(new List<Int64> { s_SongID })[s_SongID]);
                 return;
             }
 
@@ -76,9 +137,9 @@ namespace GrooveCaster.Managers
             var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
             var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];
 
-            var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
+            var s_QueueIDs = Application.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
 
-            Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
+            Application.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
         }
 
         internal static void CreateBroadcast()
@@ -91,7 +152,7 @@ namespace GrooveCaster.Managers
 
             CreatingBroadcast = true;
 
-            Program.Library.Broadcast.CreateBroadcast(GetBroadcastName(), GetBroadcastDescription(), GetBroadcastCategoryTag());
+            Application.Library.Broadcast.CreateBroadcast(GetBroadcastName(), GetBroadcastDescription(), GetBroadcastCategoryTag());
         }
 
         public static String GetBroadcastName()
@@ -136,8 +197,17 @@ namespace GrooveCaster.Managers
             QueueManager.ClearHistory();
 
             // Add two random songs to the collection.
-            if (Program.Library.Queue.CurrentQueue.Count < 2)
+            if (Application.Library.Queue.CurrentQueue.Count < 2)
             {
+                var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(2);
+
+                if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+                {
+                    var s_First = s_ModuleSongs.First();
+                    Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
+                    return;
+                }
+
                 var s_Random = new Random();
                 var s_FirstSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
                 var s_SecondSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
@@ -151,22 +221,31 @@ namespace GrooveCaster.Managers
                     s_SecondSong = QueueManager.CollectionSongs[s_SecondSongIndex];
                 }
 
-                var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> {s_FirstSong, s_SecondSong});
+                var s_QueueIDs = Application.Library.Broadcast.AddSongs(new List<Int64> {s_FirstSong, s_SecondSong});
 
-                if (Program.Library.Broadcast.PlayingSongID == 0)
-                    Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
+                if (Application.Library.Broadcast.PlayingSongID == 0)
+                    Application.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
             }
-            else if (Program.Library.Broadcast.PlayingSongID == 0)
+            else if (Application.Library.Broadcast.PlayingSongID == 0)
             {
+                var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+                if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+                {
+                    var s_First = s_ModuleSongs.First();
+                    Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
+                    return;
+                }
+
                 var s_Random = new Random();
                 var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
                 var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];
 
-                var s_QueueIDs = Program.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
+                var s_QueueIDs = Application.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
 
-                Program.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
+                Application.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
             }
-            else if (Program.Library.Broadcast.PlayingSongID != 0)
+            else if (Application.Library.Broadcast.PlayingSongID != 0)
             {
                 QueueManager.UpdateQueue();
             }
@@ -178,7 +257,7 @@ namespace GrooveCaster.Managers
 
         public static void DisableMobileCompliance()
         {
-            Program.Library.Broadcast.DisableMobileCompliance();
+            Application.Library.Broadcast.DisableMobileCompliance();
         }
 
         private static void OnBroadcastCreationFailed(SharkEvent p_SharkEvent)
@@ -240,9 +319,9 @@ namespace GrooveCaster.Managers
 
         public static void UnguestAll()
         {
-            foreach (var s_UserID in Program.Library.Broadcast.SpecialGuests)
+            foreach (var s_UserID in Application.Library.Broadcast.SpecialGuests)
             {
-                Program.Library.Broadcast.RemoveSpecialGuest(s_UserID);
+                Application.Library.Broadcast.RemoveSpecialGuest(s_UserID);
                 return;
             }
         }
@@ -255,37 +334,37 @@ namespace GrooveCaster.Managers
 
         public static bool HasActiveGuest(Int64 p_UserID)
         {
-            return Program.Library.Broadcast.SpecialGuests.Contains(p_UserID);
+            return Application.Library.Broadcast.SpecialGuests.Contains(p_UserID);
         }
 
         public static void MakeGuest(SpecialGuest p_Guest)
         {
-            Program.Library.Broadcast.AddSpecialGuest(p_Guest.UserID, p_Guest.Permissions);
+            Application.Library.Broadcast.AddSpecialGuest(p_Guest.UserID, p_Guest.Permissions);
         }
 
         public static void MakeGuest(Int64 p_UserID, VIPPermissions p_Permissions)
         {
-            Program.Library.Broadcast.AddSpecialGuest(p_UserID, p_Permissions);
+            Application.Library.Broadcast.AddSpecialGuest(p_UserID, p_Permissions);
         }
 
         public static void Unguest(SpecialGuest p_Guest)
         {
-            Program.Library.Broadcast.RemoveSpecialGuest(p_Guest.UserID);
+            Application.Library.Broadcast.RemoveSpecialGuest(p_Guest.UserID);
         }
 
         public static void Unguest(Int64 p_UserID)
         {
-            Program.Library.Broadcast.RemoveSpecialGuest(p_UserID);
+            Application.Library.Broadcast.RemoveSpecialGuest(p_UserID);
         }
 
         public static void SetTitle(String p_Title)
         {
-            Program.Library.Broadcast.UpdateBroadcastName(p_Title);
+            Application.Library.Broadcast.UpdateBroadcastName(p_Title);
         }
 
         public static void SetDescription(String p_Description)
         {
-            Program.Library.Broadcast.UpdateBroadcastDescription(p_Description);
+            Application.Library.Broadcast.UpdateBroadcastDescription(p_Description);
         }
 
         public static bool CanUseCommands(SpecialGuest p_Guest)
