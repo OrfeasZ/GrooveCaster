@@ -216,3 +216,45 @@ if (s_ModuleScriptInput !== null) {
 $('#module-name-input').on('input', function () {
     $('#module-id-input').val($(this).val().trim().toLowerCase().replace(' ', '-').replace('.', '').replace(',', ''));
 });
+
+$('.listener-stats').each(function() {
+    var s_Element = $(this);
+    var s_Perdiod = s_Element.attr('data-period') || 'day';
+
+    $.getJSON('/stats/listeners/' + s_Perdiod + '.json', function(p_Data) {
+        var s_DataPoints = [];
+
+        for (var i = 0; i < p_Data.length; ++i) {
+            s_DataPoints.push({
+                x: new Date(p_Data[i].date),
+                y: p_Data[i].integerValue
+            });
+        }
+
+        console.log(s_DataPoints);
+        
+        s_Element.CanvasJSChart({
+            zoomEnabled: false,
+            animationEnabled: true,
+            axisY2: {
+                interlacedColor: "#F5F5F5",
+                gridColor: "#D7D7D7",
+                tickColor: "#D7D7D7"
+            },
+            theme: "theme2",
+            toolTip:{
+                shared: true
+            },
+            data: [
+                {
+                    type: "spline",
+                    lineThickness:3,
+                    axisYType:"secondary",
+                    showInLegend: false,           
+                    name: "Listeners", 
+                    dataPoints: s_DataPoints
+                }
+            ]
+        });
+    });
+});

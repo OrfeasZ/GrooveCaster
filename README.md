@@ -2,7 +2,7 @@ GrooveCaster
 ===========
 The most advanced broadcasting bot for GrooveShark.  
 
-![Screenshot of the Administration Dashboard](http://i.nofate.me/MsDD8e3W.png)
+![Screenshot of the Administration Dashboard](http://i.nofate.me/f5mKBdMZ.png)
 
 ----------
 
@@ -16,7 +16,7 @@ Additionally, it provides a variety of management features, either via it's web-
 
 Moreover, GrooveCaster provides an advanced [module system](#the-module-system), which allows users to very easily introduce completely new functionality (or modify existing one) .
 
-Finally, GrooveCaster is completely standalone and headless, which means that you can run it on almost any piece of hardware without the need for a graphical output (even on Linux servers using Mono!).
+Finally, GrooveCaster is completely standalone and headless, which means that you can run it on almost any piece of hardware without the need for a graphical output (even on Linux servers using Mono!). Additionally, an ASP.NET package is provided if you want to run it on IIS or Azure.
 
 > **Note:**  
 > While using GrooveCaster you shouldn't be using GrooveShark with the same account that's used for broadcasting, as in doing so you might cause several issues, both for yourself and your listeners.
@@ -30,10 +30,11 @@ Installation
 For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
 However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.
 
-Latest Release: **1.2.0.0**
+Latest Release: **1.3.0.0**
 
-Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.2.0.0/GrooveCaster-1.2.0.0-Win32.zip)  
-Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.2.0.0/GrooveCaster-1.2.0.0-Mono.zip)
+Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.0.0/GrooveCaster-1.3.0.0-Win32.zip)  
+ASP.NET Package: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.0.0/GrooveCaster-1.3.0.0-AspNet.zip)  
+Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.0.0/GrooveCaster-1.3.0.0-Mono.zip)
 
 There's no installation required.  
 Simply download the binaries archive from the links above, and extract them at some location on your drive.
@@ -41,6 +42,8 @@ Simply download the binaries archive from the links above, and extract them at s
 If you wish to upgrade GrooveCaster, simply download the latest archive, delete all previous files (except for `gcaster.sqlite`), and extract the fresh archive in the same directory.
 
 ### Windows Environments
+
+#### Standalone
 If you want to run GrooveCaster on a Windows environment you first need to make sure you have .NET Framework 4.5 installed. If you don't already have it installed, make sure to grab it from [here](http://www.microsoft.com/en-us/download/details.aspx?id=40779).
 
 Afterwards, running GrooveCaster is as simply as double clicking GrooveCaster.exe and following the instructions on how to perform the [initial setup](#initial-setup).
@@ -52,6 +55,34 @@ GrooveCaster doesn't currently support being ran as a service, however you could
 > \> GrooveCaster.exe -d
 
 After GrooveCaster has started you should be able to access it's web interface at [http://localhost:42278](http://localhost:42278).
+
+#### ASP.NET
+GrooveCaster can run under IIS or Windows Azure as an ASP.NET application.
+For ease-of-use, a pre-built package is provided.
+
+Here's how you can run GrooveCaster under IIS (version >= 7.5 required with ASP.NET 4.5 enabled).
+
+First of all, you need to extract the GrooveCaster ASP.NET package you downloaded at a folder of your preference.
+
+After you've done that, open the IIS Manager, and add a new website with the name `GrooveCaster` (or anything else you like), and point its content directory to the directory you just extracted the ASP.NET package. Make sure to untick the `Start Website immediately` option.
+
+![Setup IIS website](http://i.nofate.me/N5tK4n3K.png)
+
+After you've done that, you need to configure the application pool for GrooveCaster.
+
+In order to do that, click on the `Application Pools` tab present in the left navigation bar, find the `GrooveCaster` application pool, right click it, select `Advanced Settings`, and change the following options:
+
+ - Enable 32-Bit Applications: **True**
+ - Start Mode: **Always Running**
+ - Idle Time-out (minutes): **0**
+
+After you've done that, make sure to stop and re-start the application pool.
+
+Finally, go back to the `Sites` tab, right-click the `GrooveCaster` website, go to `Manage Website` and then `Advanced Settings`, and change the following options:
+
+ - Preload Enabled: **True**
+
+You can now start the GrooveCaster website and access it from your web browser.
 
 ### Unix Environments
 In Unix-based environments, GrooveCaster requires a framework called Mono.
@@ -139,7 +170,7 @@ The Admin Dashboard
 ### Overview
 The overview page provides a quick overview of the current status of GrooveCaster and your broadcast.  
 
-This dashboard also provides you with information about the currently playing song, the upcoming songs in your queue, some basic queue management functions, and a chat box which you can use to interact with your listeners.
+This dashboard also provides you with information about the currently playing song, the number of listeners your broadcast had in the past 24 hours, the upcoming songs in your queue, some basic queue management functions, and a chat box which you can use to interact with your listeners.
 
 GrooveCaster currently only keeps track of the last 20 chat messages.
 
@@ -296,6 +327,12 @@ The default commands are the following:
 | `setDescription`		| `!setDescription <description>`: Sets the description of the broadcast. |
 | `about`		| `!about`: Displays information about the GrooveCaster bot. |
 | `help`		| `!help [command]`: Displays detailed information about the command `[command]`. Displays all available commands if `[command]` is not specified. |
+| `find`		| `!find <name>`: Finds songs in the queue whose names match `<name>`. |
+| `findPlaylist`	| `!findPlaylist <name>`: Finds playlists whose name match `<name>` and displays their IDs. |
+| `loadPlaylist`	| `!loadPlaylist <id>`: Loads a playlist with the specified `<id>` into the queue. |
+| `disablePlaylist`	| `!disablePlaylist`: Disables the currently active playlist. |
+| `queuePlaylist` | `!queuePlaylist <id>`: Queues the playlist with the specified `<id>` after the currently active playlist. |
+| `playlist` | `!playlist`: Displays the name of the currently active playlist (if any). |
 
 For more details on how to implement your own modules, sample modules, and documentation on the available APIs, please refer to the [Wiki](https://github.com/OrfeasZ/GrooveCaster/wiki).
 
@@ -303,15 +340,15 @@ Upcoming Features
 -----------------------
 This is a list of features and fixes that are currently being worked on:
 
- - Statistics!
+ - More statistics!
  - Automatic service installation on Windows
- - More advanced logging
 
 Contributing
 ---------------
 GrooveCaster is an open-source project, available for everyone to use and modify.
 
-If you want to implement a new feature, modify an existing one, fix a bug, or anything else, feel free to fork this respository and send me a pull request.
+If you want to implement a new feature, modify an ex
+isting one, fix a bug, or anything else, feel free to fork this respository and send me a pull request.
 
 Approved contributions will get added to the master branch, shipped in the next binary release, and contributors will be listed below.
 

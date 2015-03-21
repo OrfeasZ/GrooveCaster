@@ -142,6 +142,7 @@
     <Compile Include="Migrations\1200.cs" />
     <Compile Include="Migrations\1121.cs" />
     <Compile Include="Migrations\1120.cs" />
+    <Compile Include="Migrations\1300.cs" />
     <Compile Include="Models\AddGuestRequest.cs" />
     <Compile Include="Models\AddModuleRequest.cs" />
     <Compile Include="Models\AddSongRequest.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Models\SongEntry.cs" />
     <Compile Include="Models\SongShuffleData.cs" />
     <Compile Include="Models\SongSuggestion.cs" />
+    <Compile Include="Models\StatisticsUnit.cs" />
     <Compile Include="Models\UpdateAccountSettingsRequest.cs" />
     <Compile Include="Models\UpdateGuestRequest.cs" />
     <Compile Include="Models\VersionModel.cs" />
@@ -176,6 +178,7 @@
     <Compile Include="Modules\SettingsModule.cs" />
     <Compile Include="Modules\SetupModule.cs" />
     <Compile Include="Modules\SongsModule.cs" />
+    <Compile Include="Modules\StatisticsModule.cs" />
     <Compile Include="Modules\UsersModule.cs" />
     <Compile Include="Nancy\Bootstrapper.cs" />
     <Compile Include="Modules\DashboardModule.cs" />
@@ -226,6 +229,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\js\codemirror\mode\python.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\js\jquery.canvasjs.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\js\typeahead.bundle.min.js">

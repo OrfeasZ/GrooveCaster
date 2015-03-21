@@ -30,6 +30,7 @@
 <script src="/Content/js/typeahead.bundle.min.js"></script>
 <script src="/Content/js/codemirror/lib/codemirror.js"></script>
 <script src="/Content/js/codemirror/mode/python.js"></script>
+<script src="/Content/js/jquery.canvasjs.min.js"></script>
 <script src="/Content/js/app.js"></script>
 
 @Section['Scripts']

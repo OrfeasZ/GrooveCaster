@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using GrooveCaster.Models;
+using ServiceStack.OrmLite;
 
 namespace GrooveCaster.Managers
 {
@@ -51,7 +53,19 @@ namespace GrooveCaster.Managers
 
         private static void StoreStats(object p_Sender, ElapsedEventArgs p_ElapsedEventArgs)
         {
-            Console.WriteLine("Current Listeners: {0}", m_CurrentListeners);
+            var s_Now = DateTime.UtcNow;
+            var s_CurrentTime = new DateTime(s_Now.Year, s_Now.Month, s_Now.Day, s_Now.Hour, s_Now.Minute, 0);
+
+            var s_ListenersUnit = new StatisticsUnit
+            {
+                Date = s_CurrentTime,
+                IntegerValue = m_CurrentListeners,
+                Key = "lsnr",
+                Type = StatisticsUnit.UnitType.Integer
+            };
+
+            using (var s_Db = Database.GetStatsConnection())
+                s_Db.Save(s_ListenersUnit);
 
             // Restart the storage timer.
             m_StatsStorageTimer.Interval = GetStoreInterval();
@@ -67,6 +81,24 @@ namespace GrooveCaster.Managers
         {
             var s_Now = DateTime.UtcNow;
             return ((s_Now.Second > 30 ? 120 : 60) - s_Now.Second) * 1000 - s_Now.Millisecond;
+        }
+
+        public static List<StatisticsUnit> GetUnits(String p_Key)
+        {
+            using (var s_Db = Database.GetStatsConnection())
+                return s_Db.Select<StatisticsUnit>(p_Unit => p_Unit.Key == p_Key);
+        }
+
+        public static List<StatisticsUnit> GetUnits(String p_Key, DateTime p_From)
+        {
+            using (var s_Db = Database.GetStatsConnection())
+                return s_Db.Select<StatisticsUnit>(p_Unit => p_Unit.Key == p_Key && p_Unit.Date >= p_From);
+        }
+
+        public static List<StatisticsUnit> GetUnits(String p_Key, DateTime p_From, DateTime p_To)
+        {
+            using (var s_Db = Database.GetStatsConnection())
+                return s_Db.Select<StatisticsUnit>(p_Unit => p_Unit.Key == p_Key && p_Unit.Date >= p_From && p_Unit.Date <= p_To);
         }
     }
 }
