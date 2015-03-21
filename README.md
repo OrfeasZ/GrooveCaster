@@ -39,7 +39,7 @@ Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/downl
 There's no installation required.  
 Simply download the binaries archive from the links above, and extract them at some location on your drive.
 
-If you wish to upgrade GrooveCaster, simply download the latest archive, delete all previous files (except for `gcaster.sqlite`), and extract the fresh archive in the same directory.
+If you wish to upgrade GrooveCaster, simply download the latest archive, delete all previous files (except for `gcaster.sqlite` and `gcaster.stats.sqlite`), and extract the fresh archive in the same directory.
 
 ### Windows Environments
 
