@@ -96,8 +96,14 @@ namespace GrooveCaster.Managers
                 // Quickly! Add two to the queue!
 
                 // Allows for custom queuing logic by Modules.
-                if (!ModuleManager.OnFetchingNextSong())
+                var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(2);
+
+                if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+                {
+                    var s_First = s_ModuleSongs.First();
+                    Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
                     return;
+                }
 
                 if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
                 {
@@ -143,8 +149,9 @@ namespace GrooveCaster.Managers
             // We're running out of songs; add new ones.
             if (s_Index + 1 >= Application.Library.Queue.CurrentQueue.Count)
             {
-                // Allows for custom queuing logic by Modules.
-                if (!ModuleManager.OnFetchingNextSong())
+                var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+                if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
                     return;
 
                 if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
@@ -348,8 +355,6 @@ namespace GrooveCaster.Managers
                 s_QueueIDs.Add(s_Songs[i].QueueID);
 
             Application.Library.Broadcast.MoveSongs(s_QueueIDs, Application.Library.Queue.GetPlayingSongIndex() + 1);
-
-            Application.Library.Chat.SendChatMessage("Shuffled " + s_SongCount + " songs.");
         }
 
         public static bool AddPlayingSongToCollection()
@@ -422,14 +427,14 @@ namespace GrooveCaster.Managers
             Application.Library.Broadcast.RemoveSongs(s_SongsToRemove);
         }
 
-        public static void QueueSong(Int64 p_SongID)
+        public static Dictionary<Int64, Int64> QueueSong(Int64 p_SongID)
         {
-            Application.Library.Broadcast.AddSongs(new List<Int64>() { p_SongID });
+            return Application.Library.Broadcast.AddSongs(new List<Int64>() { p_SongID });
         }
 
-        public static void QueueSongs(List<Int64> p_SongIDs)
+        public static Dictionary<Int64, Int64> QueueSongs(List<Int64> p_SongIDs)
         {
-            Application.Library.Broadcast.AddSongs(p_SongIDs);
+            return Application.Library.Broadcast.AddSongs(p_SongIDs);
         }
 
         public static void MoveSong(Int64 p_QueueID, int p_Index)

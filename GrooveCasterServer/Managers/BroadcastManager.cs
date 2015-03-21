@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GrooveCaster.Models;
 using GS.Lib.Enums;
 using GS.Lib.Events;
@@ -24,6 +25,54 @@ namespace GrooveCaster.Managers
             Application.Library.RegisterEventHandler(ClientEvent.BroadcastCreationFailed, OnBroadcastCreationFailed);
             Application.Library.RegisterEventHandler(ClientEvent.ComplianceIssue, OnComplianceIssue);
             Application.Library.RegisterEventHandler(ClientEvent.PendingDestruction, OnPendingDestruction);
+            Application.Library.RegisterEventHandler(ClientEvent.PlaybackStatusUpdate, OnPlaybackStatusUpdate);
+        }
+
+        private static void OnPlaybackStatusUpdate(SharkEvent p_SharkEvent)
+        {
+            if (Application.Library.Broadcast.CurrentBroadcastStatus != BroadcastStatus.Broadcasting)
+                return;
+
+            var s_Event = (PlaybackStatusUpdateEvent) p_SharkEvent;
+
+            if (s_Event.Status != PlaybackStatus.Completed && s_Event.Status != PlaybackStatus.Paused &&
+                s_Event.Status != PlaybackStatus.Suspended)
+                return;
+
+            var s_CurrentIndex = QueueManager.GetPlayingSongIndex();
+
+            if (s_CurrentIndex != -1 && s_CurrentIndex < QueueManager.GetCurrentQueue().Count - 2)
+            {
+                var s_NextSong = QueueManager.GetCurrentQueue()[s_CurrentIndex + 1];
+                Application.Library.Broadcast.PlaySong(s_NextSong.SongID, s_NextSong.QueueID);
+                return;
+            }
+
+            // Allows for custom queuing logic by Modules.
+            var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+            if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+            {
+                var s_First = s_ModuleSongs.First();
+                Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
+                return;
+            }
+
+            // Try to play a new song.
+            if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
+            {
+                var s_SongID = PlaylistManager.DequeueNextSong();
+                Application.Library.Broadcast.PlaySong(s_SongID, Application.Library.Broadcast.AddSongs(new List<Int64> { s_SongID })[s_SongID]);
+                return;
+            }
+
+            var s_Random = new Random();
+            var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
+            var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];
+
+            var s_QueueIDs = Application.Library.Broadcast.AddSongs(new List<Int64> { s_FirstSong });
+
+            Application.Library.Broadcast.PlaySong(s_FirstSong, s_QueueIDs[s_FirstSong]);
         }
 
         private static void OnPendingDestruction(SharkEvent p_SharkEvent)
@@ -32,8 +81,14 @@ namespace GrooveCaster.Managers
                 return;
 
             // Allows for custom queuing logic by Modules.
-            if (!ModuleManager.OnFetchingNextSong())
+            var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+            if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+            {
+                var s_First = s_ModuleSongs.First();
+                Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
                 return;
+            }
 
             if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
             {
@@ -61,8 +116,14 @@ namespace GrooveCaster.Managers
             }
 
             // Allows for custom queuing logic by Modules.
-            if (!ModuleManager.OnFetchingNextSong())
+            var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+            if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+            {
+                var s_First = s_ModuleSongs.First();
+                Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
                 return;
+            }
 
             // Try to play a new song.
             if (PlaylistManager.PlaylistActive && PlaylistManager.HasNextSong())
@@ -138,6 +199,15 @@ namespace GrooveCaster.Managers
             // Add two random songs to the collection.
             if (Application.Library.Queue.CurrentQueue.Count < 2)
             {
+                var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(2);
+
+                if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+                {
+                    var s_First = s_ModuleSongs.First();
+                    Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
+                    return;
+                }
+
                 var s_Random = new Random();
                 var s_FirstSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
                 var s_SecondSongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
@@ -158,6 +228,15 @@ namespace GrooveCaster.Managers
             }
             else if (Application.Library.Broadcast.PlayingSongID == 0)
             {
+                var s_ModuleSongs = ModuleManager.OnFetchingNextSongs(1);
+
+                if (s_ModuleSongs != null && s_ModuleSongs.Count > 0)
+                {
+                    var s_First = s_ModuleSongs.First();
+                    Application.Library.Broadcast.PlaySong(s_First.Key, s_First.Value);
+                    return;
+                }
+
                 var s_Random = new Random();
                 var s_SongIndex = s_Random.Next(0, QueueManager.CollectionSongs.Count);
                 var s_FirstSong = QueueManager.CollectionSongs[s_SongIndex];

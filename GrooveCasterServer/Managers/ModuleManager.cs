@@ -62,18 +62,25 @@ namespace GrooveCaster.Managers
                     CompileModule(s_Module);
         }
 
-        internal static bool OnFetchingNextSong()
+        internal static Dictionary<Int64, Int64> OnFetchingNextSongs(int p_SongCount)
         {
             foreach (var s_Pair in m_LoadedModules)
             {
                 try
                 {
-                    Func<bool> s_Function;
+                    Func<int, Dictionary<Int64, Int64>> s_Function;
                     if (!s_Pair.Value.Scope.TryGetVariable("OnFetchingNextSong", out s_Function))
                         continue;
 
-                    if (s_Function != null && !s_Function())
-                        return false;
+                    if (s_Function == null)
+                        continue;
+
+                    var s_Result = s_Function(p_SongCount);
+
+                    if (s_Result == null)
+                        continue;
+
+                    return s_Result;
                 }
                 catch
                 {
@@ -81,7 +88,7 @@ namespace GrooveCaster.Managers
                 }
             }
 
-            return true;
+            return null;
         }
 
         internal static void CompileModule(GrooveModule p_Module)
