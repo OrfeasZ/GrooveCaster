@@ -23,6 +23,7 @@ namespace GrooveCaster.Modules
                 var s_Index = QueueManager.GetPlayingSongIndex();
 
                 var s_Playlists = PlaylistManager.GetPlaylists();
+                var s_QueuedPlaylists = PlaylistManager.GetQueuedPlaylists();
 
                 return View["Queue", new
                 {
@@ -33,7 +34,9 @@ namespace GrooveCaster.Modules
                     Playing = s_Index != -1,
                     Song = s_Index != -1 ? QueueManager.GetCurrentQueue()[s_Index] : null,
                     Playlists = s_Playlists,
-                    HasPlaylists = s_Playlists.Count > 0
+                    HasPlaylists = s_Playlists.Count > 0,
+                    QueuedPlaylists = s_QueuedPlaylists,
+                    HasQueuedPlaylists = s_QueuedPlaylists.Count > 0
                 }];
             };
 
@@ -123,6 +126,24 @@ namespace GrooveCaster.Modules
                 var s_Request = this.Bind<LoadPlaylistRequest>();
 
                 PlaylistManager.LoadPlaylist(s_Request.Playlist, s_Request.Shuffle);
+
+                return new RedirectResponse("/queue");
+            };
+
+            Post["/queue/playlist/queue"] = p_Parameters =>
+            {
+                var s_Request = this.Bind<LoadPlaylistRequest>();
+
+                PlaylistManager.QueuePlaylist(s_Request.Playlist, s_Request.Shuffle);
+
+                return new RedirectResponse("/queue");
+            };
+
+            Get["/queue/playlist/dequeue/{id:long}"] = p_Parameters =>
+            {
+                Int64 s_PlaylistID = p_Parameters.id;
+
+                PlaylistManager.DequeuePlaylist(s_PlaylistID);
 
                 return new RedirectResponse("/queue");
             };

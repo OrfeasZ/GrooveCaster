@@ -44,7 +44,11 @@
                     <a href="/queue/empty" class="btn btn-warning btn-sm" id="import-guests">Empty Queue</a>
                 </h1>
                 @If.PlaylistActive
-                    <div class="alert alert-info">Currently playing from playlist: <strong>@Model.Playlist.Name</strong> &mdash; <a class="btn btn-warning btn-sm" href="/queue/playlist/disable">Disable</a></div>
+                    <div class="alert alert-info">
+						Currently playing from playlist: <strong>@Model.Playlist.Name</strong> &mdash; 
+						<a class="btn btn-warning btn-sm" href="/queue/playlist/disable">Disable</a>
+						<a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#playlist-queue-modal">Queue Another Playlist</a>
+					</div>
                 @EndIf
                 @IfNot.PlaylistActive
                     <div class="alert alert-info">
@@ -61,6 +65,7 @@
                         </div>
                     </div>
                     @EndIf
+
                     <div class="panel panel-default">
                         <div class="panel-heading">Queue a Song</div>
                         <div class="panel-body">
@@ -72,6 +77,25 @@
                             </form>
                         </div>
                     </div>
+
+					@If.HasQueuedPlaylists
+					<div class="panel panel-default">
+                        <div class="panel-heading">Queued Playlists</div>
+                        <table class="table table-hover">
+                            <tbody>
+                                @Each.QueuedPlaylists
+                                    <tr>
+                                        <td><strong>@Current.Name</strong> &mdash; @Current.Description</td>
+                                        <td style="text-align: right;" class="actions-container">
+                                            <a href="/queue/playlist/dequeue/@Current.ID" class="btn btn-danger btn-xs btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
+                                        </td>
+                                    </tr>
+                                @EndEach
+                            </tbody>
+                        </table>
+                    </div>
+					@EndIf
+
                     <div class="panel panel-default">
                         <div class="panel-heading">Upcoming Songs</div>
                         <table class="table table-hover">
@@ -128,6 +152,43 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 @If.HasPlaylists
                     <button type="submit" class="btn btn-primary">Load Playlist</button>                
+                @EndIf
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="playlist-queue-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="playlist-modal-title">
+    <div class="modal-dialog">
+        <form class="modal-content" action="/queue/playlist/queue" method="post">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="playlist-modal-title">Queue Playlist</h4>
+            </div>
+            <div class="modal-body">
+                @IfNot.HasPlaylists
+                    <p>You currently have no playlists.</p>
+                @EndIf
+                @If.HasPlaylists
+                    <p>Note: The playlist will start playing after the end of the current playlist queue.</p>
+                    <hr/>
+                    <label>
+                        <select class="form-control" name="playlist" required>
+                            @Each.Playlists
+                            <option value="@Current.ID">@Current.Name</option>
+                            @EndEach
+                        </select>
+                    </label><br/>
+                    <label>
+                        Shuffle Playlist 
+                        <input type="checkbox" name="shuffle" />
+                    </label>
+                @EndIf
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @If.HasPlaylists
+                    <button type="submit" class="btn btn-primary">Queue Playlist</button>                
                 @EndIf
             </div>
         </form>

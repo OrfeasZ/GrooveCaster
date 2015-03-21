@@ -59,6 +59,9 @@
   <PropertyGroup>
     <SignManifests>true</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.1.1\lib\net40\Nancy.dll</HintPath>
