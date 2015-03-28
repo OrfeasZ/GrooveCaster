@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using GrooveCaster.Managers;
 using GrooveCaster.Models;
 using Nancy;
 using Nancy.Security;
+using Newtonsoft.Json;
 
 namespace GrooveCaster.Modules
 {
@@ -43,7 +45,14 @@ namespace GrooveCaster.Modules
                         break;
                 }
 
-                return s_Units;
+                var s_Serialized = JsonConvert.SerializeObject(s_Units);
+                var s_Encoded = Encoding.UTF8.GetBytes(s_Serialized);
+
+                return new Response()
+                {
+                    ContentType = "application/json",
+                    Contents = p_Writer => p_Writer.Write(s_Encoded, 0, s_Encoded.Length)
+                };
             };
         }
     }

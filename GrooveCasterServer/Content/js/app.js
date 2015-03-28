@@ -226,12 +226,10 @@ $('.listener-stats').each(function() {
 
         for (var i = 0; i < p_Data.length; ++i) {
             s_DataPoints.push({
-                x: new Date(p_Data[i].date),
-                y: p_Data[i].integerValue
+                x: new Date(p_Data[i].Date),
+                y: p_Data[i].IntegerValue
             });
         }
-
-        console.log(s_DataPoints);
         
         s_Element.CanvasJSChart({
             zoomEnabled: false,
