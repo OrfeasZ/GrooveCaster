@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GrooveCaster.Managers;
 using GrooveCaster.Models;
+using GS.Lib.Models;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
@@ -54,7 +56,7 @@ namespace GrooveCaster.Modules
                     return new RedirectResponse("/");
 
                 var s_LastBroadcast = Application.Library.Broadcast.GetLastBroadcast();
-                return s_LastBroadcast;
+                return s_LastBroadcast ?? new BroadcastData();
             };
 
             Get["/setup/category-tags"] = p_Parameters =>

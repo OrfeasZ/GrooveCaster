@@ -30,11 +30,11 @@ Installation
 For ease-of-use, pre-built binary distributions of GrooveCaster will be available for download on each release.
 However, if you want to build GrooveCaster yourself, you can clone this repository locally and build using Visual Studio 2013.
 
-Latest Release: **1.3.0.0**
+Latest Release: **1.3.1.0**
 
-Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.0.0/GrooveCaster-1.3.0.0-Win32.zip)  
-ASP.NET Package: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.0.0/GrooveCaster-1.3.0.0-AspNet.zip)  
-Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.0.0/GrooveCaster-1.3.0.0-Mono.zip)
+Windows Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.1.0/GrooveCaster-1.3.1.0-Win32.zip)  
+ASP.NET Package: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.1.0/GrooveCaster-1.3.1.0-AspNet.zip)  
+Mono Binaries: [Download](https://github.com/OrfeasZ/GrooveCaster/releases/download/1.3.1.0/GrooveCaster-1.3.1.0-Mono.zip)
 
 There's no installation required.  
 Simply download the binaries archive from the links above, and extract them at some location on your drive.
