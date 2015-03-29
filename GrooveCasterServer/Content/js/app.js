@@ -1,5 +1,5 @@
 ﻿var FetchLastBroadcastInfo = function() {
-    $.getJSON("/setup/last-broadcast", function (p_Data) {
+    var OnLastBroadcastFetched = function(p_Data) {
         var s_Name = p_Data != null ? (p_Data.name || "") : "";
         var s_Description = p_Data != null ? (p_Data.description || "") : "";
         var s_Tag = p_Data != null ? (p_Data.tag) : null;
@@ -10,12 +10,13 @@
 
         var s_SetupContainer = $("#setup-gs-broadcast");
 
-        $.getJSON("/setup/category-tags", function (p_Data) {
+        $.getJSON("/setup/category-tags", function(p_Data) {
             var s_SelectBox = s_SetupContainer.find("#inputBroadcastTag");
 
             // Sort categories by name.
-            p_Data = p_Data.sort(function (a, b) {
-                var x = a.name; var y = b.name;
+            p_Data = p_Data.sort(function(a, b) {
+                var x = a.name;
+                var y = b.name;
                 return ((x < y) ? -1 : ((x > y) ? 1 : 0));
             });
 
@@ -38,7 +39,9 @@
             $("#gs-last-broadcast-loading").hide();
             s_SetupContainer.show();
         });
-    });
+    };
+
+    $.getJSON("/setup/last-broadcast", OnLastBroadcastFetched).fail(OnLastBroadcastFetched);
 };
 
 var PopulateFinishPage = function() {
